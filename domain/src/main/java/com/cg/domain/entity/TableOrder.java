@@ -31,5 +31,4 @@ public class TableOrder extends BaseEntity {
     @JoinColumn(name="zone_id" , referencedColumnName = "id" , nullable = false)
     private Zone zone;
 
-
 }
