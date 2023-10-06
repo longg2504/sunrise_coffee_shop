@@ -1,4 +1,7 @@
 package com.cg.service.role;
 
-public interface IRoleService {
+import com.cg.domain.entity.Role;
+import com.cg.service.IGeneralService;
+
+public interface IRoleService extends IGeneralService<Role,Long> {
 }

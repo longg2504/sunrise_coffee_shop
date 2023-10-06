@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,8 @@ public class Staff extends BaseEntity{
 
     @Column(name="full_name" , nullable = false)
     private String fullName;
+
+    private Date dob;
 
     @Column(nullable = false , length = 10)
     private String phone;

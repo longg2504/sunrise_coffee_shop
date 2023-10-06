@@ -1,4 +1,8 @@
 package com.cg.service.locationRegion;
 
-public interface ILocationRegionService {
+import com.cg.domain.entity.LocationRegion;
+import com.cg.service.IGeneralService;
+
+public interface ILocationRegionService extends IGeneralService<LocationRegion,Long> {
+
 }
