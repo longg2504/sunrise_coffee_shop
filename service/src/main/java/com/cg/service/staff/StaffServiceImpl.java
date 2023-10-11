@@ -66,8 +66,8 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
-    public List<StaffDTO> findStaffByKeySearch(String keySearch) {
-        return staffRepository.findStaffByKeySearch(keySearch);
+    public Page<StaffDTO> findStaffByKeySearch(String keySearch, Pageable pageable) {
+        return staffRepository.findStaffByKeySearch(keySearch,pageable);
     }
 
     @Override

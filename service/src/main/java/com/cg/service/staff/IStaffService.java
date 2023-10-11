@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface IStaffService extends IGeneralService<Staff,Long> {
     Page<StaffDTO> findAllStaffDTOPage(Pageable pageable);
-    List<StaffDTO> findStaffByKeySearch(String keySearch);
+    Page<StaffDTO> findStaffByKeySearch(String keySearch, Pageable pageable);
 
     Optional<Staff> findByUserId(Long userId);
 

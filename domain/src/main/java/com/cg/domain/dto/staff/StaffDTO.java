@@ -27,6 +27,7 @@ public class StaffDTO {
     private Avatar staffAvatar;
     private User user;
 
+
     public StaffDTO(Long id, String fullName, Date dob, String phone, LocationRegion locationRegion, Avatar staffAvatar, User user) {
         this.id = id;
         this.fullName = fullName;

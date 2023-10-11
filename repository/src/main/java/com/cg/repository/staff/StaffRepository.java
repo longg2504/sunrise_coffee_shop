@@ -56,12 +56,12 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             "st.locationRegion," +
             "st.staffAvatar," +
             "st.user" +
-            ")" +
+            ") " +
             "FROM Staff as st " +
             "WHERE st.fullName like :keySearch " +
             "AND st.deleted = false "
     )
-    List<StaffDTO> findStaffByKeySearch(@Param("keySearch") String keySearch);
+    Page<StaffDTO> findStaffByKeySearch(@Param("keySearch") String keySearch, Pageable pageable);
 
     Optional<Staff> findByUserId(Long userId);
 
