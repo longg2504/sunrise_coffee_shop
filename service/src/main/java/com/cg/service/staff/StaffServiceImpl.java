@@ -32,8 +32,6 @@ public class StaffServiceImpl implements IStaffService {
     @Autowired
     private LocationRegionRepository locationRegionRepository;
     @Autowired
-    private IStaffService staffService;
-    @Autowired
     private IRoleService roleService;
     @Autowired
     private IUserService userService;
@@ -68,8 +66,8 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
-    public Page<StaffDTO> findStaffByKeySearch(String keySearch, Pageable pageable) {
-        return staffRepository.findStaffByKeySearch(keySearch,pageable);
+    public List<StaffDTO> findStaffByKeySearch(String keySearch) {
+        return staffRepository.findStaffByKeySearch(keySearch);
     }
 
     @Override
@@ -85,5 +83,10 @@ public class StaffServiceImpl implements IStaffService {
     @Override
     public Optional<Staff> findByIdAndDeletedFalse(Long id) {
         return staffRepository.findByIdAndDeletedFalse(id);
+    }
+
+    @Override
+    public List<StaffDTO> findAllStaffDTO() {
+        return staffRepository.findAllStaffDTO();
     }
 }

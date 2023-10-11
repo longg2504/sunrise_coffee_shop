@@ -7,15 +7,18 @@ import com.cg.service.IGeneralService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IStaffService extends IGeneralService<Staff,Long> {
     Page<StaffDTO> findAllStaffDTOPage(Pageable pageable);
-    Page<StaffDTO> findStaffByKeySearch(String keySearch, Pageable pageable);
+    List<StaffDTO> findStaffByKeySearch(String keySearch);
 
     Optional<Staff> findByUserId(Long userId);
 
     Optional<Staff> findByUserAndDeletedIsFalse(User user);
 
     Optional<Staff> findByIdAndDeletedFalse(Long id);
+
+    List<StaffDTO> findAllStaffDTO();
 }

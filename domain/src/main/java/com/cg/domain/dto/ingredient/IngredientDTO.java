@@ -1,10 +1,14 @@
 package com.cg.domain.dto.ingredient;
 
+import com.cg.domain.entity.SupplierIngredient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +18,7 @@ import lombok.experimental.Accessors;
 public class IngredientDTO {
     private Long id;
     private String name;
+
+
 
 }

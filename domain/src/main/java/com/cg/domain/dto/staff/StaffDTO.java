@@ -2,7 +2,6 @@ package com.cg.domain.dto.staff;
 
 import com.cg.domain.dto.avatar.AvatarDTO;
 import com.cg.domain.dto.locationRegion.LocationRegionDTO;
-import com.cg.domain.dto.user.UserDTO;
 import com.cg.domain.entity.Avatar;
 import com.cg.domain.entity.LocationRegion;
 import com.cg.domain.entity.User;

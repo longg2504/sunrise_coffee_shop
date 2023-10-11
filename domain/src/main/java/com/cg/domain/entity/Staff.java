@@ -1,5 +1,6 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.staff.StaffDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public class Staff extends BaseEntity{
     @Column(nullable = false , length = 10)
     private String phone;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "location_region_id", referencedColumnName = "id", nullable = false)
     private LocationRegion locationRegion;
 
@@ -55,4 +56,16 @@ public class Staff extends BaseEntity{
     @OneToMany(mappedBy = "staff")
     @JsonIgnore
     private List<Bill> bills;
+
+    public StaffDTO toStaffDTO() {
+        return new StaffDTO()
+                .setId(id)
+                .setFullName(fullName)
+                .setDob(dob)
+                .setPhone(phone)
+                .setLocationRegion(locationRegion.toLocationRegionDTO())
+                .setStaffAvatar(staffAvatar)
+                .setUser(user)
+                ;
+    }
 }
