@@ -1,6 +1,8 @@
 package com.cg.domain.entity;
 
 import com.cg.domain.dto.avatar.AvatarDTO;
+import com.cg.domain.dto.avatar.AvatarResDTO;
+import com.cg.domain.dto.product.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +50,18 @@ public class Avatar extends BaseEntity {
                 .setFileName(fileName)
                 .setFileFolder(fileFolder)
                 .setFileUrl(fileUrl)
-                .setFileType(fileType)
+                .setCloudId(cloudId)
+                .setWidth(width)
+                .setHeight(height);
+    }
+
+
+    public AvatarResDTO toAvatarResDTO() {
+        return new AvatarResDTO()
+                .setId(id)
+                .setFileName(fileName)
+                .setFileFolder(fileFolder)
+                .setFileUrl(fileUrl)
                 .setCloudId(cloudId)
                 .setWidth(width)
                 .setHeight(height)

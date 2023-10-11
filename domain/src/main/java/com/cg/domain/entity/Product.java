@@ -1,5 +1,9 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.product.ProductCreResDTO;
+import com.cg.domain.dto.product.ProductDTO;
+import com.cg.domain.dto.product.ProductUpReqDTO;
+import com.cg.domain.dto.product.ProductUpResDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,5 +46,34 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<OrderDetail> orderDetails;
 
+    public ProductCreResDTO toProductCreResDTO() {
+        return new ProductCreResDTO()
+                .setId(id)
+                .setTitle(title)
+                .setPrice(price)
+                .setUnitTitle(unit.getTitle())
+                .setCategoryTitle(category.getTitle())
+                .setProductAvatar(productAvatar.toAvatarResDTO());
+    }
+
+    public ProductDTO toProductDTO() {
+        return new ProductDTO()
+                .setId(id)
+                .setTitle(title)
+                .setPrice(price)
+                .setUnit(unit.toUnitDTO())
+                .setCategory(category.toCategoryDTO())
+                .setProductAvatar(productAvatar.toAvatarResDTO());
+    }
+
+    public ProductUpResDTO toProductUpResDTO() {
+        return new ProductUpResDTO()
+                .setId(id)
+                .setTitle(title)
+                .setPrice(price)
+                .setUnitTitle(unit.getTitle())
+                .setCategoryTitle(category.getTitle())
+                .setProductAvatar(productAvatar.toAvatarResDTO());
+    }
 
 }

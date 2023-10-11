@@ -5,4 +5,5 @@ import com.cg.service.IGeneralService;
 
 public interface IAvatarService extends IGeneralService<Avatar, String> {
 
+
 }

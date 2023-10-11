@@ -1,5 +1,6 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.category.CategoryDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,4 +29,9 @@ public class Category extends BaseEntity {
     @JsonIgnore
     private List<Product> products;
 
+    public CategoryDTO toCategoryDTO() {
+        return new CategoryDTO()
+                .setId(id)
+                .setTitle(title);
+    }
 }
