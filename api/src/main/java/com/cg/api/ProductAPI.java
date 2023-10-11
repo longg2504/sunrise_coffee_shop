@@ -112,4 +112,13 @@ public class ProductAPI {
         productService.deleteByIdTrue(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @GetMapping("/search-title/{keySearch}")
+    public ResponseEntity<List<ProductDTO>> getProductByTitle(@PathVariable("keySearch") String keySearch) {
+        keySearch = '%' + keySearch + '%';
+        List<ProductDTO> productDTOS = productService.findProductByName(keySearch);
+        if(productDTOS.isEmpty()) {
+            throw new DataInputException("Sản phẩm này không tồn tại");
+        }
+        return new ResponseEntity<>(productDTOS,HttpStatus.OK);
+    }
 }
