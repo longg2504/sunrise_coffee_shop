@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @Table(name="zones")
 @Accessors(chain = true)
-public class Zone {
+public class Zone{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

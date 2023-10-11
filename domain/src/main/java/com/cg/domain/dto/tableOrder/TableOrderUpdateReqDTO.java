@@ -1,4 +1,4 @@
-package com.cg.domain.dto.zone;
+package com.cg.domain.dto.tableOrder;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,16 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+@AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @Accessors(chain = true)
-public class ZoneDTO {
-    private Long id;
+public class TableOrderUpdateReqDTO {
     private String title;
-
-    public ZoneDTO(Long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
+    private String zoneId;
 }
