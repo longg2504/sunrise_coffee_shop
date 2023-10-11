@@ -6,16 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+@AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @Accessors(chain = true)
-public class ZoneDTO {
+public class ZoneUpdateResDTO {
     private Long id;
     private String title;
-
-    public ZoneDTO(Long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
 }

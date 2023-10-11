@@ -1,5 +1,7 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
+import com.cg.domain.dto.tableOrder.TableOrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +32,20 @@ public class TableOrder extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="zone_id" , referencedColumnName = "id" , nullable = false)
     private Zone zone;
+
+    public TableOrderDTO toTableOrderDTO() {
+        return new TableOrderDTO()
+                .setId(String.valueOf(id))
+                .setTitle(title)
+                .setStatus(status.getValue())
+                ;
+    }
+    public TableOrderCreateResDTO toTableOrderCreateResDTO() {
+        return new TableOrderCreateResDTO()
+                .setId(null)
+                .setTitle(title)
+                .setStatus(ETableStatus.EMPTY)
+                .setZoneTitle(zone.getTitle());
+    }
 
 }
