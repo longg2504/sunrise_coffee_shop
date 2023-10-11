@@ -1,4 +1,7 @@
 package com.cg.service.avatar;
 
-public interface IAvatarService {
+import com.cg.domain.entity.Avatar;
+import com.cg.service.IGeneralService;
+
+public interface IAvatarService extends IGeneralService<Avatar,Long> {
 }

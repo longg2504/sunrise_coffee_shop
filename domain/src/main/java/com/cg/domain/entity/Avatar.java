@@ -1,5 +1,7 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.avatar.AvatarResDTO;
+import com.cg.domain.dto.product.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,4 +38,29 @@ public class Avatar extends BaseEntity {
 
     @Column(name = "cloud_id")
     private String cloudId;
+
+    private Integer width;
+    private Integer height;
+    public AvatarResDTO toAvatarResDTO() {
+        return new AvatarResDTO()
+                .setId(id)
+                .setFileName(fileName)
+                .setFileFolder(fileFolder)
+                .setFileUrl(fileUrl)
+                .setCloudId(cloudId)
+                .setWidth(width)
+                .setHeight(height);
+    }
+    public AvatarResDTO toAvatarDTO() {
+        return new AvatarResDTO()
+                .setId(id)
+                .setFileName(fileName)
+                .setFileFolder(fileFolder)
+                .setFileUrl(fileUrl)
+                .setCloudId(cloudId)
+                .setWidth(width)
+                .setHeight(height);
+    }
+
+
 }

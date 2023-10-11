@@ -1,5 +1,6 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.unit.UnitDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.util.List;
 @Setter
 @Table(name="units")
 @Accessors(chain = true)
-public class Unit {
+public class Unit extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,4 +34,9 @@ public class Unit {
     private List<Product> products;
 
 
+    public UnitDTO toUnitDTO() {
+        return new UnitDTO()
+                .setId(id)
+                .setTitle(title);
+    }
 }
