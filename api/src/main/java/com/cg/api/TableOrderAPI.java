@@ -35,8 +35,8 @@ public class TableOrderAPI {
     private ValidateUtils validateUtils;
 
     @GetMapping
-    public ResponseEntity<?> getAllTableOrder() {
-        List<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder();
+    public ResponseEntity<?> getAllTableOrder(@RequestParam(defaultValue = "") String search) {
+        List<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder(search);
         if (tableOrderDTO.isEmpty()) {
             throw new ResourceNotFoundException("Không có bàn nào vui lòng kiểm tra lại hệ thống");
         }

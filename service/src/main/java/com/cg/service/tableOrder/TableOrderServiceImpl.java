@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -49,8 +50,19 @@ public class TableOrderServiceImpl implements ITableOrderService {
     }
 
     @Override
-    public List<TableOrderDTO> findAllTableOrder() {
-        return tableOrderRepository.findAllTableOrder();
+    public List<TableOrderDTO> findAllTableOrder(String search) {
+        return tableOrderRepository
+                .findByTitleContainingIgnoreCase(search)
+                .stream()
+                .map(tableOrder -> {
+                    var tableOrderDTO = new TableOrderDTO();
+                    tableOrderDTO.setId(tableOrder.getId());
+                    tableOrderDTO.setTitle(tableOrder.getTitle());
+                    tableOrderDTO.setStatus(tableOrder.getStatus());
+//                    tableOrderDTO.setZone(tableOrder.getZone());
+                    return tableOrderDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
