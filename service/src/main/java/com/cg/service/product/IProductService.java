@@ -20,4 +20,7 @@ public interface IProductService extends IGeneralService<Product,Long> {
     Product update(Long productId, ProductUpReqDTO productUpReqDTO, Category category,Unit unit);
 
     void deleteByIdTrue(Product product);
+    List<ProductDTO> findProductByName(String keySearch);
+
+
 }

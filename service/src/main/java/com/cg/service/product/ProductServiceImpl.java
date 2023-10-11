@@ -77,6 +77,13 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    public List<ProductDTO> findProductByName(String keySearch) {
+        return productRepository.findProductByName(keySearch);
+    }
+
+
+
+    @Override
     public Product createProduct(ProductCreReqDTO productCreReqDTO, Category category,Unit unit) {
         Avatar avatar = new Avatar();
         avatarRepository.save(avatar);
