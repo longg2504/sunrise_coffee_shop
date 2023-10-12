@@ -1,5 +1,6 @@
 package com.cg.service.staff;
 
+import com.cg.domain.dto.staff.StaffCreReqDTO;
 import com.cg.domain.dto.staff.StaffDTO;
 import com.cg.domain.entity.Staff;
 import com.cg.domain.entity.User;
@@ -22,4 +23,9 @@ public interface IStaffService extends IGeneralService<Staff,Long> {
 
     List<StaffDTO> findAllStaffDTO();
 
+    Staff create(StaffCreReqDTO staffCreReqDTO);
+
+    void deleteByIdTrue(Staff staff);
+
+    Staff update(StaffUpReqDTO staffUpReqDTO , Long staffId);
 }

@@ -1,5 +1,6 @@
 package com.cg.service.staff;
 
+import com.cg.domain.dto.staff.StaffCreReqDTO;
 import com.cg.domain.dto.staff.StaffDTO;
 import com.cg.domain.entity.Staff;
 import com.cg.domain.entity.User;
@@ -88,5 +89,20 @@ public class StaffServiceImpl implements IStaffService {
     @Override
     public List<StaffDTO> findAllStaffDTO() {
         return staffRepository.findAllStaffDTO();
+    }
+
+    @Override
+    public Staff create(StaffCreReqDTO staffCreReqDTO) {
+        return null;
+    }
+
+    @Override
+    public void deleteByIdTrue(Staff staff) {
+
+    }
+
+    @Override
+    public Staff update(StaffUpReqDTO staffUpReqDTO, Long staffId) {
+        return null;
     }
 }
