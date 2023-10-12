@@ -35,6 +35,7 @@ public class ProductServiceImpl implements IProductService {
     private UploadUtils uploadUtils;
     @Autowired
     private ValidateUtils validateUtils;
+
     @Override
     public List<ProductDTO> findAllProductDTO() {
         return productRepository.findAllProductDTO();
@@ -78,17 +79,16 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ProductDTO> findProductByName(String keySearch) {
-        return productRepository.findProductByName(keySearch);
+        return productRepository.findProductsByTitleContainingIgnoreCase(keySearch);
     }
 
 
-
     @Override
-    public Product createProduct(ProductCreReqDTO productCreReqDTO, Category category,Unit unit) {
+    public Product createProduct(ProductCreReqDTO productCreReqDTO, Category category, Unit unit) {
         Avatar avatar = new Avatar();
         avatarRepository.save(avatar);
-        uploadAndSaveProductImage(productCreReqDTO,avatar);
-        Product product = productCreReqDTO.toProduct(category,unit);
+        uploadAndSaveProductImage(productCreReqDTO, avatar);
+        Product product = productCreReqDTO.toProduct(category, unit);
         product.setProductAvatar(avatar);
         productRepository.save(product);
         return product;
@@ -98,26 +98,26 @@ public class ProductServiceImpl implements IProductService {
     public Product update(Long id, ProductUpReqDTO productUpReqDTO, Category category, Unit unit) {
         Avatar avatar = new Avatar();
         avatarRepository.save(avatar);
-        uploadAndSaveProductImage(productUpReqDTO.toProductCreReqDTO(),avatar);
-        Product productUpdate = productUpReqDTO.toProductChangeImage(unit,category);
+        uploadAndSaveProductImage(productUpReqDTO.toProductCreReqDTO(), avatar);
+        Product productUpdate = productUpReqDTO.toProductChangeImage(unit, category);
         productUpdate.setId(id);
         productUpdate.setProductAvatar(avatar);
         productRepository.save(productUpdate);
         return productUpdate;
     }
 
-    public  void uploadAndSaveProductImage(ProductCreReqDTO productCreReqDTO, Avatar avatar) {
+    public void uploadAndSaveProductImage(ProductCreReqDTO productCreReqDTO, Avatar avatar) {
         try {
-            Map uploadResult = uploadService.uploadImage(productCreReqDTO.getProductAvatar(),uploadUtils.buildImageUploadParams(avatar));
+            Map uploadResult = uploadService.uploadImage(productCreReqDTO.getProductAvatar(), uploadUtils.buildImageUploadParams(avatar));
             String fileUrl = (String) uploadResult.get("secure_url");
             String fileFormat = (String) uploadResult.get("format");
 
-            avatar.setFileName(avatar.getId()+"."+fileFormat);
+            avatar.setFileName(avatar.getId() + "." + fileFormat);
             avatar.setFileUrl(fileUrl);
             avatar.setFileFolder(UploadUtils.IMAGE_UPLOAD_FOLDER);
-            avatar.setCloudId(avatar.getFileFolder()+"/"+avatar.getId());
+            avatar.setCloudId(avatar.getFileFolder() + "/" + avatar.getId());
             avatarRepository.save(avatar);
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new DataInputException("Upload hình ảnh thất bại");
         }
