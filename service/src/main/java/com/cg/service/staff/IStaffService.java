@@ -21,4 +21,5 @@ public interface IStaffService extends IGeneralService<Staff,Long> {
     Optional<Staff> findByIdAndDeletedFalse(Long id);
 
     List<StaffDTO> findAllStaffDTO();
+
 }
