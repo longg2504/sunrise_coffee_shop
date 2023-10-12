@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
-    List<TableOrderDTO> findAllTableOrder(String table);
+    List<TableOrderDTO> findAllTableOrder(String search);
 
     List<TableOrderDTO> findAllTablesWithoutSenderId(@Param("tableId") Long tableId);
 

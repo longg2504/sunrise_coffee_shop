@@ -1,5 +1,7 @@
 package com.cg.domain.dto.tableOrder;
 
+import com.cg.domain.dto.zone.ZoneDTO;
+import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.domain.enums.ETableStatus;
 import lombok.AllArgsConstructor;
@@ -17,20 +19,20 @@ public class TableOrderDTO {
     private String id;
     private String title;
     private String status;
-    private String zone;
+    private ZoneDTO zone;
 
     public TableOrderDTO(Long id, String title, ETableStatus status, Zone zone) {
         this.id = String.valueOf(id);
         this.title = title;
         this.status = status.getValue();
-        this.zone = zone.getTitle();
+        this.zone = zone.toZoneDTO();
     }
 
-    public TableOrderDTO toTableOrderDTO() {
-        return new TableOrderDTO()
-                .setId(id)
+    public TableOrder toTableOrder() {
+        return new TableOrder()
+                .setId(Long.valueOf(id))
                 .setTitle(title)
-                .setStatus(status)
-                .setZone(zone);
+                .setStatus(ETableStatus.valueOf(status))
+                .setZone(zone.toZone());
     }
 }

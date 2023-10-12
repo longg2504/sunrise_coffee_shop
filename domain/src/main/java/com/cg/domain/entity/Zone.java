@@ -1,5 +1,6 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.zone.ZoneDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +28,11 @@ public class Zone{
     @OneToMany(mappedBy = "zone")
     @JsonIgnore
     private List<TableOrder> tableOrders;
+
+    public ZoneDTO toZoneDTO() {
+        return new ZoneDTO()
+                .setId(id)
+                .setTitle(title);
+    }
 
 }
