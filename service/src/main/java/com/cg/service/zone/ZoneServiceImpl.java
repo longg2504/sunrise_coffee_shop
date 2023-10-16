@@ -50,4 +50,5 @@ public class ZoneServiceImpl implements IZoneService{
     public Optional<Zone> findByIdAndDeletedFalse(Long id) {
         return zoneRepository.findById(id);
     }
+
 }

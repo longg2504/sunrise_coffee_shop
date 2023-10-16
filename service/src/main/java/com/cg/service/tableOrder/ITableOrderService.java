@@ -6,12 +6,14 @@ import com.cg.domain.dto.tableOrder.TableOrderDTO;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.service.IGeneralService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
-    List<TableOrderDTO> findAllTableOrder(String search);
+    Page<TableOrderDTO> findAllTableOrder(String search, Pageable pageable);
 
     List<TableOrderDTO> findAllTablesWithoutSenderId(@Param("tableId") Long tableId);
 

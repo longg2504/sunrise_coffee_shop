@@ -3,6 +3,8 @@ package com.cg.repository.tableOrder;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,5 +33,6 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
             ") " +
             "FROM TableOrder AS to " +
             "WHERE to.title LIKE %:search%")
-    List<TableOrderDTO> findAllTableOrderByTitle(@Param("search") String search);
+    Page<TableOrderDTO> findAllTableOrderByTitle(@Param("search") String search, Pageable pageable);
+
 }

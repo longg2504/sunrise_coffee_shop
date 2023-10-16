@@ -12,6 +12,8 @@ import com.cg.service.zone.IZoneService;
 import com.cg.utils.AppUtils;
 import com.cg.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +37,8 @@ public class TableOrderAPI {
     private ValidateUtils validateUtils;
 
     @GetMapping
-    public ResponseEntity<?> getAllTableOrder(@RequestParam(defaultValue = "") String search) {
-        List<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder(search);
+    public ResponseEntity<?> getAllTableOrder(@RequestParam(defaultValue = "") String search, Pageable pageable) {
+        Page<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder(search, pageable);
 
         if (tableOrderDTO.isEmpty()) {
             throw new ResourceNotFoundException("Không có bàn nào vui lòng kiểm tra lại hệ thống");
