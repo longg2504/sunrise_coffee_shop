@@ -12,7 +12,6 @@ import com.cg.repository.avatar.AvatarRepository;
 import com.cg.repository.product.ProductRepository;
 import com.cg.service.upload.IUploadService;
 import com.cg.utils.UploadUtils;
-import com.cg.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +32,6 @@ public class ProductServiceImpl implements IProductService {
     private IUploadService uploadService;
     @Autowired
     private UploadUtils uploadUtils;
-    @Autowired
-    private ValidateUtils validateUtils;
 
     @Override
     public List<ProductDTO> findAllProductDTO() {
