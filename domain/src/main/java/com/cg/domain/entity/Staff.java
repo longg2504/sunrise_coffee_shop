@@ -1,6 +1,7 @@
 package com.cg.domain.entity;
 
 import com.cg.domain.dto.staff.StaffDTO;
+import com.cg.domain.dto.staff.StaffUpResDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -66,6 +67,17 @@ public class Staff extends BaseEntity{
                 .setLocationRegion(locationRegion.toLocationRegionDTO())
                 .setStaffAvatar(staffAvatar)
                 .setUser(user)
+                ;
+    }
+
+    public StaffUpResDTO toStaffUpResDTO() {
+        return new StaffUpResDTO()
+                .setId(id)
+                .setFullName(fullName)
+                .setDob(dob)
+                .setPhone(phone)
+                .setLocationRegion(locationRegion.toLocationRegionUpResDTO())
+                .setStaffAvatar(staffAvatar)
                 ;
     }
 }

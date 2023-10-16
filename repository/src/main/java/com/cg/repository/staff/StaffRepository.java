@@ -60,7 +60,7 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             "FROM Staff as st " +
             "WHERE st.fullName like :keySearch " +
             "OR st.locationRegion.provinceName like :keySearch " +
-            "OR concat(st.user.role.name, '') like :keySearch " +
+            "OR st.user.role.code like :keySearch " +
             "AND st.deleted = false "
     )
     Page<StaffDTO> findStaffByKeySearch(@Param("keySearch") String keySearch, Pageable pageable);
@@ -70,5 +70,7 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
     Optional<Staff> findByUserAndDeletedIsFalse(User user);
 
     Optional<Staff> findByIdAndDeletedFalse(Long id);
+
+    Optional<Staff> findByUser(User user);
 
 }

@@ -13,7 +13,6 @@ public class HomeController {
     @GetMapping
     public String showHome() {
         Product product = new Product();
-
         return "Home page";
     }
 }

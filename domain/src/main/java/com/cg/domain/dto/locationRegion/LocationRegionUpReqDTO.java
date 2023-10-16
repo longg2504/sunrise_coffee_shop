@@ -1,50 +1,29 @@
-package com.cg.domain.entity;
+package com.cg.domain.dto.locationRegion;
 
-import com.cg.domain.dto.locationRegion.LocationRegionDTO;
-import com.cg.domain.dto.locationRegion.LocationRegionUpResDTO;
+
+import com.cg.domain.entity.LocationRegion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name="location_region")
 @Accessors(chain = true)
-public class LocationRegion extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "province_id")
+public class LocationRegionUpReqDTO {
     private String provinceId;
-
-    @Column(name = "province_name")
     private String provinceName;
-
-    @Column(name = "district_id")
     private String districtId;
-
-    @Column(name = "district_name")
     private String districtName;
-
-    @Column(name = "ward_id")
     private String wardId;
-
-    @Column(name = "ward_name")
     private String wardName;
-
     private String address;
 
-    public LocationRegionDTO toLocationRegionDTO() {
-        return new LocationRegionDTO()
-                .setId(id)
+    public LocationRegion toLocationRegion() {
+        return new LocationRegion()
                 .setProvinceId(provinceId)
                 .setProvinceName(provinceName)
                 .setDistrictId(districtId)
@@ -55,8 +34,8 @@ public class LocationRegion extends BaseEntity {
                 ;
     }
 
-    public LocationRegionUpResDTO toLocationRegionUpResDTO() {
-        return new LocationRegionUpResDTO()
+    public LocationRegion toLocationRegionUp(Long id) {
+        return new LocationRegion()
                 .setId(id)
                 .setProvinceId(provinceId)
                 .setProvinceName(provinceName)
@@ -64,7 +43,8 @@ public class LocationRegion extends BaseEntity {
                 .setDistrictName(districtName)
                 .setWardId(wardId)
                 .setWardName(wardName)
-                .setAddress(address);
+                .setAddress(address)
+                ;
     }
 
 

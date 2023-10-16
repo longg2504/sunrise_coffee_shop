@@ -49,6 +49,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<?> unauthorizedException(UnauthorizedException ex, WebRequest request) {
+        Map<String, String> body = new HashMap<>();
+
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ForBiddenException.class)
+    public ResponseEntity<?> forBiddenException(ForBiddenException ex, WebRequest request) {
+        Map<String, String> body = new HashMap<>();
+
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         Map<String, String> body = new HashMap<>();

@@ -31,7 +31,6 @@ public class StaffCreReqDTO implements Validator {
     private String address;
     private MultipartFile staffAvatar;
     private String username;
-    private String password;
     private Long roleId;
 
     public LocationRegion toLocationRegion() {
@@ -57,9 +56,8 @@ public class StaffCreReqDTO implements Validator {
 
     public User toUser(Role role) {
         return new User()
-                .setId(null)
                 .setUsername(username)
-                .setPassword(password)
+                .setPassword("123123")
                 .setRole(role)
                 ;
     }
@@ -76,11 +74,11 @@ public class StaffCreReqDTO implements Validator {
         String phone = staffCreReqDTO.phone;
         String username = staffCreReqDTO.username;
         if (fullName.isEmpty()) {
-            errors.rejectValue("title", "title.null", "Tên không được phép rỗng");
+            errors.rejectValue("fullName", "fullName.null", "Tên không được phép rỗng");
             return;
         }
         if (fullName.length() >= 25 || fullName.length() <= 5) {
-            errors.rejectValue("title", "title.length", "Tên không ít hơn 5 kí tự và dài hơn 25 kí tự");
+            errors.rejectValue("fullName", "fullName.length", "Tên không ít hơn 5 kí tự và dài hơn 25 kí tự");
         }
         if (phone.isEmpty()) {
             errors.rejectValue("phone", "phone.null", "Số điện thoại không được phép rỗng");
