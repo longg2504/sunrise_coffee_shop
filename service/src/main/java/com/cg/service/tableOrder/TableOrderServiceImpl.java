@@ -8,6 +8,8 @@ import com.cg.domain.entity.Zone;
 import com.cg.repository.tableOrder.TableOrderRepository;
 import com.cg.repository.zone.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,9 +52,8 @@ public class TableOrderServiceImpl implements ITableOrderService {
     }
 
     @Override
-    public List<TableOrderDTO> findAllTableOrder(String search) {
-        return tableOrderRepository.findAllTableOrderByTitle(search);
-
+    public Page<TableOrderDTO> findAllTableOrder(String search, Pageable pageable) {
+        return tableOrderRepository.findAllTableOrderByTitle(search, pageable);
     }
 
     @Override

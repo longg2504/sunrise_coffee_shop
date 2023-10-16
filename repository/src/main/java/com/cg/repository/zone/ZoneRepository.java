@@ -17,4 +17,5 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
             "z.title) " +
             "FROM Zone AS z ")
     List<ZoneDTO> findAllZoneDTO();
+
 }

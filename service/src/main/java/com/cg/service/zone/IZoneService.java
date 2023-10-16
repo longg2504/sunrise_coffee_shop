@@ -12,4 +12,5 @@ public interface IZoneService extends IGeneralService<Zone, Long> {
     List<ZoneDTO> findAllZoneDTO();
 
     Optional<Zone> findByIdAndDeletedFalse(Long id);
+
 }

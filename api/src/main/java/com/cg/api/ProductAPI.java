@@ -5,6 +5,7 @@ import com.cg.domain.entity.Category;
 import com.cg.domain.entity.Product;
 import com.cg.domain.entity.Unit;
 import com.cg.exception.DataInputException;
+import com.cg.exception.ResourceNotFoundException;
 import com.cg.service.category.ICategoryService;
 import com.cg.service.product.IProductService;
 import com.cg.service.unit.IUnitService;
@@ -38,7 +39,7 @@ public class ProductAPI {
     public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search) {
         List<ProductDTO> productDTOS = productService.findProductByName(search);
         if (productDTOS.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            throw new ResourceNotFoundException("Không có sản phẩm nào vui lòng kiểm tra lại hệ thống");
         }
         return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }
