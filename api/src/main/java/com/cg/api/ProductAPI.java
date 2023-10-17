@@ -12,11 +12,12 @@ import com.cg.service.unit.IUnitService;
 import com.cg.utils.AppUtils;
 import com.cg.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -35,14 +36,27 @@ public class ProductAPI {
 
 
     @GetMapping
-    public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search) {
-        List<ProductDTO> productDTOS = productService.findProductByName(search);
+    public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search, Pageable pageable) {
+        Page<ProductDTO> productDTOS = productService.findProductByName(search,pageable);
         if (productDTOS.isEmpty()) {
             throw new ResourceNotFoundException("Không có sản phẩm nào vui lòng kiểm tra lại hệ thống");
         }
         return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> findByIdProduct(@PathVariable("productId") String productIdStr) {
+        if (!validateUtils.isNumberValid(productIdStr)) {
+            throw new DataInputException("Mã sản phẩm không hợp lệ");
+        }
+        Long productId = Long.valueOf(productIdStr);
+
+        Product product = productService.findByIdAndDeletedFalse(productId).orElseThrow(() -> {
+            throw new DataInputException("Mã sản phẩm không tồn tại");
+        });
+        ProductDTO productDTO = product.toProductDTO();
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
     @PostMapping
     public ResponseEntity<?> createProduct(@ModelAttribute ProductCreReqDTO productCreReqDTO, BindingResult bindingResult) {
         new ProductCreReqDTO().validate(productCreReqDTO, bindingResult);

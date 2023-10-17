@@ -2,6 +2,8 @@ package com.cg.repository.product;
 
 import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,6 +24,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<ProductDTO> findAllProductDTO();
 
     Optional<Product> findByIdAndDeletedFalse(Long id);
-    List<ProductDTO> findProductsByTitleContainingIgnoreCase(String title);
+    Page<ProductDTO> findProductsByTitleContainingIgnoreCase(String title, Pageable pageable);
 
 }

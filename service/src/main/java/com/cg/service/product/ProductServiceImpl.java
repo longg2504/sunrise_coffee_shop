@@ -13,6 +13,8 @@ import com.cg.repository.product.ProductRepository;
 import com.cg.service.upload.IUploadService;
 import com.cg.utils.UploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,8 +77,8 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findProductByName(String keySearch) {
-        return productRepository.findProductsByTitleContainingIgnoreCase(keySearch);
+    public Page<ProductDTO> findProductByName(String keySearch, Pageable pageable) {
+        return productRepository.findProductsByTitleContainingIgnoreCase(keySearch,pageable);
     }
 
 
