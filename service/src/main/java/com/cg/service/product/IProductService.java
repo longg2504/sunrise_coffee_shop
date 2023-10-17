@@ -7,6 +7,9 @@ import com.cg.domain.entity.Category;
 import com.cg.domain.entity.Product;
 import com.cg.domain.entity.Unit;
 import com.cg.service.IGeneralService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +22,7 @@ public interface IProductService extends IGeneralService<Product,Long> {
     Product update(Long productId, ProductUpReqDTO productUpReqDTO, Category category,Unit unit);
 
     void deleteByIdTrue(Product product);
-    List<ProductDTO> findProductByName(String keySearch);
+    Page<ProductDTO> findProductByName(String keySearch, Pageable pageable);
 
 
 }
