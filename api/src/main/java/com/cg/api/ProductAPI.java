@@ -45,7 +45,7 @@ public class ProductAPI {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<?> findByIdProduct(@PathVariable("productId") String productIdStr) {
+    public ResponseEntity<?> getByIdProduct(@PathVariable("productId") String productIdStr) {
         if (!validateUtils.isNumberValid(productIdStr)) {
             throw new DataInputException("Mã sản phẩm không hợp lệ");
         }
