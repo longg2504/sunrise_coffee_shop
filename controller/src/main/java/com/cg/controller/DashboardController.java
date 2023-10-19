@@ -18,6 +18,27 @@ public class DashboardController {
 
     @GetMapping()
     public String showDashboardPage(){
-        return "dashboard/dashboard";
+        return "/dashboard/dashboard";
     }
+
+    @GetMapping("/table")
+    public String showTablePage() {
+        return "/dashboard/list-table";
+    }
+
+    @GetMapping("/staff")
+    public String showStaffPage() {
+        return "/dashboard/list-staff";
+    }
+
+    @GetMapping("/bill")
+    public String showBillPage() {
+        return "/dashboard/list-bill";
+    }
+
+    @GetMapping("/product")
+    public String showProductPage() {
+        return "/dashboard/list-product";
+    }
+
 }
