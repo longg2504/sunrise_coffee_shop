@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("")
 public class HomeController {
-
-    @GetMapping
-    public String showHome() {
-        Product product = new Product();
-        return "Home page";
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login/login" ;
     }
 }
