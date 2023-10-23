@@ -2,6 +2,12 @@
 <html html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <th:block th:replace="/layout/dashboard_layout/head"/>
+    <link rel="stylesheet" href="/assets/bootstrap/v.5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="/assets/css/preview-image.css">
+    <link rel="stylesheet" href="/assets/iziToast/iziToast-1.4.0.min.css">
+<!--    <link rel="stylesheet" href="/assets/css/styles.css">-->
 </head>
 <body class="g-sidenav-show  bg-gray-200">
 <th:block th:replace="/layout/dashboard_layout/left-sidebar :: left-sidebar-product"/>
@@ -10,213 +16,36 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
+                <div class="col-sm-8">
+                    <button type="button" class="btn btn-light" id="btnShowModalCreate">
+                        <i class="material-icons opacity-10">add</i>
+                        Thêm món
+                    </button>
+                </div>
                 <div class="card my-4">
+
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                            <h6 class="text-white text-capitalize ps-3">Table Order</h6>
+                            <h6 class="text-white text-capitalize ps-3">Product</h6>
                         </div>
                     </div>
+
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0">
+                            <table class="table align-items-center mb-0" id="tbProduct">
                                 <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Author
-                                    </th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                        Function
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Status
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Employed
-                                    </th>
-                                    <th class="text-secondary opacity-7"></th>
+                                    <th>#</th>
+                                    <th>Tên món</th>
+                                    <th>Ảnh </th>
+                                    <th>Giá </th>
+                                    <th>Đơn vị </th>
+                                    <th>Loại </th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/team-2.jpg"
-                                                     class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">John Michael</h6>
-                                                <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                                        <p class="text-xs text-secondary mb-0">Organization</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                           data-toggle="tooltip" data-original-title="Edit user">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/team-3.jpg"
-                                                     class="avatar avatar-sm me-3 border-radius-lg" alt="user2">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Alexa Liras</h6>
-                                                <p class="text-xs text-secondary mb-0">alexa@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">Programator</p>
-                                        <p class="text-xs text-secondary mb-0">Developer</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">11/01/19</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                           data-toggle="tooltip" data-original-title="Edit user">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/team-4.jpg"
-                                                     class="avatar avatar-sm me-3 border-radius-lg" alt="user3">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Laurent Perrier</h6>
-                                                <p class="text-xs text-secondary mb-0">laurent@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">Executive</p>
-                                        <p class="text-xs text-secondary mb-0">Projects</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">19/09/17</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                           data-toggle="tooltip" data-original-title="Edit user">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/team-3.jpg"
-                                                     class="avatar avatar-sm me-3 border-radius-lg" alt="user4">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Michael Levi</h6>
-                                                <p class="text-xs text-secondary mb-0">michael@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">Programator</p>
-                                        <p class="text-xs text-secondary mb-0">Developer</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">Online</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">24/12/08</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                           data-toggle="tooltip" data-original-title="Edit user">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/team-2.jpg"
-                                                     class="avatar avatar-sm me-3 border-radius-lg" alt="user5">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Richard Gran</h6>
-                                                <p class="text-xs text-secondary mb-0">richard@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">Manager</p>
-                                        <p class="text-xs text-secondary mb-0">Executive</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">04/10/21</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                           data-toggle="tooltip" data-original-title="Edit user">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/team-4.jpg"
-                                                     class="avatar avatar-sm me-3 border-radius-lg" alt="user6">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Miriam Eric</h6>
-                                                <p class="text-xs text-secondary mb-0">miriam@creative-tim.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">Programator</p>
-                                        <p class="text-xs text-secondary mb-0">Developer</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-secondary">Offline</span>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">14/09/20</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                           data-toggle="tooltip" data-original-title="Edit user">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -229,5 +58,531 @@
 </main>
 
 <th:block th:replace="/layout/dashboard_layout/javascript"/>
+<th:block th:replace="/dashboard/modal-create :: modal-create"></th:block>
+<th:block th:replace="/dashboard/modal-update :: modal-update"></th:block>
+
+<script src="/assets/jquery/jquery-3.7.0.min.js"></script>
+<script src="/assets/jquery/jquery.validate.js"></script>
+<script src="/assets/bootstrap/v.5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/sweetalert2/sweetalert2.all.min.js"></script>
+<script src="/assets/js/magnific-popup-1.1.0.js"></script>
+<script src="/assets/js/app.js"></script>
+<script>
+    const page = {
+        url: {
+            getAllProducts: App.API_PRODUCT,
+            getAllCategories: App.API_CATEGORY,
+            create: App.API_CREATE_PRODUCT,
+            update: App.API_UPDATE_PRODUCT,
+            delete: App.API_DELETE_PRODUCT
+        },
+        elements: {},
+        loadData: {},
+        commands: {},
+        dialogs: {
+            elements: {},
+            commands: {},
+            loadData: {}
+        }
+    }
+    page.elements.tbProductBody = $('#tbProduct tbody')
+
+    page.elements.loader = $(".loader");
+
+    page.elements.btnShowCreateForm = $("#create");
+    page.elements.btnShowModalCreate = $('#btnShowModalCreate');
+    page.dialogs.elements.frmCreateProduct = $('#frmCreateProduct');
+    page.dialogs.elements.modalCreate = $('#modalCreate')
+    page.dialogs.elements.errorCreateArea = $('#modalCreate .modal-body .modal-alert-danger')
+    page.dialogs.elements.productTitle = $('#productTitle')
+    page.dialogs.elements.productPrice = $('#productPrice')
+    page.dialogs.elements.unitSelectCreate = $('#unitSelectCreate')
+    page.dialogs.elements.categorySelectCreate = $('#categorySelectCreate')
+    page.dialogs.elements.btnCreate = $('#btnCreate')
+
+
+    page.dialogs.elements.frmUpdateProduct = $('#frmUpdateProduct');
+    page.dialogs.elements.modalUpdate = $('#modalUpdate')
+    page.dialogs.elements.errorUpdateArea = $('#modalUpdate .modal-body .modal-alert-danger')
+    page.dialogs.elements.productTitleUp = $('#productTitleUp')
+    page.dialogs.elements.productPriceUp = $('#productPriceUp')
+    page.dialogs.elements.unitSelectUp = $('#unitSelectUp')
+    page.dialogs.elements.categorySelectUp = $('#categorySelectUp')
+    page.dialogs.elements.btnUpdate = $('#btnUpdate')
+
+    page.dialogs.elements.wrapper = $("section .wrapper");
+    page.dialogs.elements.imageFileCreate = $("#imageFileCreate");
+    page.dialogs.elements.imageFileUpdate = $("#imageFileUpdate");
+    page.dialogs.elements.wrapperContent = $("section .wrapper .content");
+    page.dialogs.elements.imagePreview = $("section .image-preview canvas");
+    page.dialogs.elements.canvasCreate = $("#canvasCreate");
+    page.dialogs.elements.canvasUpdate = $("#canvasUpdate");
+    page.dialogs.elements.contextCreate = page.dialogs.elements.canvasCreate[0].getContext('2d');
+    page.dialogs.elements.contextUpdate = page.dialogs.elements.canvasUpdate[0].getContext('2d');
+    page.dialogs.elements.imagePreview.css("display", "none");
+    page.dialogs.elements.divImagePreviewCreate = $("#modalCreate div.image-preview, #modalCreate div.file-name");
+    page.dialogs.elements.divImagePreviewUpdate = $("#modalUpdate div.image-preview, #modalUpdate div.file-name");
+    page.dialogs.elements.btnClearImagePreview = $(".clear-image-preview i");
+    let productId = 0;
+
+    let product = new Product();
+
+
+    page.commands.renderProduct = (product) => {
+        avatar = product.productAvatar;
+        let imageThumbnail = (avatar && avatar.fileFolder && avatar.fileName) ?
+            App.BASE_URL_CLOUD_IMAGE + "/" + App.IMAGE_SCALE_W_100_h_80_Q_90 + "/" + avatar.fileFolder + "/" + avatar.fileName :
+            '';
+
+        return `
+                <tr>
+                    <td>${product.id}</td>
+                    <td>${product.title}</td>
+                    <td><img src="${imageThumbnail}" alt="" /></td>
+                    <td>${product.price}</td>
+                    <td>${product.unit.title}</td>
+                    <td>${product.category.title}</td>
+                    <td>
+                        <button class="btn btn-outline-secondary edit" data-id="${product.id}">
+                            <i class="fas fa-user-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger delete" data-id="${product.id}" >
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+    }
+
+    page.commands.getAllProduct = () => {
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: 'GET',
+            url: page.url.getAllProducts,
+        })
+            .done((data) => {
+                console.log(data)
+                page.elements.tbProductBody.empty();
+                $.each(data.content, (index, product) => {
+                    const str = page.commands.renderProduct(product)
+                    page.elements.tbProductBody.prepend(str)
+                })
+
+            })
+            .fail(function () {
+                App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+            });
+    }
+    page.commands.getProductById = (productId) => {
+        return $.ajax({
+            type: 'GET',
+            url: page.url.getAllProducts + '/' + productId
+        });
+    }
+
+    page.commands.getCategories = () => {
+
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: 'GET',
+            url: page.url.getAllCategories,
+        })
+            .done((data) => {
+                console.log(data)
+                page.dialogs.elements.categorySelectCreate.empty();
+                page.dialogs.elements.categorySelectUp.empty();
+
+                $.each(data, function (index, item) {
+                    page.dialogs.elements.categorySelectCreate.append($('<option>').val(item.id).text(item.title));
+                    page.dialogs.elements.categorySelectUp.append($('<option>').val(item.id).text(item.title));
+                })
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+                console.log('Error: ' + textStatus + ' ' + errorThrown);
+            })
+    }
+
+    page.dialogs.commands.loadImageToCanvas = (imageFile, fileType, imageUrl) => {
+        page.dialogs.elements.imagePreview.css("display", "");
+        page.dialogs.elements.wrapper.addClass("active");
+        page.dialogs.elements.wrapperContent.css("opacity", 0);
+
+        let imageObj = new Image();
+
+        imageObj.onload = function () {
+            page.dialogs.elements.contextCreate.canvas.width = imageObj.width;
+            page.dialogs.elements.contextCreate.canvas.height = imageObj.height;
+            page.dialogs.elements.contextCreate.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
+
+        };
+
+        if (fileType === "BINARY") {
+            imageObj.src = URL.createObjectURL(imageFile);
+        } else {
+            imageObj.src = imageUrl;
+        }
+    }
+    page.dialogs.commands.loadImageToCanvasUpdate = (imageFile, fileType, imageUrl) => {
+        page.dialogs.elements.imagePreview.css("display", "");
+        page.dialogs.elements.wrapper.addClass("active");
+        page.dialogs.elements.wrapperContent.css("opacity", 0);
+
+        let imageObj = new Image();
+
+        imageObj.onload = function () {
+            page.dialogs.elements.contextUpdate.canvas.width = imageObj.width;
+            page.dialogs.elements.contextUpdate.canvas.height = imageObj.height;
+            page.dialogs.elements.contextUpdate.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
+
+        };
+
+        if (fileType === "BINARY") {
+            imageObj.src = URL.createObjectURL(imageFile);
+        } else {
+            imageObj.src = imageUrl;
+        }
+    }
+    page.dialogs.commands.changeImagePreviewCreate = () => {
+        let imageFile = page.dialogs.elements.imageFileCreate[0].files[0];
+
+
+        if (imageFile) {
+            let reader = new FileReader();
+
+            reader.readAsDataURL(imageFile);
+
+            reader.onload = function (e) {
+                if (e.target.readyState === FileReader.DONE) {
+                    page.dialogs.commands.loadImageToCanvas(imageFile, "BINARY", null);
+                }
+            }
+        } else {
+            page.dialogs.elements.clearImagePreview();
+        }
+    }
+    page.dialogs.commands.changeImagePreviewUpdate = () => {
+        let imageFile = page.dialogs.elements.imageFileUpdate[0].files[0];
+
+
+        if (imageFile) {
+            let reader = new FileReader();
+
+            reader.readAsDataURL(imageFile);
+
+            reader.onload = function (e) {
+                if (e.target.readyState === FileReader.DONE) {
+                    page.dialogs.commands.loadImageToCanvasUpdate(imageFile, "BINARY", null);
+                }
+            }
+        } else {
+            page.dialogs.elements.clearImagePreview();
+        }
+    }
+    page.commands.handleImagePopup = () => {
+
+        $('.image-popup-vertical-fit').magnificPopup({
+            type: 'image',
+            closeOnContentClick: true,
+            mainClass: 'mfp-img',
+            image: {
+                verticalFit: true
+            },
+            gallery: {
+                enabled: true
+            }
+        });
+
+        $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
+            disableOn: 700,
+            type: 'iframe',
+            mainClass: 'mfp-fade',
+            removalDelay: 160,
+            preloader: false,
+            fixedContentPos: false
+        });
+    }
+
+
+    page.commands.clearForm = () => {
+        $('.btnClose').on('click', () => {
+            page.dialogs.elements.clearImagePreview();
+
+            $("#modalCreate .modal-alert-danger").removeClass("show").addClass("hide").empty();
+            $("#frmCreateProduct input.error").removeClass("error");
+            page.dialogs.elements.frmCreateProduct.trigger("reset");
+
+            // $("#mdUpdate .modal-alert-danger").removeClass("show").addClass("hide").empty();
+            // $("#frmUpdateProduct input.error").removeClass("error");
+            // page.dialogs.elements.frmUpdateCustomer.trigger("reset");
+        })
+    }
+
+    page.commands.createProduct = () => {
+        page.elements.loader.removeClass("hide");
+        page.dialogs.elements.btnCreate.prop('disabled', true);
+
+        let formData = new FormData();
+        formData.append("title", page.dialogs.elements.productTitle.val().toString());
+        formData.append("price", page.dialogs.elements.productPrice.val().toString());
+        formData.append("unitId", page.dialogs.elements.unitSelectCreate.val());
+        formData.append("categoryId", page.dialogs.elements.categorySelectCreate.val());
+        formData.append("productAvatar", page.dialogs.elements.imageFileCreate[0].files[0]);
+
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            url: page.url.create,
+            data: formData
+        }).done((data) => {
+            // const avatar = data.productAvatar;
+            const str = page.commands.renderProduct(data);
+            page.elements.tbProductBody.prepend(str)
+            page.dialogs.elements.modalCreate.modal('hide');
+            page.commands.handleImagePopup();
+            App.SweetAlert.showSuccessAlert("Thêm mới thành công")
+        }).fail((err) => {
+            App.SweetAlert.showErrorAlert(error.responseJSON.message);
+            console.log(err)
+        }).always(function () {
+            page.elements.loader.addClass("hide");
+            page.dialogs.elements.btnCreate.prop('disabled', false);
+        });
+    }
+
+    page.commands.showModalUpdate = (productId) => {
+
+        page.commands.getProductById(productId).then((data) => {
+            product = data;
+            console.log(product)
+            avatar = product.productAvatar;
+
+            page.dialogs.elements.productTitleUp.val(product.title);
+            page.dialogs.elements.productPriceUp.val(product.price);
+            page.dialogs.elements.unitSelectUp.val(product.unit.id);
+            page.dialogs.elements.categorySelectUp.val(product.category.id);
+            page.dialogs.commands.loadImageToCanvasUpdate(null, "", avatar.fileUrl);
+            page.dialogs.elements.modalUpdate.modal('show');
+            page.dialogs.elements.errorUpdateArea.empty();
+        })
+
+    }
+    page.dialogs.commands.updateProduct = () => {
+
+        page.elements.loader.removeClass("hide");
+        page.dialogs.elements.btnUpdate.prop('disabled', true);
+
+        let formData = new FormData();
+        formData.append("title", page.dialogs.elements.productTitleUp.val().toString());
+        formData.append("price", page.dialogs.elements.productPriceUp.val().toString());
+        formData.append("unitId", page.dialogs.elements.unitSelectUp.val().toString());
+        formData.append("categoryId", page.dialogs.elements.categorySelectUp.val());
+
+        if (page.dialogs.elements.imageFileUpdate[0].files[0] != null) {
+            formData.append("productAvatar", page.dialogs.elements.imageFileUpdate[0].files[0]);
+        }
+
+        $.ajax({
+            type: "PATCH",
+            contentType: false,
+            cache: false,
+            processData: false,
+            url: page.url.update + '/' + productId,
+            data: formData
+        }).done((data) => {
+            const str = page.commands.renderProduct(data);
+            const currentRow = $('#tr_' + productId);
+            currentRow.replaceWith(str);
+            page.commands.getAllProduct();
+            page.dialogs.elements.modalUpdate.modal('hide');
+            App.SweetAlert.showSuccessAlert("Cập nhật thành công")
+
+        }).fail((err) => {
+            App.SweetAlert.showErrorAlert(err.responseJSON.message);
+        }).always(function () {
+            page.elements.loader.addClass("hide");
+            page.dialogs.elements.btnUpdate.prop('disabled', false);
+        });
+    }
+
+
+    page.initializeControlEvent = () => {
+        page.elements.btnShowModalCreate.on('click', () => {
+            page.dialogs.elements.modalCreate.modal('show');
+        })
+        page.dialogs.elements.btnCreate.on('click', () => {
+            page.dialogs.elements.frmCreateProduct.trigger("submit");
+        })
+        page.dialogs.elements.divImagePreviewCreate.on("click", function () {
+            page.dialogs.elements.imageFileCreate.trigger("click");
+        });
+        page.dialogs.elements.divImagePreviewUpdate.on("click", function () {
+            page.dialogs.elements.imageFileUpdate.trigger("click");
+        });
+        page.dialogs.elements.imageFileCreate.on("change", function () {
+            page.dialogs.commands.changeImagePreviewCreate();
+        });
+        page.dialogs.elements.imageFileUpdate.on("change", function () {
+            page.dialogs.commands.changeImagePreviewUpdate();
+        });
+        page.elements.tbProductBody.on('click', '.edit', function () {
+            productId = $(this).data('id');
+            page.commands.showModalUpdate(productId);
+        })
+
+        page.dialogs.elements.btnUpdate.on('click', () => {
+            page.dialogs.elements.frmUpdateProduct.trigger("submit");
+        })
+        page.dialogs.elements.clearImagePreview = () => {
+            page.dialogs.elements.imageFileCreate.val("");
+            page.dialogs.elements.imageFileUpdate.val("");
+            page.dialogs.elements.imagePreview.css("display", "none");
+            page.dialogs.elements.wrapper.removeClass("active");
+            page.dialogs.elements.wrapperContent.css("opacity", 1);
+        }
+
+        page.dialogs.elements.btnClearImagePreview.on("click", function () {
+            page.dialogs.elements.clearImagePreview();
+        });
+
+        page.commands.closeModalCreate = () => {
+            page.dialogs.elements.frmCreateProduct[0].reset();
+            page.dialogs.elements.frmCreateProduct.validate().resetForm();
+            page.dialogs.elements.frmCreateProduct.find("input.error").removeClass("error");
+            page.dialogs.elements.errorCreateArea.empty().removeClass("show").addClass("hide");
+            page.dialogs.elements.clearImagePreview();
+        }
+
+        page.dialogs.elements.modalCreate.on("hidden.bs.modal", function () {
+            page.commands.closeModalCreate();
+        });
+    }
+    page.dialogs.elements.frmCreateProduct.validate({
+        rules: {
+            productTitle: {
+                required: true,
+            },
+            productPrice: {
+                required: true,
+                min: 100,
+                max: 999999999,
+                number: true
+            },
+            unitSelectCreate: {
+                required: true
+            },
+            categorySelectCreate: {
+                required: true,
+                number: true
+
+            }
+        },
+        messages: {
+            productTitle: {
+                required: "Vui lòng nhập tên sản phẩm.",
+            },
+            productPrice: {
+                required: "Vui lòng nhập giá.",
+                number: "Giá sản phẩm phải là số.",
+                min: "Giá sản phẩm tối thiểu là 100 VNĐ.",
+                max: "Giá sản phẩm tối đa là 999.999.999 VNĐ."
+            },
+            unitSelectCreate: {
+                required: "Vui lòng nhập loại sản phẩm."
+            },
+            categorySelectCreate: {
+                required: "Vui lòng nhập loại sản phẩm.",
+                number: "Mã danh mục không đúng. Vui lòng chọn lại."
+            }
+        },
+        errorLabelContainer: "#modalCreate .modal-alert-danger",
+        errorPlacement: function (error, element) {
+            error.appendTo("#modalCreate .modal-alert-danger");
+        },
+        showErrors: function (errorMap, errorList) {
+            if (this.numberOfInvalids() > 0) {
+                $("#modalCreate .modal-alert-danger").removeClass("hide").addClass("show");
+            } else {
+                $("#modalCreate .modal-alert-danger").removeClass("show").addClass("hide").empty();
+                $("#frmCreateProduct input.error").removeClass("error");
+            }
+            this.defaultShowErrors();
+        },
+        submitHandler: function () {
+            page.commands.createProduct();
+        }
+    })
+    page.dialogs.elements.frmUpdateProduct.validate({
+        rules: {
+            productTitleUp: {
+                required: true,
+            },
+            productPriceUp: {
+                required: true,
+                min: 100,
+                max: 999999999,
+                number: true
+            },
+            unitSelectUp: {
+                required: true
+            },
+            categorySelectUp: {
+                required: true,
+                number: true
+
+            }
+        },
+        messages: {
+            productTitleUp: {
+                required: "Vui lòng nhập tên sản phẩm.",
+            },
+            productPriceUp: {
+                required: "Vui lòng nhập giá.",
+                number: "Giá sản phẩm phải là số.",
+                min: "Giá sản phẩm tối thiểu là 100 VNĐ.",
+                max: "Giá sản phẩm tối đa là 999.999.999 VNĐ."
+            },
+
+            unitSelectUp: {
+                required: "Vui lòng nhập loại sản phẩm."
+            },
+            categorySelectUp: {
+                required: "Vui lòng nhập loại sản phẩm.",
+                number: "Mã danh mục không đúng. Vui lòng chọn lại."
+            }
+        },
+        errorLabelContainer: "#modalUpdate .modal-alert-danger",
+        errorPlacement: function (error, element) {
+            error.appendTo("#modalUpdate .modal-alert-danger");
+        },
+        showErrors: function (errorMap, errorList) {
+            if (this.numberOfInvalids() > 0) {
+                $("#modalUpdate .modal-alert-danger").removeClass("hide").addClass("show");
+            } else {
+                $("#modalUpdate .modal-alert-danger").removeClass("show").addClass("hide").empty();
+                $("#frmUpdateProduct input.error").removeClass("error");
+            }
+            this.defaultShowErrors();
+        },
+        submitHandler: function () {
+            page.dialogs.commands.updateProduct();
+        }
+    })
+    page.loadData = () => {
+        page.commands.getAllProduct();
+        page.commands.getCategories();
+    }
+    $(() => {
+        page.loadData();
+        page.initializeControlEvent();
+    })
+</script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package com.cg.domain.dto.product;
 
 import com.cg.domain.dto.avatar.AvatarResDTO;
+import com.cg.domain.entity.Category;
+import com.cg.domain.entity.Unit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +19,8 @@ public class ProductCreResDTO {
     private Long id;
     private String title;
     private BigDecimal price;
-    private String unitTitle;
-    private String categoryTitle;
+    private Unit unit;
+    private Category category;
     private AvatarResDTO productAvatar;
 
 }
