@@ -1,0 +1,96 @@
+<th:block th:fragment="modal-create">
+  <div class="modal fade" id="modalCreate" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+       data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal create product</h1>
+          <button type="button" class="btn-close btnClose" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!--                    <div class="error-area"></div>-->
+          <div class="modal-alert-danger hide">
+          </div>
+
+          <form method="post" id="frmCreateProduct" enctype="multipart/form-data">
+            <div class="container">
+              <div class="row mb-3">
+                <div class="col-6">
+                  <div class="row">
+                    <div class="col-lg-6 form-group">
+                      <label for="productTitle" class="form-label">Title</label>
+                      <input type="text" class="form-control" id="productTitle" name="productTitle"
+                             placeholder="Enter title product">
+                      <div class="form-message"></div>
+                    </div>
+                    <div class="col-lg-6 form-group">
+                      <label for="productPrice" class="form-label">Price</label>
+                      <input type="text" class="form-control" id="productPrice" name="productPrice"
+                             placeholder="Enter price">
+                      <div class="form-message"></div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 form-group">
+                      <label for="unitSelectCreate" class="form-label">Unit</label>
+                      <select class="form-select" name="unitSelectCreate" id="unitSelectCreate">
+                        <option value="1">Ly</option>
+                        <option value="2">Hộp</option>
+                        <option value="3">Gói</option>
+                        <option value="4">Cái</option>
+                      </select>
+                      <div class="form-message"></div>
+                    </div>
+                    <div class="col-lg-6 form-group">
+                      <label for="categorySelectCreate">Category</label>
+                      <select class="form-select" name="category" id="categorySelectCreate">
+                        <option value="" selected disabled>Select Category</option>
+                      </select>
+                      <div class="form-message"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <section>
+                    <div class="wrapper">
+                      <div class="image-preview">
+                        <canvas id="canvasCreate"></canvas>
+                      </div>
+                      <div class="content">
+                        <div class="icon">
+                          <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="text">
+                          No file chosen, yet!
+                        </div>
+                        <div class="text">
+                          Max file size = 2MB
+                        </div>
+                      </div>
+                      <div class="clear-image-preview">
+                        <i class="fas fa-times"></i>
+                      </div>
+                      <div class="file-name">
+                        Change image
+                      </div>
+                    </div>
+                    <input type="file" id="imageFileCreate" accept="image/jpeg, image/png" hidden />
+                  </section>
+                </div>
+              </div>
+
+            </div>
+            <!--                        <div id="loading">-->
+            <!--                        </div>-->
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btnClose" data-bs-dismiss="modal">Close
+          </button>
+          <button type="button" id="btnCreate" class="btn btn-outline-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</th:block>

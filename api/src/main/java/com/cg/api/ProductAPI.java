@@ -63,9 +63,14 @@ public class ProductAPI {
         if (bindingResult.hasFieldErrors()) {
             return appUtils.mapErrorToResponse(bindingResult);
         }
-        if (!validateUtils.isNumberValid(productCreReqDTO.getCategoryId())) {
-            new DataInputException(("Mã danh mục không hợp lệ"));
+
+        if (productCreReqDTO.getProductAvatar() == null) {
+            throw new DataInputException("Hình ảnh sản phẩm không được để trống");
         }
+        if (!validateUtils.isNumberValid(productCreReqDTO.getCategoryId())) {
+            throw new DataInputException("Mã danh mục không hợp lệ");
+        }
+
         Long idCategory = Long.parseLong(productCreReqDTO.getCategoryId());
         Category category = categoryService.findByIdAndDeletedFalse(idCategory).orElseThrow(() -> {
             throw new DataInputException("Mã danh mục không tồn tại");
@@ -75,6 +80,7 @@ public class ProductAPI {
         Unit unit = unitService.findByIdAndDeletedFalse(idUnit).orElseThrow(() -> {
             throw new DataInputException("Mã đơn vị không tồn tại");
         });
+
         Product product = productService.createProduct(productCreReqDTO, category, unit);
         ProductCreResDTO productCreResDTO = product.toProductCreResDTO();
         return new ResponseEntity<>(productCreResDTO, HttpStatus.CREATED);

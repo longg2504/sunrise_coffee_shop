@@ -4,7 +4,7 @@ class App {
 
     static API_PRODUCT = this.API_SERVER + '/products';
     static API_PRODUCT_SEARCH_NAME = this.API_PRODUCT + '/searchName';
-    static API_CREATE_PRODUCT = this.API_PRODUCT + '/create'
+    static API_CREATE_PRODUCT = this.API_PRODUCT
     static API_UPDATE_PRODUCT = this.API_PRODUCT + '/edit'
     static API_DELETE_PRODUCT = this.API_PRODUCT
 
@@ -13,7 +13,7 @@ class App {
     static API_ORDER = this.API_SERVER + '/orders';
     static API_ORDER_BY_TABLE_ID = this.API_ORDER + '/table';
 
-    static API_CATEGORY = this.API_SERVER + '/category'
+    static API_CATEGORY = this.API_SERVER + '/categories'
 
     static API_BILL = this.API_SERVER + '/bills';
 
@@ -187,6 +187,12 @@ class TableOrder{
 }
 
 class Category {
+    constructor(id,title) {
+        this.id = id;
+        this.title = title;
+    }
+}
+class Unit {
     constructor(id,title) {
         this.id = id;
         this.title = title;
