@@ -195,8 +195,10 @@ public class OrderServiceImpl implements IOrderService {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
         for(OrderDetail item : orderDetails){
-            item.setStatus(EOrderDetailStatus.WAITER);
-            orderDetailRepository.save(item);
+            if(item.getStatus() == EOrderDetailStatus.NEW) {
+                item.setStatus(EOrderDetailStatus.WAITER);
+                orderDetailRepository.save(item);
+            }
         }
 
         List<OrderDetailChangeStatusResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailByStatus(orderOptional.get().getId(), EOrderDetailStatus.WAITER);
