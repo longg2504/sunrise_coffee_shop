@@ -10,13 +10,12 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Accessors(chain = true)
-public class OrderDetailProductUpResDTO {
+public class OrderDetailChangeStatusResDTO {
     private Long id;
     private Long productId;
     private String title;
@@ -28,18 +27,7 @@ public class OrderDetailProductUpResDTO {
     private String status;
     private AvatarResDTO avatar;
 
-    public OrderDetailProductUpResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity, BigDecimal amount, String note, Avatar avatar) {
-        this.id = id;
-        this.productId = productId;
-        this.title = title;
-        this.price = price;
-        this.quantity = quantity;
-        this.amount = amount;
-        this.note = note;
-        this.avatar = avatar.toAvatarResDTO();
-    }
-
-    public OrderDetailProductUpResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity,Long quantityDelivery ,BigDecimal amount, String note, EOrderDetailStatus status, Avatar avatar) {
+    public OrderDetailChangeStatusResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity, Long quantityDelivery, BigDecimal amount, String note, EOrderDetailStatus status, Avatar avatar) {
         this.id = id;
         this.productId = productId;
         this.title = title;

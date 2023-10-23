@@ -1,11 +1,10 @@
 package com.cg.service.order;
 
+import com.cg.domain.dto.order.OrderChangeStatusReqDTO;
+import com.cg.domain.dto.order.OrderChangeStatusResDTO;
 import com.cg.domain.dto.order.OrderCreReqDTO;
 import com.cg.domain.dto.order.OrderUpReqDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailCreResDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailProductUpResDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailUpResDTO;
+import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.*;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.domain.enums.ETableStatus;
@@ -95,11 +94,13 @@ public class OrderServiceImpl implements IOrderService {
 
         OrderDetail orderDetail = new OrderDetail();
         Long quantity = orderCreReqDTO.getQuantity();
+        Long quantityDelivery = 0L;
         BigDecimal price = product.getPrice();
         BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 
         orderDetail.setProduct(product);
         orderDetail.setQuantity(quantity);
+        orderDetail.setQuantityDelivery(quantityDelivery);
         orderDetail.setPrice(price);
         orderDetail.setAmount(amount);
         orderDetail.setNote(orderCreReqDTO.getNote());
@@ -118,6 +119,7 @@ public class OrderServiceImpl implements IOrderService {
         orderDetailCreResDTO.setTitle(product.getTitle());
         orderDetailCreResDTO.setPrice(price);
         orderDetailCreResDTO.setQuantity(quantity);
+        orderDetailCreResDTO.setQuantityDelivery(quantityDelivery);
         orderDetailCreResDTO.setAmount(amount);
         orderDetailCreResDTO.setNote(orderDetail.getNote());
         orderDetailCreResDTO.setTotalAmount(amount);
@@ -130,6 +132,7 @@ public class OrderServiceImpl implements IOrderService {
     public OrderDetailUpResDTO upOrderDetail(OrderUpReqDTO orderUpReqDTO, Order order, Product product, User user) {
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(order);
         OrderDetail orderDetail = new OrderDetail();
+        Long quantityDelivery = 0l;
         if (orderDetails.size() == 0) {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
@@ -137,6 +140,7 @@ public class OrderServiceImpl implements IOrderService {
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote());
         if (orderDetailOptional.isEmpty()) {
             Long quantity = orderUpReqDTO.getQuantity();
+
             BigDecimal price = product.getPrice();
             BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 
@@ -144,6 +148,7 @@ public class OrderServiceImpl implements IOrderService {
             orderDetail.setOrder(order);
             orderDetail.setPrice(product.getPrice());
             orderDetail.setQuantity(quantity);
+            orderDetail.setQuantityDelivery(quantityDelivery);
             orderDetail.setAmount(amount);
             orderDetail.setStatus(EOrderDetailStatus.NEW);
             orderDetail.setNote(orderUpReqDTO.getNote());
@@ -159,6 +164,7 @@ public class OrderServiceImpl implements IOrderService {
             BigDecimal price = orderDetail.getPrice();
             BigDecimal newAmount = price.multiply(BigDecimal.valueOf(newQuantity));
             orderDetail.setQuantity(newQuantity);
+            orderDetail.setQuantityDelivery(quantityDelivery);
             orderDetail.setAmount(newAmount);
             orderDetail.setStatus(EOrderDetailStatus.NEW);
             orderDetailRepository.save(orderDetail);
@@ -175,6 +181,31 @@ public class OrderServiceImpl implements IOrderService {
         orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
         orderDetailUpResDTO.setStatus(EOrderDetailStatus.NEW);
         return orderDetailUpResDTO;
+    }
+
+    @Override
+    public OrderChangeStatusResDTO upStatusOrderItemToWaiter(OrderChangeStatusReqDTO orderChangeStatusReqDTO, User user) {
+        Long tableId = orderChangeStatusReqDTO.getTableId();
+        Optional<Order> orderOptional  = orderRepository.findByTableId(tableId);
+        if(!orderOptional.isPresent()){
+            throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
+        }
+        List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(orderOptional.get());
+        if(orderDetails.isEmpty()){
+            throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
+        }
+        for(OrderDetail item : orderDetails){
+            item.setStatus(EOrderDetailStatus.WAITER);
+            orderDetailRepository.save(item);
+        }
+
+        List<OrderDetailChangeStatusResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailByStatus(orderOptional.get().getId(), EOrderDetailStatus.WAITER);
+        OrderChangeStatusResDTO orderChangeStatusResDTO = new OrderChangeStatusResDTO();
+        orderChangeStatusResDTO.setOrderDetails(newOrderDetails);
+        orderChangeStatusResDTO.setTotalAmount(orderOptional.get().getTotalAmount());
+        orderChangeStatusResDTO.setTableId(tableId);
+        return orderChangeStatusResDTO;
+
     }
 
     @Override

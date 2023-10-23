@@ -54,7 +54,10 @@ public class TableOrder extends BaseEntity {
                 .setId(id)
                 .setTitle(title)
                 .setStatus(status)
+                .setZoneTitle(zone.getTitle())
                 ;
+
+
     }
 
 }

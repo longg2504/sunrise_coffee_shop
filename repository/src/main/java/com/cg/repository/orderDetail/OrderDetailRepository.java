@@ -1,9 +1,12 @@
 package com.cg.repository.orderDetail;
 
 import com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO;
+import com.cg.domain.dto.orderDetail.OrderDetailChangeStatusResDTO;
+import com.cg.domain.dto.orderDetail.OrderDetailDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailProductUpResDTO;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
+import com.cg.domain.enums.EOrderDetailStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +24,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.title, " +
             "od.price, " +
             "od.quantity, " +
+            "od.quantityDelivery," +
             "od.amount, " +
             "od.product.unit ," +
             "od.note," +
@@ -28,7 +32,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.productAvatar" +
             ") " +
             "FROM OrderDetail AS od " +
-            "WHERE od.order.id = :orderId"
+            "WHERE od.order.id = :orderId " +
+            "AND od.deleted = false "
     )
     List<OrderDetailByTableResDTO> getOrderDetailByTableResDTO(@Param("orderId") Long orderId);
 
@@ -39,16 +44,39 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.id, " +
             "od.product.title, " +
             "od.price, " +
-            "od.quantity, " +
+            "od.quantity," +
+            "od.quantityDelivery, " +
             "od.amount, " +
             "od.note," +
             "od.status, " +
             "od.product.productAvatar" +
             ") " +
             "FROM OrderDetail AS od " +
-            "WHERE od.order.id = :orderId"
+            "WHERE od.order.id = :orderId " +
+            "AND od.deleted = false"
     )
     List<OrderDetailProductUpResDTO> findAllOrderDetailProductUpResDTO(@Param("orderId") Long orderId);
+
+
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailChangeStatusResDTO (" +
+            "od.id, " +
+            "od.product.id, " +
+            "od.product.title, " +
+            "od.price," +
+            "od.quantity ," +
+            "od.quantityDelivery, " +
+            "od.amount," +
+            "od.note," +
+            "od.status," +
+            "od.product.productAvatar" +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "WHERE od.order.id = :orderId " +
+            "AND od.deleted = false " +
+            "AND od.status = :orderDetailStatus"
+    )
+
+    List<OrderDetailChangeStatusResDTO> findAllOrderDetailByStatus(@Param("orderId") Long orderId, @Param("orderDetailStatus")EOrderDetailStatus orderDetailStatus);
 
 
     @Query("SELECT odt FROM OrderDetail AS odt WHERE odt.order.id = :orderId")

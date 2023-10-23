@@ -1,5 +1,7 @@
 package com.cg.api;
 
+import com.cg.domain.dto.order.OrderChangeStatusReqDTO;
+import com.cg.domain.dto.order.OrderChangeStatusResDTO;
 import com.cg.domain.dto.order.OrderCreReqDTO;
 import com.cg.domain.dto.order.OrderUpReqDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO;
@@ -171,5 +173,32 @@ public class OrderAPI {
             return new ResponseEntity<>(tableOrder,HttpStatus.OK);
         }
         return new ResponseEntity<>(orderDetail.getOrder().getTableOrder(), HttpStatus.OK);
+    }
+
+    @PostMapping("/change-status-waiting")
+    public ResponseEntity<?> changeStatusWaiting(@RequestBody OrderChangeStatusReqDTO orderChangeStatusReqDTO){
+        String username = appUtils.getPrincipalUsername();
+        Optional<User> userOptional = userService.findByName(username);
+
+        TableOrder tableOrder = tableOrderService.findById(orderChangeStatusReqDTO.getTableId()).orElseThrow(() -> {
+            throw new DataInputException("Bàn không tồn tại");
+        });
+
+        List<Order> orders = orderService.findByTableOrderAndPaid(tableOrder, false);
+
+        if (orders.size() == 0) {
+            throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+        }
+
+        if (orders.size() > 1) {
+            throw new DataInputException("Lỗi hệ thống, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
+        }
+
+        if(tableOrder.getStatus() == ETableStatus.EMPTY){
+            throw new DataInputException("Bàn đang rảnh không thể gửi thông báo tới bếp khi bàn đang rảnh!!!");
+        }
+
+        OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToWaiter(orderChangeStatusReqDTO, userOptional.get());
+        return  new ResponseEntity<>(orderChangeStatusResDTO, HttpStatus.OK);
     }
 }

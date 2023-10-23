@@ -1,5 +1,7 @@
 package com.cg.service.order;
 
+import com.cg.domain.dto.order.OrderChangeStatusReqDTO;
+import com.cg.domain.dto.order.OrderChangeStatusResDTO;
 import com.cg.domain.dto.order.OrderCreReqDTO;
 import com.cg.domain.dto.order.OrderUpReqDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailCreResDTO;
@@ -22,6 +24,8 @@ public interface IOrderService extends IGeneralService<Order,Long> {
     OrderDetailCreResDTO creOrder(OrderCreReqDTO orderCreReqDTO, TableOrder tableOrder, User user);
 
     OrderDetailUpResDTO upOrderDetail(OrderUpReqDTO orderUpReqDTO, Order order, Product product, User user);
+
+    OrderChangeStatusResDTO upStatusOrderItemToWaiter(OrderChangeStatusReqDTO orderChangeStatusReqDTO ,User user);
 
 
     BigDecimal getOrderTotalAmount(Long orderId);
