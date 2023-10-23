@@ -86,9 +86,10 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "FROM OrderDetail AS odt " +
             "WHERE odt.product.id = :idProduct " +
             "AND odt.order.id = :idOrder " +
-            "AND odt.note LIKE :note "
+            "AND odt.note LIKE :note " +
+            "AND odt.status = :status"
     )
-    Optional<OrderDetail> findByProductIdAndOrderIdAndNote(@Param("idProduct") Long idProduct, @Param("idOrder") Long idOrder, @Param("note") String note);
+    Optional<OrderDetail> findByProductIdAndOrderIdAndNote(@Param("idProduct") Long idProduct, @Param("idOrder") Long idOrder, @Param("note") String note, @Param("status") EOrderDetailStatus status );
 
     @Query("SELECT SUM(odt.amount) FROM OrderDetail AS odt WHERE odt.order.id = :orderId")
     BigDecimal findByOrderByIdSumAmount(@Param("orderId") Long orderId);

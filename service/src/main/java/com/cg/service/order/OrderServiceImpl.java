@@ -132,12 +132,11 @@ public class OrderServiceImpl implements IOrderService {
     public OrderDetailUpResDTO upOrderDetail(OrderUpReqDTO orderUpReqDTO, Order order, Product product, User user) {
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(order);
         OrderDetail orderDetail = new OrderDetail();
-        Long quantityDelivery = 0l;
         if (orderDetails.size() == 0) {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
 
-        Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote());
+        Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote(),orderUpReqDTO.getStatus());
         if (orderDetailOptional.isEmpty()) {
             Long quantity = orderUpReqDTO.getQuantity();
 
@@ -148,7 +147,7 @@ public class OrderServiceImpl implements IOrderService {
             orderDetail.setOrder(order);
             orderDetail.setPrice(product.getPrice());
             orderDetail.setQuantity(quantity);
-            orderDetail.setQuantityDelivery(quantityDelivery);
+            orderDetail.setQuantityDelivery(orderDetail.getQuantityDelivery());
             orderDetail.setAmount(amount);
             orderDetail.setStatus(EOrderDetailStatus.NEW);
             orderDetail.setNote(orderUpReqDTO.getNote());
@@ -164,7 +163,7 @@ public class OrderServiceImpl implements IOrderService {
             BigDecimal price = orderDetail.getPrice();
             BigDecimal newAmount = price.multiply(BigDecimal.valueOf(newQuantity));
             orderDetail.setQuantity(newQuantity);
-            orderDetail.setQuantityDelivery(quantityDelivery);
+            orderDetail.setQuantityDelivery(orderDetail.getQuantityDelivery());
             orderDetail.setAmount(newAmount);
             orderDetail.setStatus(EOrderDetailStatus.NEW);
             orderDetailRepository.save(orderDetail);
