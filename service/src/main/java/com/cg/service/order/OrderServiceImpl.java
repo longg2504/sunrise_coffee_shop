@@ -143,7 +143,7 @@ public class OrderServiceImpl implements IOrderService {
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote(),orderUpReqDTO.getStatus());
         if (orderDetailOptional.isEmpty()) {
             Long quantity = orderUpReqDTO.getQuantity();
-
+            Long quantityDelivery = 0L;
             BigDecimal price = product.getPrice();
             BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 
@@ -151,7 +151,7 @@ public class OrderServiceImpl implements IOrderService {
             orderDetail.setOrder(order);
             orderDetail.setPrice(product.getPrice());
             orderDetail.setQuantity(quantity);
-            orderDetail.setQuantityDelivery(orderDetail.getQuantityDelivery());
+            orderDetail.setQuantityDelivery(quantityDelivery);
             orderDetail.setAmount(amount);
             orderDetail.setStatus(EOrderDetailStatus.NEW);
             orderDetail.setNote(orderUpReqDTO.getNote());
