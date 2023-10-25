@@ -1,5 +1,6 @@
 package com.cg.domain.dto.orderDetail;
 
+import com.cg.domain.enums.EOrderDetailStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class OrderDetailKitchenTableDTO {
     private Long orderDetailId;
     private String tableName;
     private Long productId;
-    private String productTilte;
+    private String productTitle;
     private String note;
     private Long quantity;
     private String unitTilte;
@@ -27,4 +28,16 @@ public class OrderDetailKitchenTableDTO {
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date updateAt;
+
+    public OrderDetailKitchenTableDTO(Long orderDetailId, String tableName, Long productId, String productTitle, String note, Long quantity, String unitTilte, EOrderDetailStatus status, Date updateAt) {
+        this.orderDetailId = orderDetailId;
+        this.tableName = tableName;
+        this.productId = productId;
+        this.productTitle = productTitle;
+        this.note = note;
+        this.quantity = quantity;
+        this.unitTilte = unitTilte;
+        this.status = String.valueOf(status);
+        this.updateAt = updateAt;
+    }
 }

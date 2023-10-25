@@ -11,21 +11,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 @Setter
 @Accessors(chain = true)
 public class OrderDetailKitchenGroupDTO {
-    private ProductDTO product;
+    private Long productId;
+    private String productTitle;
     private String note;
     private Long quantity;
-    private String status;
+    private String unitTitle;
+    //com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO(java.lang.Long, java.lang.String, java.lang.String, java.lang.Long, java.lang.String)'
 
-    public OrderDetailKitchenGroupDTO(Product product, String note, Long quantity, EOrderDetailStatus status) {
-        this.product = product.toProductDTO();
+
+    public OrderDetailKitchenGroupDTO(Long productId, String productTitle, String note, Long quantity, String unitTitle) {
+        this.productId = productId;
+        this.productTitle = productTitle;
         this.note = note;
         this.quantity = quantity;
-        this.status = String.valueOf(status);
+        this.unitTitle = unitTitle;
     }
 }

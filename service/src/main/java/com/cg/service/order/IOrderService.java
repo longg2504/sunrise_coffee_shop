@@ -1,15 +1,12 @@
 package com.cg.service.order;
 
-import com.cg.domain.dto.order.OrderChangeStatusReqDTO;
-import com.cg.domain.dto.order.OrderChangeStatusResDTO;
-import com.cg.domain.dto.order.OrderCreReqDTO;
-import com.cg.domain.dto.order.OrderUpReqDTO;
+import com.cg.domain.dto.order.*;
+import com.cg.domain.dto.orderDetail.IOrderDetailKitchenTableDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailCreResDTO;
+import com.cg.domain.dto.orderDetail.OrderDetailKitchenTableDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailUpResDTO;
-import com.cg.domain.entity.Order;
-import com.cg.domain.entity.Product;
-import com.cg.domain.entity.TableOrder;
-import com.cg.domain.entity.User;
+import com.cg.domain.entity.*;
+import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.service.IGeneralService;
 
 import java.math.BigDecimal;
@@ -29,6 +26,16 @@ public interface IOrderService extends IGeneralService<Order,Long> {
 
 
     BigDecimal getOrderTotalAmount(Long orderId);
+
+    List<OrderKitchenTableDTO> getAllOrderKitchenCookingByTable(EOrderDetailStatus status);
+
+    List<OrderDTO> getOrderDTOByStatus();
+    List<IOrderDTO> getOrderDTOByStatusCooking();
+
+    int countProductInOrder(List<OrderDetailKitchenTableDTO> orderItemList);
+
+    int countProductInOrderItem(List<IOrderDetailKitchenTableDTO> orderItemList);
+
 
 
 }
