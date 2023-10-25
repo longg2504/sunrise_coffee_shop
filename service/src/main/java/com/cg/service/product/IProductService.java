@@ -9,6 +9,8 @@ import com.cg.domain.entity.Unit;
 import com.cg.service.IGeneralService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +26,9 @@ public interface IProductService extends IGeneralService<Product,Long> {
     void deleteByIdTrue(Product product);
     Page<ProductDTO> findProductByName(String keySearch, Pageable pageable);
 
-
+    Page<ProductDTO> findAllByDeletedFalse(String title,Pageable pageable);
+    List<ProductDTO> findAllByDeletedFalse(Sort sort);
+    List<ProductDTO> findAllByDeletedFalseAndTitleLike(String title);
+    Page<ProductDTO> findAllProductDTOPage(Pageable pageable);
+    Page<ProductDTO> findProductByKeySearch(String keySearch, Pageable pageable);
 }

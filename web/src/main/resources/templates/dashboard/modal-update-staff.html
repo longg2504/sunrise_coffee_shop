@@ -1,0 +1,112 @@
+<th:block th:fragment="modal-update-staff">
+    <div class="modal fade" id="modalUpdate" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+         data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal create staff</h1>
+                    <button type="button" class="btn-close btnClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--                    <div class="error-area"></div>-->
+                    <div class="modal-alert-danger hide">
+                    </div>
+                    <form method="post" id="frmUpdateStaff" enctype="multipart/form-data">
+                        <div class="container">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="row">
+                                        <div class="col-lg-6 form-group">
+                                            <label for="fullNameUp" class="form-label">Họ tên</label>
+                                            <input type="text" class="form-control" id="fullNameUp" name="fullNameUp">
+                                            <div class="form-message"></div>
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            <label for="dobUp" class="form-label">Ngày sinh</label>
+                                            <input type="date" class="form-control" id="dobUp" name="dobUp">
+                                            <div class="form-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 form-group">
+                                            <label for="phoneUp" class="form-label">Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phoneUp" name="phoneUp">
+                                            <div class="form-message"></div>
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            <label for="provinceUp">Tỉnh/Thành phố</label>
+                                            <select class="form-select" name="provinceUp" id="provinceUp"></select>
+                                            <div class="form-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-lg-6 form-group">
+                                            <label for="districtUp">Quận/Huyện</label>
+                                            <select class="form-select" name="districtUp" id="districtUp"></select>
+                                            <div class="form-message"></div>
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            <label for="wardUp">Phường/Xã</label>
+                                            <select class="form-select" name="wardUp" id="wardUp"></select>
+                                            <div class="form-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 form-group">
+                                            <label for="addressUp" class="form-label">Địa chỉ</label>
+                                            <input type="text" class="form-control" id="addressUp" name="addressUp">
+                                            <div class="form-message"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-6">
+                                    <section>
+                                        <div class="wrapper">
+                                            <div class="image-preview">
+                                                <canvas id="canvasUpdate"></canvas>
+                                            </div>
+                                            <div class="content">
+                                                <div class="icon">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                </div>
+                                                <div class="text">
+                                                    No file chosen, yet!
+                                                </div>
+                                                <div class="text">
+                                                    Max file size = 2MB
+                                                </div>
+                                            </div>
+                                            <div class="clear-image-preview">
+                                                <i class="fas fa-times"></i>
+                                            </div>
+                                            <div class="file-name">
+                                                Change image
+                                            </div>
+                                        </div>
+                                        <input type="file" id="imageFileUpdate" accept="image/jpeg, image/png" hidden />
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                        <!--                        <div id="loading">-->
+                        <!--                        </div>-->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btnClose" data-bs-dismiss="modal">Close
+                    </button>
+                    <button type="button" id="btnUpdate" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+
+
+
+
+
+

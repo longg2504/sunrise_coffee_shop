@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class StaffUpReqDTO implements Validator {
     private String fullName;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dob;
     private String phone;
     private LocationRegionUpReqDTO locationRegion;

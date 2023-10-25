@@ -145,6 +145,7 @@ public class StaffAPI {
             locationRegionService.save(locationRegion);
 
             staff.setStaffAvatar(staffOptional.get().getStaffAvatar());
+            staff.setLocationRegion(locationRegion);
             staff.setUser(user);
             staffService.save(staff);
 
@@ -160,9 +161,7 @@ public class StaffAPI {
             staffUpResDTO.setUser(staff.getUser());
             return new ResponseEntity<>(staffUpResDTO,HttpStatus.OK);
         }
-
     }
-
 
     @DeleteMapping("/delete/{staffId}")
     public ResponseEntity<?> deleteStaff(@PathVariable("staffId") String staffIdStr) {

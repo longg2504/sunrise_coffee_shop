@@ -58,9 +58,9 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             "st.user" +
             ") " +
             "FROM Staff as st " +
-            "WHERE st.fullName like :keySearch " +
+            "WHERE (st.fullName like :keySearch " +
             "OR st.locationRegion.provinceName like :keySearch " +
-            "OR st.user.role.code like :keySearch " +
+            "OR st.user.role.code like :keySearch)" +
             "AND st.deleted = false "
     )
     Page<StaffDTO> findStaffByKeySearch(@Param("keySearch") String keySearch, Pageable pageable);
