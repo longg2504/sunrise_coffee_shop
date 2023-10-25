@@ -35,4 +35,6 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
             "WHERE to.title LIKE %:search%")
     Page<TableOrderDTO> findAllTableOrderByTitle(@Param("search") String search, Pageable pageable);
 
+
+
 }

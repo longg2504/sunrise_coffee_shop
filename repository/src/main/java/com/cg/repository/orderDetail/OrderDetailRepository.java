@@ -4,6 +4,7 @@ import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.enums.EOrderDetailStatus;
+import com.cg.domain.enums.ETableStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -160,5 +161,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
     List<IOrderDetailKitchenTableDTO> getOrderItemByStatusCookingAndTable(@Param("tableId") Long tableId);
 
 
-
+    @Query("Select o FROM OrderDetail o WHERE o.order.tableOrder.id = :id AND o.status = :status" )
+    List<OrderDetail> getOrder(Long id, EOrderDetailStatus status);
 }

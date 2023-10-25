@@ -11,9 +11,12 @@ public interface IOrderDTO {
     Long getId();
     StaffDTO getStaff();
     TableOrderDTO getTable();
+    Long getTableId();
     BigDecimal getTotalAmount();
     OrderDetailDTO getOrderDetail();
     Date getUpdatedAt();
     Boolean getPaid();
+
+    String getTableName();
 
 }

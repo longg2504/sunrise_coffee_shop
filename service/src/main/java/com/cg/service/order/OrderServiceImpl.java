@@ -43,7 +43,6 @@ public class OrderServiceImpl implements IOrderService {
     private IOrderDetailService orderDetailService;
 
 
-
     @Override
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -76,7 +75,7 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public List<Order> findByTableOrderAndPaid(TableOrder tableOrder, Boolean paid) {
-        return orderRepository.findByTableOrderAndPaid(tableOrder,paid);
+        return orderRepository.findByTableOrderAndPaid(tableOrder, paid);
     }
 
     @Override
@@ -140,7 +139,7 @@ public class OrderServiceImpl implements IOrderService {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
 
-        Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote(),orderUpReqDTO.getStatus());
+        Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote(), orderUpReqDTO.getStatus());
         if (orderDetailOptional.isEmpty()) {
             Long quantity = orderUpReqDTO.getQuantity();
             Long quantityDelivery = 0L;
@@ -160,8 +159,7 @@ public class OrderServiceImpl implements IOrderService {
             BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
             order.setTotalAmount(newTotalAmount);
             orderRepository.save(order);
-        }
-        else {
+        } else {
             orderDetail = orderDetailOptional.get();
             long newQuantity = orderDetail.getQuantity() + orderUpReqDTO.getQuantity();
             BigDecimal price = orderDetail.getPrice();
@@ -189,16 +187,16 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public OrderChangeStatusResDTO upStatusOrderItemToWaiter(OrderChangeStatusReqDTO orderChangeStatusReqDTO, User user) {
         Long tableId = orderChangeStatusReqDTO.getTableId();
-        Optional<Order> orderOptional  = orderRepository.findByTableId(tableId);
-        if(!orderOptional.isPresent()){
+        Optional<Order> orderOptional = orderRepository.findByTableId(tableId);
+        if (!orderOptional.isPresent()) {
             throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
         }
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(orderOptional.get());
-        if(orderDetails.isEmpty()){
+        if (orderDetails.isEmpty()) {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
-        for(OrderDetail item : orderDetails){
-            if(item.getStatus() == EOrderDetailStatus.NEW) {
+        for (OrderDetail item : orderDetails) {
+            if (item.getStatus() == EOrderDetailStatus.NEW) {
                 item.setStatus(EOrderDetailStatus.COOKING);
                 orderDetailRepository.save(item);
             }
@@ -226,19 +224,17 @@ public class OrderServiceImpl implements IOrderService {
 
 
         for (IOrderDTO item : orderDTOList) {
-            List<IOrderDetailKitchenTableDTO> orderItemList = orderDetailService.getOrderItemByStatusCookingAndTable(item.getTable().toTableOrder().getId());
-
+            List<IOrderDetailKitchenTableDTO> orderItemList = orderDetailService.getOrderItemByStatusCookingAndTable(item.getTableId());
             if (orderItemList.size() != 0) {
                 int countProduct = this.countProductInOrderItem(orderItemList);
 
                 OrderKitchenTableDTO orderKitchenDTO = new OrderKitchenTableDTO()
                         .setOrderId(item.getId())
-                        .setTableId(Long.valueOf(item.getTable().getId()))
-                        .setTableName(item.getTable().getTitle())
+                        .setTableId(item.getTableId())
+                        .setTableName(item.getTableName())
                         .setCountProduct(countProduct)
                         .setUpdatedAt(item.getUpdatedAt())
-                        .setOrderDetails(orderItemList)
-                        ;
+                        .setOrderDetails(orderItemList);
                 orderList.add(orderKitchenDTO);
             }
         }
@@ -275,4 +271,5 @@ public class OrderServiceImpl implements IOrderService {
         return count;
 
     }
+
 }
