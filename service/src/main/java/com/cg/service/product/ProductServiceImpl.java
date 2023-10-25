@@ -15,6 +15,7 @@ import com.cg.utils.UploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,5 +121,30 @@ public class ProductServiceImpl implements IProductService {
             e.printStackTrace();
             throw new DataInputException("Upload hình ảnh thất bại");
         }
+    }
+
+    @Override
+    public Page<ProductDTO> findAllByDeletedFalse(String title, Pageable pageable) {
+        return productRepository.findAllByDeletedFalse(title,pageable);
+    }
+
+    @Override
+    public List<ProductDTO> findAllByDeletedFalse(Sort sort) {
+        return productRepository.findAllByDeletedFalse(sort);
+    }
+
+    @Override
+    public List<ProductDTO> findAllByDeletedFalseAndTitleLike(String title) {
+        return productRepository.findAllByDeletedFalseAndTitleLike(title);
+    }
+
+    @Override
+    public Page<ProductDTO> findAllProductDTOPage(Pageable pageable) {
+        return productRepository.findAllProductDTOPage(pageable);
+    }
+
+    @Override
+    public Page<ProductDTO> findProductByKeySearch(String keySearch, Pageable pageable) {
+        return productRepository.findProductByKeySearch(keySearch,pageable);
     }
 }

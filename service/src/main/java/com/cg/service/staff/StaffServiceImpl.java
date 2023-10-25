@@ -150,20 +150,14 @@ public class StaffServiceImpl implements IStaffService {
 
         Avatar staffAvatar = new Avatar();
         avatarRepository.save(staffAvatar);
-
         uploadAndSaveStaffImage(staffAvatar,file);
-
         Staff staffUpdate = staffUpReqDTO.toStaffChangeImage();
-
         staffUpdate.setId(staffId);
         staffUpdate.setStaffAvatar(staffAvatar);
         staffUpdate.setLocationRegion(locationRegion);
         staffUpdate.setUser(staffOptional.get().getUser());
-
         staffRepository.save(staffUpdate);
-
         return staffUpdate;
-
     }
 
     @Override

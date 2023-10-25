@@ -27,6 +27,7 @@ class App {
 
     static API_STAFF = this.API_SERVER + '/staff'
 
+
     static BASE_URL_CLOUD_IMAGE = "https://res.cloudinary.com/dadtniwa8/image/upload";
     static IMAGE_SCALE_W_280_h_180_Q_100 = 'c_scale,w_280,h_180,q_100'
     static IMAGE_SCALE_W_250_h_200_Q_90 = 'c_scale,w_250,h_2000,q_90'
@@ -193,6 +194,12 @@ class Category {
     }
 }
 class Unit {
+    constructor(id,title) {
+        this.id = id;
+        this.title = title;
+    }
+}
+class Zone {
     constructor(id,title) {
         this.id = id;
         this.title = title;
