@@ -1,9 +1,6 @@
 package com.cg.repository.orderDetail;
 
-import com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailChangeStatusResDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailProductUpResDTO;
+import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.enums.EOrderDetailStatus;
@@ -93,4 +90,75 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
 
     @Query("SELECT SUM(odt.amount) FROM OrderDetail AS odt WHERE odt.order.id = :orderId")
     BigDecimal findByOrderByIdSumAmount(@Param("orderId") Long orderId);
+
+
+
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO (" +
+            "od.product.id, " +
+            "od.product.title, " +
+            "od.note, " +
+            "SUM(od.quantity), " +
+            "od.product.unit.title" +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "JOIN Product AS pd " +
+            "ON od.product.id = pd.id " +
+            "WHERE od.status = :orderDetailStatus " +
+            "GROUP BY od.product.id, od.note "
+    )
+    List<OrderDetailKitchenGroupDTO> getOrderItemByStatusGroupByProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
+
+    @Query(value = "SELECT * FROM v_get_order_detail_by_status_cooking_group_by_product", nativeQuery = true)
+    List<IOrderDetailKitchenGroupDTO> getOrderDetailByStatusCookingGroupByProduct();
+
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailKitchenWaiterDTO (" +
+            "od.id," +
+            "od.order.tableOrder.id," +
+            "od.order.tableOrder.title," +
+            "od.product.id," +
+            "od.product.title," +
+            "od.note," +
+            "SUM(od.quantity)," +
+            "od.product.unit.title," +
+            "od.status," +
+            "od.updatedAt " +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "JOIN Product AS pd " +
+            "ON od.product.id = pd.id " +
+            "WHERE od.status = :orderDetailStatus " +
+            "GROUP BY od.order.tableOrder.id, od.product.id, od.note "
+    )
+    List<OrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
+
+    @Query(value = "SELECT * FROM v_get_order_detail_waiter_group_by_table_and_product", nativeQuery = true)
+    List<IOrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct();
+
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailKitchenTableDTO(" +
+            "od.id, " +
+            "od.order.tableOrder.title, " +
+            "od.product.id, " +
+            "od.product.title, " +
+            "od.note," +
+            "od.quantity," +
+            "od.product.unit.title," +
+            "od.status," +
+            "od.updatedAt" +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "JOIN Product AS pd " +
+            "on od.product.id = pd.id " +
+            "JOIN TableOrder AS t " +
+            "ON od.order.tableOrder.id = t.id " +
+            "WHERE od.status = :orderDetailStatus " +
+            "AND od.order.tableOrder.id = :tableId " +
+            "ORDER by od.updatedAt ASC "
+    )
+    List<OrderDetailKitchenTableDTO> getOrderDetailByStatusAndTable(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus , @Param("tableId") Long tableId);
+
+    @Query(value = "CALL sp_get_order_detail_by_status_cooking_and_table(:tableId)", nativeQuery = true)
+    List<IOrderDetailKitchenTableDTO> getOrderItemByStatusCookingAndTable(@Param("tableId") Long tableId);
+
+
+
 }

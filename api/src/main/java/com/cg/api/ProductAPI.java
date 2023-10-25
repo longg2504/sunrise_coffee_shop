@@ -14,10 +14,13 @@ import com.cg.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,7 +40,8 @@ public class ProductAPI {
 
     @GetMapping
     public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search, Pageable pageable) {
-        Page<ProductDTO> productDTOS = productService.findProductByName(search,pageable);
+        search =  '%' + search + '%';
+        Page<ProductDTO> productDTOS = productService.findProductByKeySearch(search,pageable);
         if (productDTOS.isEmpty()) {
             throw new ResourceNotFoundException("Không có sản phẩm nào vui lòng kiểm tra lại hệ thống");
         }
@@ -121,16 +125,25 @@ public class ProductAPI {
 
     }
     @DeleteMapping("/{productId}")
-    public  ResponseEntity<?> deleteProduct(@PathVariable("productId") String productIdStr) {
-        if(!validateUtils.isNumberValid(productIdStr)) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("productId") String productIdStr) {
+        if (!validateUtils.isNumberValid(productIdStr)) {
             throw new DataInputException("Mã sản phẩm không hợp lệ");
         }
         Long productId = Long.parseLong(productIdStr);
-        Product product = productService.findByIdAndDeletedFalse(productId).orElseThrow(()-> {
+        Product product = productService.findByIdAndDeletedFalse(productId).orElseThrow(() -> {
             throw new DataInputException("Mã sản phẩm không tồn tại");
         });
         productService.deleteByIdTrue(product);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @GetMapping("/sorted")
+    public ResponseEntity<?> getAllProductSorted(@RequestParam(value = "sort_by", defaultValue = "price") String sortBy,
+                                                 @RequestParam(value = "direction", defaultValue = "asc") String direction) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        List<ProductDTO> productDTOS = productService.findAllByDeletedFalse(sort);
+        return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }
 
 }

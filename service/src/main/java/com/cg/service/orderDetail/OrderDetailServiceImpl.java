@@ -1,8 +1,9 @@
 package com.cg.service.orderDetail;
 
-import com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO;
+import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
+import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.repository.order.OrderRepository;
 import com.cg.repository.orderDetail.OrderDetailRepository;
 import com.cg.service.order.IOrderService;
@@ -80,5 +81,35 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     @Override
     public OrderDetail findByOrderId(Long orderId) {
         return orderDetailRepository.findByOrderId(orderId);
+    }
+
+    @Override
+    public List<OrderDetailKitchenGroupDTO> getOrderItemByStatusGroupByProduct(EOrderDetailStatus orderDetailStatus) {
+        return orderDetailRepository.getOrderItemByStatusGroupByProduct(orderDetailStatus);
+    }
+
+    @Override
+    public List<IOrderDetailKitchenGroupDTO> getOrderDetailByStatusCookingGroupByProduct() {
+        return orderDetailRepository.getOrderDetailByStatusCookingGroupByProduct();
+    }
+
+    @Override
+    public List<OrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct(EOrderDetailStatus orderDetailStatus) {
+        return orderDetailRepository.getOrderDetailByStatusWaiterGroupByTableAndProduct(orderDetailStatus);
+    }
+
+    @Override
+    public List<IOrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct() {
+        return orderDetailRepository.getOrderDetailByStatusWaiterGroupByTableAndProduct();
+    }
+
+    @Override
+    public List<OrderDetailKitchenTableDTO> getOrderDetailByStatusAndTable(EOrderDetailStatus orderDetailStatus, Long tableId) {
+        return orderDetailRepository.getOrderDetailByStatusAndTable(orderDetailStatus,tableId);
+    }
+
+    @Override
+    public List<IOrderDetailKitchenTableDTO> getOrderItemByStatusCookingAndTable(Long tableId) {
+        return orderDetailRepository.getOrderItemByStatusCookingAndTable(tableId);
     }
 }

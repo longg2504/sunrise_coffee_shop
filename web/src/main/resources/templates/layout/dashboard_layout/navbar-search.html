@@ -2,8 +2,20 @@
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
         <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             <div class="input-group input-group-outline">
-                <label class="form-label">Type here...</label>
-                <input type="text" class="form-control" onfocus="focused(this)" >
+                <div class="navbar-nav align-items-center">
+                    <form method="get" id="formSearch">
+                        <div class="container-search d-flex">
+                            <div class="d-flex "
+                                 style="border: 1px solid lightgrey; border-radius: 25px">
+                                <input type="search" id="keySearch" name="keySearch" placeholder="Search..."
+                                       style="border: none" width="200px" class="form-control">
+                                <button type="button" class="btn btn-outline-success"
+                                        style="border: none;margin-top: 7px" id="searchbtn">
+                                    <i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <ul class="navbar-nav  justify-content-end">

@@ -130,7 +130,8 @@ public class AuthAPI {
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.SET_COOKIE, springCookie.toString())
-                .body(jwtResponse);
+                .body(jwtResponse)
+                ;
 
     }
 }
