@@ -1,9 +1,6 @@
 package com.cg.repository.orderDetail;
 
-import com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailChangeStatusResDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailDTO;
-import com.cg.domain.dto.orderDetail.OrderDetailProductUpResDTO;
+import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.enums.EOrderDetailStatus;
@@ -93,4 +90,40 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
 
     @Query("SELECT SUM(odt.amount) FROM OrderDetail AS odt WHERE odt.order.id = :orderId")
     BigDecimal findByOrderByIdSumAmount(@Param("orderId") Long orderId);
+
+
+
+    @Query("SELECT new com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO (" +
+            "od.product," +
+            "od.note," +
+            "SUM(od.quantity)," +
+            "od.status " +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "JOIN Product AS pd " +
+            "ON od.product.id = pd.id " +
+            "WHERE od.status = :orderDetailStatus " +
+            "GROUP BY od.product.id, od.note "
+    )
+    List<OrderDetailKitchenGroupDTO> getOrderItemByStatusGroupByProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
+
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailKitchenWaiterDTO (" +
+            "od.id," +
+            "od.order.tableOrder.id," +
+            "od.order.tableOrder.title," +
+            "od.product.id," +
+            "od.product.title," +
+            "od.note," +
+            "SUM(od.quantity)," +
+            "od.product.unit.title," +
+            "od.status," +
+            "od.updatedAt " +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "JOIN Product AS pd " +
+            "ON od.product.id = pd.id " +
+            "WHERE od.status = :orderDetailStatus " +
+            "GROUP BY od.order.tableOrder.id, od.product.id, od.note "
+    )
+    List<OrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
 }

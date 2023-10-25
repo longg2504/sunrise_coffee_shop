@@ -1,8 +1,10 @@
 package com.cg.service.orderDetail;
 
 import com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO;
+import com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
+import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.repository.order.OrderRepository;
 import com.cg.repository.orderDetail.OrderDetailRepository;
 import com.cg.service.order.IOrderService;
@@ -80,5 +82,10 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     @Override
     public OrderDetail findByOrderId(Long orderId) {
         return orderDetailRepository.findByOrderId(orderId);
+    }
+
+    @Override
+    public List<OrderDetailKitchenGroupDTO> getOrderItemByStatusGroupByProduct(EOrderDetailStatus orderDetailStatus) {
+        return orderDetailRepository.getOrderItemByStatusGroupByProduct(orderDetailStatus);
     }
 }
