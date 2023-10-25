@@ -17,5 +17,5 @@ public class TableOrderResDTO {
     private Long id;
     private String title;
     private ETableStatus status;
-    private Zone zone;
+    private String zoneTitle;
 }

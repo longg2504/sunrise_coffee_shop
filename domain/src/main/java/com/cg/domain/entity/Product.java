@@ -51,8 +51,8 @@ public class Product extends BaseEntity {
                 .setId(id)
                 .setTitle(title)
                 .setPrice(price)
-                .setUnitTitle(unit.getTitle())
-                .setCategoryTitle(category.getTitle())
+                .setUnit(unit)
+                .setCategory(category)
                 .setProductAvatar(productAvatar.toAvatarResDTO());
     }
 
@@ -71,8 +71,8 @@ public class Product extends BaseEntity {
                 .setId(id)
                 .setTitle(title)
                 .setPrice(price)
-                .setUnitTitle(unit.getTitle())
-                .setCategoryTitle(category.getTitle())
+                .setUnit(unit)
+                .setCategory(category)
                 .setProductAvatar(productAvatar.toAvatarResDTO());
     }
 
