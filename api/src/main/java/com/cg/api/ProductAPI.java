@@ -43,7 +43,7 @@ public class ProductAPI {
         search =  '%' + search + '%';
         Page<ProductDTO> productDTOS = productService.findProductByKeySearch(search,pageable);
         if (productDTOS.isEmpty()) {
-            throw new ResourceNotFoundException("Không có sản phẩm nào vui lòng kiểm tra lại hệ thống");
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }

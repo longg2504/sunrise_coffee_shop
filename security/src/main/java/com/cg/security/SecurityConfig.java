@@ -71,7 +71,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/login","/login/**",
                         "/logout","/logout/**",
                         "/api/test",
-                        "/api/**"
+                        "/api/**",
+                        "/ws/**",
+                        "/testsocket",
+                        "/api/socket"
                 ).permitAll()
                 .antMatchers("/dashboard","/dashboard/**").hasAnyAuthority("ADMIN")
 //                .antMatchers("/shop","/shop/**").hasAnyAuthority("STAFF")
