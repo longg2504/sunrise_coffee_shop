@@ -12,6 +12,6 @@ public interface IOrderDetailKitchenWaiterDTO {
     Long getQuantity();
     String getUnitTitle();
     Date getUpdatedAt();
-    Boolean getCooking();
+    String getStatus();
 
 }
