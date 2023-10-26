@@ -4,7 +4,8 @@ public enum EOrderDetailStatus {
     NEW ("NEW"),
     WAITER("WAITER"),
     DOING("DOING"),
-    DONE("DONE");
+    DONE("DONE"),
+    COOKING("COOKING");
 
 
     private final String value;

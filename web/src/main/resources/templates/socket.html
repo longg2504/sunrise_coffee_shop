@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Socket</title>
+    <!-- https://cdnjs.com/libraries/sockjs-client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <!-- https://cdnjs.com/libraries/stomp.js/ -->
+    <script  src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+    <h1>ĐÂY LÀ TRANG ĐỂ TEST SOCKET</h1>
+
+
+    <form>
+        <input id="txtData" type="text" placeholder="Enter data" />
+
+        <button type="button" onclick="handleSendData()">Send</button>
+    </form>
+    <script>
+      'use strict';
+
+      var stompClient = null;
+      var username = null;
+
+
+      function handleSendData(){
+          let data = {
+              sender: "QUANG DANG",
+              type: 'KITCHEN',
+              data: {
+                  tableId: 1,
+                  message: document.getElementById("txtData").value
+              }
+          }
+          sendMessage(data);
+
+      }
+      function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, onConnected, onError);
+      }
+      connect();
+
+      function onConnected() {
+        stompClient.subscribe('/topic/notification', onMessageReceived);
+        stompClient.send("/app/chat.sendMessage",
+                {},
+                JSON.stringify(
+                    {
+                        sender: "QUANG DANG",
+                        type: 'KITCHEN',
+                        data: {
+                            tableId: 1,
+                            message: "HELLO"
+                        }
+                    })
+        )
+      }
+
+
+      function onError(error) {
+        console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
+      }
+
+
+      function sendMessage(data) {
+        if(stompClient) {
+
+            console.log("DATA SEND", JSON.stringify(data))
+          stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(data));
+        }
+      }
+
+
+      function onMessageReceived(payload) {
+        var message = JSON.parse(payload.body);
+
+        console.log(message)
+      }
+    </script>
+</body>
+</html>

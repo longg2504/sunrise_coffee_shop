@@ -1,24 +1,26 @@
 package com.cg.controller;
 
-import com.cg.model.ChatMessage;
+import com.cg.domain.dto.socket.Notification;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WebSocketController {
 
-
-
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/notification")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+    public Notification sendMessage(@Payload Notification notification) {
+        System.out.println("SOCKET send data from client: " + notification);
+//        chatMessage.setContent(chatMessage.getContent() + " love");
+        return notification;
+    }
 
-        System.out.println("RECEIVED: " + chatMessage);
-        chatMessage.setContent(chatMessage.getContent() + " love lyly");
-        return chatMessage;
+    @RequestMapping("/testsocket")
+    public String testSocket(){
+        return "socket";
     }
 
 //    @MessageMapping("/chat.addUser")
