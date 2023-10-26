@@ -176,7 +176,7 @@ public class OrderAPI {
         return new ResponseEntity<>(orderDetail.getOrder().getTableOrder(), HttpStatus.OK);
     }
 
-    @PostMapping("/change-status-waiting")
+    @PostMapping("/change-status-cooking")
     public ResponseEntity<?> changeStatusWaiting(@RequestBody OrderChangeStatusReqDTO orderChangeStatusReqDTO){
         String username = appUtils.getPrincipalUsername();
         Optional<User> userOptional = userService.findByName(username);
@@ -199,7 +199,7 @@ public class OrderAPI {
             throw new DataInputException("Bàn đang rảnh không thể gửi thông báo tới bếp khi bàn đang rảnh!!!");
         }
 
-        OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToWaiter(orderChangeStatusReqDTO, userOptional.get());
+        OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
         return  new ResponseEntity<>(orderChangeStatusResDTO, HttpStatus.OK);
     }
 }

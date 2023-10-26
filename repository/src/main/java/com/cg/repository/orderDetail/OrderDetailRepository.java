@@ -61,6 +61,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.id, " +
             "od.product.title, " +
             "od.price," +
+            "od.count, " +
             "od.quantity ," +
             "od.quantityDelivery, " +
             "od.amount," +
@@ -75,6 +76,13 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
     )
 
     List<OrderDetailChangeStatusResDTO> findAllOrderDetailByStatus(@Param("orderId") Long orderId, @Param("orderDetailStatus")EOrderDetailStatus orderDetailStatus);
+    @Query("SELECT od " +
+            "FROM OrderDetail AS od " +
+            "WHERE od.order.id = :orderId " +
+            "AND od.product.id = :productId " +
+            "AND od.note = :note " +
+            "AND od.status = :orderDetailStatus ")
+    Optional<OrderDetail> findByOrderIdAndProductIdAndNoteAndOrderDetailStatus(@Param("orderId") Long orderId, @Param("productId") Long productId, @Param("note") String note, @Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
 
 
     @Query("SELECT odt FROM OrderDetail AS odt WHERE odt.order.id = :orderId")
@@ -98,6 +106,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.id, " +
             "od.product.title, " +
             "od.note, " +
+            "SUM(od.count), " +
             "SUM(od.quantity), " +
             "od.product.unit.title" +
             ") " +
@@ -119,6 +128,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.id," +
             "od.product.title," +
             "od.note," +
+            "SUM(od.count), " +
             "SUM(od.quantity)," +
             "od.product.unit.title," +
             "od.status," +
@@ -140,7 +150,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.order.tableOrder.title, " +
             "od.product.id, " +
             "od.product.title, " +
-            "od.note," +
+            "od.note, " +
+            "od.count," +
             "od.quantity," +
             "od.product.unit.title," +
             "od.status," +

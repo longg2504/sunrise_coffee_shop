@@ -28,7 +28,7 @@ public class OrderDetailProductUpResDTO {
     private String status;
     private AvatarResDTO avatar;
 
-    public OrderDetailProductUpResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity, BigDecimal amount, String note, Avatar avatar) {
+    public OrderDetailProductUpResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity,BigDecimal amount, String note, Avatar avatar) {
         this.id = id;
         this.productId = productId;
         this.title = title;

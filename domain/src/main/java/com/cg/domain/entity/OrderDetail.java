@@ -1,10 +1,12 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.orderDetail.OrderDetailKitchenWaiterDTO;
 import com.cg.domain.enums.EOrderDetailStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(name = "order_detail")
+@Accessors(chain = true)
 public class OrderDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +33,9 @@ public class OrderDetail extends BaseEntity {
 
     @Column(nullable = false)
     private Long quantity;
+
+    private Long count;
+
     @Column(scale = 0)
     private Long quantityDelivery;
 
@@ -43,4 +49,19 @@ public class OrderDetail extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private EOrderDetailStatus status;
+
+    public OrderDetailKitchenWaiterDTO toOrderItemKitchenWaiterDTO() {
+        return new OrderDetailKitchenWaiterDTO()
+                .setOrderItemId(id)
+                .setTableId(order.getTableOrder().getId())
+                .setTableName(order.getTableOrder().getTitle())
+                .setProductId(product.getId())
+                .setProductTitle(product.getTitle())
+                .setNote(note)
+                .setQuantity((long) quantity)
+                .setUnitTitle(product.getUnit().getTitle())
+                .setStatus(String.valueOf(status))
+                .setUpdatedAt(getUpdatedAt())
+                ;
+    }
 }

@@ -14,6 +14,9 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
 
     Optional<OrderDetail> findByOrderDetailByIdProductAndIdOrder(Long idProduct, Long idOrder, String note, String status);
 
+    Optional<OrderDetail> findByOrderIdAndProductIdAndNoteAndStatusWaiter(Long orderId, Long productId, String note);
+    Optional<OrderDetail> findByOrderIdAndProductIdAndNoteAndStatusDone(Long orderId, Long productId, String note);
+
     OrderDetail findByOrderId(Long orderId);
     List<OrderDetailKitchenGroupDTO> getOrderItemByStatusGroupByProduct(EOrderDetailStatus orderDetailStatus);
     List<IOrderDetailKitchenGroupDTO> getOrderDetailByStatusCookingGroupByProduct();
@@ -21,4 +24,7 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
     List<IOrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct();
     List<OrderDetailKitchenTableDTO> getOrderDetailByStatusAndTable(EOrderDetailStatus orderDetailStatus, Long tableId);
     List<IOrderDetailKitchenTableDTO> getOrderItemByStatusCookingAndTable(Long tableId);
+
+
+    OrderDetailKitchenWaiterDTO changeStatusFromCookingToWaiterOfProduct(OrderDetail orderItemCooking);
 }

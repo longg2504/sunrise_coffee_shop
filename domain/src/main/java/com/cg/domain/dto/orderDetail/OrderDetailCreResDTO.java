@@ -19,6 +19,7 @@ public class OrderDetailCreResDTO {
     private Long productId;
     private String title;
     private BigDecimal price;
+    private Long count;
     private Long quantity;
     private Long quantityDelivery;
     private BigDecimal amount;

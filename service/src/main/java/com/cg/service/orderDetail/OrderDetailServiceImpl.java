@@ -3,6 +3,7 @@ package com.cg.service.orderDetail;
 import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
+import com.cg.domain.entity.Product;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.repository.order.OrderRepository;
 import com.cg.repository.orderDetail.OrderDetailRepository;
@@ -79,6 +80,18 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
+    public Optional<OrderDetail> findByOrderIdAndProductIdAndNoteAndStatusWaiter(Long orderId, Long productId, String note) {
+        return orderDetailRepository.findByOrderIdAndProductIdAndNoteAndOrderDetailStatus(orderId, productId, note, EOrderDetailStatus.WAITING);
+    }
+
+    @Override
+    public Optional<OrderDetail> findByOrderIdAndProductIdAndNoteAndStatusDone(Long orderId, Long productId, String note) {
+        return orderDetailRepository.findByOrderIdAndProductIdAndNoteAndOrderDetailStatus(orderId, productId, note, EOrderDetailStatus.DONE);
+
+    }
+
+
+    @Override
     public OrderDetail findByOrderId(Long orderId) {
         return orderDetailRepository.findByOrderId(orderId);
     }
@@ -111,5 +124,62 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     @Override
     public List<IOrderDetailKitchenTableDTO> getOrderItemByStatusCookingAndTable(Long tableId) {
         return orderDetailRepository.getOrderItemByStatusCookingAndTable(tableId);
+    }
+
+    @Override
+    public OrderDetailKitchenWaiterDTO changeStatusFromCookingToWaiterOfProduct(OrderDetail orderItemCooking) {
+        Order order = orderItemCooking.getOrder();
+        Product product = orderItemCooking.getProduct();
+        String note = orderItemCooking.getNote();
+
+        Optional<OrderDetail> orderDetailOptional = this.findByOrderIdAndProductIdAndNoteAndStatusWaiter(order.getId(), product.getId(), note);
+
+        OrderDetailKitchenWaiterDTO orderDetailKitchenWaiterDTO;
+        if(!orderDetailOptional.isPresent()){
+            if(orderItemCooking.getQuantity() == 1){
+                orderItemCooking.setStatus(EOrderDetailStatus.WAITING);
+                orderDetailRepository.save(orderItemCooking);
+
+                orderDetailKitchenWaiterDTO = orderItemCooking.toOrderItemKitchenWaiterDTO();
+            }
+            else {
+                Long newQuantityCooking = orderItemCooking.getQuantity() - 1 ;
+                BigDecimal newAmountCooking = orderItemCooking.getPrice().multiply(BigDecimal.valueOf(newQuantityCooking));
+                orderItemCooking.setQuantity(newQuantityCooking);
+                orderItemCooking.setAmount(newAmountCooking);
+                orderDetailRepository.save(orderItemCooking);
+
+                OrderDetail newOrdetDetail = new OrderDetail();
+
+
+                orderDetailKitchenWaiterDTO = orderItemCooking.toOrderItemKitchenWaiterDTO();
+
+            }
+        }
+        else {
+            OrderDetail newOrderDetail = orderDetailOptional.get();
+
+            if(orderItemCooking.getQuantity() == 1){
+                orderDetailRepository.deleteById(orderItemCooking.getId());
+            }
+            else{
+                Long newQuantityCooking = orderItemCooking.getQuantity() - 1;
+                BigDecimal newAmountCooking = orderItemCooking.getPrice().multiply(BigDecimal.valueOf(newQuantityCooking));
+                orderItemCooking.setQuantity(newQuantityCooking);
+                orderItemCooking.setAmount(newAmountCooking);
+                orderDetailRepository.save(orderItemCooking);
+
+            }
+
+            Long newQuantityWaiter = orderItemCooking.getQuantity() + 1;
+            BigDecimal newAmountWaiter = orderItemCooking.getPrice().multiply(BigDecimal.valueOf(newQuantityWaiter));
+            newOrderDetail.setQuantity(newQuantityWaiter);
+            newOrderDetail.setAmount(newAmountWaiter);
+            orderDetailRepository.save(newOrderDetail);
+
+            orderDetailKitchenWaiterDTO = newOrderDetail.toOrderItemKitchenWaiterDTO();
+
+        }
+        return orderDetailKitchenWaiterDTO;
     }
 }

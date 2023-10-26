@@ -5,6 +5,7 @@ SELECT
     od.product_id AS productId,
     pd.title AS productTitle,
     od.note AS note,
+    SUM(od.count) AS count,
     SUM(od.quantity) AS quantity,
     u.title AS unitTitle,
     od.updated_at AS updatedAt,
