@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -21,6 +22,7 @@ import java.util.Date;
 public class StaffDTO {
     private Long id;
     private String fullName;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dob;
     private String phone;
     private LocationRegionDTO locationRegion;

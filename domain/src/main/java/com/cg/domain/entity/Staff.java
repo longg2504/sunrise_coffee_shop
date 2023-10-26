@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -28,7 +29,7 @@ public class Staff extends BaseEntity{
 
     @Column(name="full_name" , nullable = false)
     private String fullName;
-
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dob;
 
     @Column(nullable = false , length = 10)

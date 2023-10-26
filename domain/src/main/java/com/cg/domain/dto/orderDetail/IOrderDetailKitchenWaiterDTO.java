@@ -1,15 +1,17 @@
 package com.cg.domain.dto.orderDetail;
 
-
 import java.util.Date;
 
-public interface IOrderDetailKitchenTableDTO {
+public interface IOrderDetailKitchenWaiterDTO {
     Long getOrderDetailId();
+    Long getTableId();
     String getTableName();
     Long getProductId();
     String getProductTitle();
     String getNote();
-    int getQuantity();
+    Long getQuantity();
     String getUnitTitle();
     Date getUpdatedAt();
+    String getStatus();
+
 }

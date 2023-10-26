@@ -2,10 +2,9 @@ package com.cg.domain.enums;
 
 public enum EOrderDetailStatus {
     NEW ("NEW"),
-    WAITER("WAITER"),
-    DOING("DOING"),
-    DONE("DONE"),
-    COOKING("COOKING");
+    COOKING("COOKING"),
+    WAITING("WAITING"),
+    DONE("DONE");
 
 
     private final String value;

@@ -1,50 +1,76 @@
-<th:block th:fragment="modal-create">
+<th:block th:fragment="modal-create-staff">
   <div class="modal fade" id="modalCreate" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
        data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal create product</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal create staff</h1>
           <button type="button" class="btn-close btnClose" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <!--                    <div class="error-area"></div>-->
           <div class="modal-alert-danger hide">
           </div>
-
-          <form method="post" id="frmCreateProduct" enctype="multipart/form-data">
+          <form method="post" id="frmCreateStaff" enctype="multipart/form-data">
             <div class="container">
               <div class="row mb-3">
                 <div class="col-6">
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="productTitle" class="form-label">Title</label>
-                      <input type="text" class="form-control" id="productTitle" name="productTitle"
-                             placeholder="Enter title product">
+                      <label for="fullNameCre" class="form-label">Họ tên</label>
+                      <input type="text" class="form-control" id="fullNameCre" name="fullNameCre">
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="productPrice" class="form-label">Price</label>
-                      <input type="text" class="form-control" id="productPrice" name="productPrice"
-                             placeholder="Enter price">
+                      <label for="dobCre" class="form-label">Ngày sinh</label>
+                      <input type="date" class="form-control" id="dobCre" name="dobCre">
                       <div class="form-message"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="unitSelectCreate" class="form-label">Unit</label>
-                      <select class="form-select" name="unitSelectCreate" id="unitSelectCreate">
-                        <option value="1">Ly</option>
-                        <option value="2">Hộp</option>
-                        <option value="3">Gói</option>
-                        <option value="4">Cái</option>
-                      </select>
+                      <label for="phoneCre" class="form-label">Số điện thoại</label>
+                      <input type="text" class="form-control" id="phoneCre" name="phoneCre">
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="categorySelectCreate">Category</label>
-                      <select class="form-select" name="category" id="categorySelectCreate">
-                        <option value="" selected disabled>Select Category</option>
+                      <label for="provinceCre">Tỉnh/Thành phố</label>
+                      <select class="form-select" name="provinceCre" id="provinceCre"></select>
+                      <div class="form-message"></div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 form-group">
+                      <label for="districtCre">Quận/Huyện</label>
+                      <select class="form-select" name="districtCre" id="districtCre"></select>
+                      <div class="form-message"></div>
+                    </div>
+                    <div class="col-lg-6 form-group">
+                      <label for="wardCre">Phường/Xã</label>
+                      <select class="form-select" name="wardCre" id="wardCre"></select>
+                      <div class="form-message"></div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 form-group">
+                      <label for="addressCre" class="form-label">Địa chỉ</label>
+                      <input type="text" class="form-control" id="addressCre" name="addressCre">
+                      <div class="form-message"></div>
+                    </div>
+                    <div class="col-lg-6 form-group">
+                      <label for="userNameCre" class="form-label">Tài khoản</label>
+                      <input type="email" class="form-control" id="userNameCre" name="userNameCre">
+                      <div class="form-message"></div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 form-group">
+                      <label for="roleCre">Vai trò</label>
+                      <select class="form-select" name="roleCre" id="roleCre">
+                        <option value="2" selected>BARISTA</option>
+                        <option value="3" selected>CASHIER</option>
+                        <option value="4" selected>MANAGER</option>
+                        <option value="5" selected>STAFF_ORDER</option>
                       </select>
                       <div class="form-message"></div>
                     </div>
@@ -78,7 +104,6 @@
                   </section>
                 </div>
               </div>
-
             </div>
             <!--                        <div id="loading">-->
             <!--                        </div>-->
@@ -92,5 +117,11 @@
       </div>
     </div>
   </div>
-
 </th:block>
+
+
+
+
+
+
+

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/assets/css/magnific-popup.css">
     <link rel="stylesheet" href="/assets/css/preview-image.css">
     <link rel="stylesheet" href="/assets/iziToast/iziToast-1.4.0.min.css">
-<!--    <link rel="stylesheet" href="/assets/css/styles.css">-->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body class="g-sidenav-show  bg-gray-200">
 <th:block th:replace="/layout/dashboard_layout/left-sidebar :: left-sidebar-product"/>
@@ -16,31 +16,31 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <div class="col-sm-8">
-                    <button type="button" class="btn btn-light" id="btnShowModalCreate">
+                <div>
+                    <button type="button" class="btn btn-primary" id="btnShowModalCreate">
                         <i class="material-icons opacity-10">add</i>
                         Thêm món
                     </button>
                 </div>
                 <div class="card my-4">
-
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                             <h6 class="text-white text-capitalize ps-3">Product</h6>
                         </div>
                     </div>
-
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0" id="tbProduct">
+                            <table class="table align-items-center text-center mb-0" id="tbProduct">
                                 <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Ảnh</th>
                                     <th>Tên món</th>
-                                    <th>Ảnh </th>
-                                    <th>Giá </th>
-                                    <th>Đơn vị </th>
-                                    <th>Loại </th>
+                                    <th>Giá
+                                        <i id="sortByPrice" class="fas fa-arrows-alt-v"></i>
+                                    </th>
+                                    <th>Đơn vị</th>
+                                    <th>Loại</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -49,10 +49,24 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="row">
+                            <nav id="paginationNav">
+                                <ul class="pagination justify-content-center">
+                                    <!-- Các nút phân trang sẽ được thêm vào đây -->
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="spinner loader">
+                            <div class="spinner-sector spinner-sector-red"></div>
+                            <div class="spinner-sector spinner-sector-blue"></div>
+                            <div class="spinner-sector spinner-sector-green"></div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <th:block th:replace="/layout/dashboard_layout/footer"/>
 </main>
@@ -89,7 +103,6 @@
 
     page.elements.loader = $(".loader");
 
-    page.elements.btnShowCreateForm = $("#create");
     page.elements.btnShowModalCreate = $('#btnShowModalCreate');
     page.dialogs.elements.frmCreateProduct = $('#frmCreateProduct');
     page.dialogs.elements.modalCreate = $('#modalCreate')
@@ -123,23 +136,33 @@
     page.dialogs.elements.divImagePreviewCreate = $("#modalCreate div.image-preview, #modalCreate div.file-name");
     page.dialogs.elements.divImagePreviewUpdate = $("#modalUpdate div.image-preview, #modalUpdate div.file-name");
     page.dialogs.elements.btnClearImagePreview = $(".clear-image-preview i");
+
+    page.elements.sortByPrice = $('#sortByPrice');
+    page.elements.keySearch = $('#keySearch');
+    page.elements.pagination = $('.pagination')
     let productId = 0;
-
     let product = new Product();
-
-
+    let currentPage = 0;
+    let keySearch = "";
+    function showLoader() {
+        page.elements.loader.css('display', 'block');
+    }
+    function hideLoader() {
+        page.elements.loader.css('display', 'none');
+    }
     page.commands.renderProduct = (product) => {
         avatar = product.productAvatar;
         let imageThumbnail = (avatar && avatar.fileFolder && avatar.fileName) ?
             App.BASE_URL_CLOUD_IMAGE + "/" + App.IMAGE_SCALE_W_100_h_80_Q_90 + "/" + avatar.fileFolder + "/" + avatar.fileName :
             '';
+        let prices = product.price.toLocaleString('vi', {style: 'currency', currency: 'VND'});
 
         return `
                 <tr>
                     <td>${product.id}</td>
-                    <td>${product.title}</td>
                     <td><img src="${imageThumbnail}" alt="" /></td>
-                    <td>${product.price}</td>
+                    <td>${product.title}</td>
+                    <td>${prices}</td>
                     <td>${product.unit.title}</td>
                     <td>${product.category.title}</td>
                     <td>
@@ -154,14 +177,40 @@
             `
     }
 
-    page.commands.getAllProduct = () => {
+
+    page.commands.displayPagination = (totalPages, currentPage) => {
+        page.elements.pagination.empty();
+
+        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + 0 + ', 10, keySearch)">First</a></li>';
+        page.elements.pagination.append(firstBtn);
+
+        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (currentPage - 2) + ', 10, keySearch)">Pre</a></li>';
+        page.elements.pagination.append(previousBtn);
+
+        for (let i = 1; i <= totalPages; i++) {
+            let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+            page.elements.pagination.append(pageBtn);
+        }
+
+        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (currentPage) + ', 10, keySearch)">Next</a></li>';
+        page.elements.pagination.append(nextBtn);
+
+        let lastBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (totalPages - 1) + ', 10, keySearch)">Last</li>';
+        page.elements.pagination.append(lastBtn);
+    };
+
+    page.commands.getAllProduct = (pageProduct,pageSize,keySearch) => {
+        showLoader();
         $.ajax({
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             type: 'GET',
-            url: page.url.getAllProducts,
+            url: page.url.getAllProducts+`?page=${pageProduct}&size=${pageSize}&search=${keySearch}`,
+            data: {
+                keySearch: keySearch
+            }
         })
             .done((data) => {
                 console.log(data)
@@ -170,10 +219,13 @@
                     const str = page.commands.renderProduct(product)
                     page.elements.tbProductBody.prepend(str)
                 })
-
+                page.commands.displayPagination(data.totalPages, data.number + 1);
             })
             .fail(function () {
                 App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+            })
+            .always(function () {
+                hideLoader();
             });
     }
     page.commands.getProductById = (productId) => {
@@ -184,7 +236,6 @@
     }
 
     page.commands.getCategories = () => {
-
         $.ajax({
             headers: {
                 'Accept': 'application/json',
@@ -205,6 +256,22 @@
             })
             .fail((jqXHR, textStatus, errorThrown) => {
                 console.log('Error: ' + textStatus + ' ' + errorThrown);
+            })
+    }
+    page.commands.getAllProductSorted = (sortBy, direction) => {
+        page.elements.tbProductBody.empty();
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:9000/api/products/sorted?sort_by=' + sortBy + '&direction=' + direction
+        })
+            .done((data) => {
+                data.forEach(item => {
+                    const str = page.commands.renderProduct(item);
+                    page.elements.tbProductBody.prepend(str);
+                });
+            })
+            .fail((error) => {
+                console.log(error);
             })
     }
 
@@ -248,7 +315,7 @@
             imageObj.src = imageUrl;
         }
     }
-    page.dialogs.commands.changeImagePreviewCreate = () => {
+    page.commands.changeImagePreviewCreate = () => {
         let imageFile = page.dialogs.elements.imageFileCreate[0].files[0];
 
 
@@ -266,7 +333,7 @@
             page.dialogs.elements.clearImagePreview();
         }
     }
-    page.dialogs.commands.changeImagePreviewUpdate = () => {
+    page.commands.changeImagePreviewUpdate = () => {
         let imageFile = page.dialogs.elements.imageFileUpdate[0].files[0];
 
 
@@ -317,14 +384,14 @@
             $("#frmCreateProduct input.error").removeClass("error");
             page.dialogs.elements.frmCreateProduct.trigger("reset");
 
-            // $("#mdUpdate .modal-alert-danger").removeClass("show").addClass("hide").empty();
-            // $("#frmUpdateProduct input.error").removeClass("error");
-            // page.dialogs.elements.frmUpdateCustomer.trigger("reset");
+            $("#modalUpdate .modal-alert-danger").removeClass("show").addClass("hide").empty();
+            $("#frmUpdateProduct input.error").removeClass("error");
+            page.dialogs.elements.frmUpdateProduct.trigger("reset");
         })
     }
 
     page.commands.createProduct = () => {
-        page.elements.loader.removeClass("hide");
+        showLoader();
         page.dialogs.elements.btnCreate.prop('disabled', true);
 
         let formData = new FormData();
@@ -352,7 +419,7 @@
             App.SweetAlert.showErrorAlert(error.responseJSON.message);
             console.log(err)
         }).always(function () {
-            page.elements.loader.addClass("hide");
+            hideLoader();
             page.dialogs.elements.btnCreate.prop('disabled', false);
         });
     }
@@ -376,7 +443,7 @@
     }
     page.dialogs.commands.updateProduct = () => {
 
-        page.elements.loader.removeClass("hide");
+        showLoader();
         page.dialogs.elements.btnUpdate.prop('disabled', true);
 
         let formData = new FormData();
@@ -400,15 +467,50 @@
             const str = page.commands.renderProduct(data);
             const currentRow = $('#tr_' + productId);
             currentRow.replaceWith(str);
-            page.commands.getAllProduct();
+            page.commands.getAllProduct(keySearch,0,10);
             page.dialogs.elements.modalUpdate.modal('hide');
             App.SweetAlert.showSuccessAlert("Cập nhật thành công")
 
         }).fail((err) => {
             App.SweetAlert.showErrorAlert(err.responseJSON.message);
         }).always(function () {
-            page.elements.loader.addClass("hide");
+            hideLoader();
             page.dialogs.elements.btnUpdate.prop('disabled', false);
+        });
+    }
+
+    page.commands.showDeleteConfirm = () => {
+
+        App.SweetAlert.showDeleteConfirmDialog()
+            .then((result) => {
+                if (result.isConfirmed) {
+                    page.commands.deleteProduct();
+                }
+            });
+    }
+    page.commands.deleteProduct = () => {
+        showLoader();
+
+        $.ajax({
+            type: "DELETE",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: page.url.delete + '/' + productId
+        }).done((data) => {
+
+            App.SweetAlert.showSuccessAlert("Xoá món thành công");
+
+            $("#tr_" + product.id).remove();
+
+            page.commands.handleImagePopup();
+            page.commands.getAllProduct(keySearch,0,10);
+
+        }).fail(function (jqXHR) {
+            App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);
+        }).always(function () {
+            hideLoader();
         });
     }
 
@@ -427,10 +529,10 @@
             page.dialogs.elements.imageFileUpdate.trigger("click");
         });
         page.dialogs.elements.imageFileCreate.on("change", function () {
-            page.dialogs.commands.changeImagePreviewCreate();
+            page.commands.changeImagePreviewCreate();
         });
         page.dialogs.elements.imageFileUpdate.on("change", function () {
-            page.dialogs.commands.changeImagePreviewUpdate();
+            page.commands.changeImagePreviewUpdate();
         });
         page.elements.tbProductBody.on('click', '.edit', function () {
             productId = $(this).data('id');
@@ -440,6 +542,11 @@
         page.dialogs.elements.btnUpdate.on('click', () => {
             page.dialogs.elements.frmUpdateProduct.trigger("submit");
         })
+
+        page.elements.tbProductBody.on("click", ".delete", function () {
+            productId = $(this).data('id');
+            page.commands.showDeleteConfirm(productId);
+        });
         page.dialogs.elements.clearImagePreview = () => {
             page.dialogs.elements.imageFileCreate.val("");
             page.dialogs.elements.imageFileUpdate.val("");
@@ -463,6 +570,28 @@
         page.dialogs.elements.modalCreate.on("hidden.bs.modal", function () {
             page.commands.closeModalCreate();
         });
+
+        page.elements.keySearch.on('input', function () {
+            const keySearch = $(this).val();
+            // $('#formSearch').trigger("submit");
+            page.commands.getAllProduct(0,10,keySearch);
+
+        })
+
+        page.elements.sortByPrice.on('click', function () {
+            if ($(this).hasClass('asc')) {
+                $(this).addClass('desc').removeClass('asc');
+            } else {
+                if ($(this).hasClass('desc')) {
+                    $(this).addClass('asc').removeClass('desc');
+                }
+            }
+            const direction = $(this).hasClass('asc') ? 'asc' : 'desc';
+            const sortBy = 'price';
+            page.commands.getAllProductSorted(sortBy, direction);
+
+        })
+
     }
     page.dialogs.elements.frmCreateProduct.validate({
         rules: {
@@ -576,7 +705,7 @@
         }
     })
     page.loadData = () => {
-        page.commands.getAllProduct();
+        page.commands.getAllProduct(0,10,keySearch);
         page.commands.getCategories();
     }
     $(() => {
