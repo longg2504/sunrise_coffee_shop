@@ -5,7 +5,6 @@ public interface IOrderDetailKitchenGroupDTO {
     String getProductTitle();
     String getNote();
 
-    Long getCount();
     Long getQuantity();
 
     String getUnitTitle();

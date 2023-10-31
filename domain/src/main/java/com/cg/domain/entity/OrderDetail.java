@@ -34,8 +34,6 @@ public class OrderDetail extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
-    private Long count;
-
     @Column(scale = 0)
     private Long quantityDelivery;
 

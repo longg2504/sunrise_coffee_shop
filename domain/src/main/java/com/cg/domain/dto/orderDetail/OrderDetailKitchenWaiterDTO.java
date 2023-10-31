@@ -21,20 +21,18 @@ public class OrderDetailKitchenWaiterDTO {
     private Long productId;
     private String productTitle;
     private String note;
-    private Long count;
     private Long quantity;
     private String unitTitle;
     private String status;
     private Date updatedAt;
 
-    public OrderDetailKitchenWaiterDTO(Long orderItemId, Long tableId, String tableName, Long productId, String productTitle, String note, Long count, Long quantity, String unitTitle, EOrderDetailStatus status, Date updatedAt) {
+    public OrderDetailKitchenWaiterDTO(Long orderItemId, Long tableId, String tableName, Long productId, String productTitle, String note, Long quantity, String unitTitle, EOrderDetailStatus status, Date updatedAt) {
         this.orderItemId = orderItemId;
         this.tableId = tableId;
         this.tableName = tableName;
         this.productId = productId;
         this.productTitle = productTitle;
         this.note = note;
-        this.count = count;
         this.quantity = quantity;
         this.unitTitle = unitTitle;
         this.status = String.valueOf(status);

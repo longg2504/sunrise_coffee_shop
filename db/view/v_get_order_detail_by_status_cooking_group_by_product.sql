@@ -2,7 +2,6 @@ SELECT
     pd.id AS productId,
     pd.title AS productTitle,
     od.note AS note,
-    SUM(od.count) AS count,
     SUM(od.quantity) AS quantity,
     u.title AS unitTitle
 FROM order_detail AS od

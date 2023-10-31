@@ -104,7 +104,6 @@ public class OrderServiceImpl implements IOrderService {
 
 
         orderDetail.setProduct(product);
-        orderDetail.setCount(count);
         orderDetail.setQuantity(quantity);
         orderDetail.setQuantityDelivery(quantityDelivery);
         orderDetail.setPrice(price);
@@ -124,7 +123,6 @@ public class OrderServiceImpl implements IOrderService {
         orderDetailCreResDTO.setProductId(product.getId());
         orderDetailCreResDTO.setTitle(product.getTitle());
         orderDetailCreResDTO.setPrice(price);
-        orderDetailCreResDTO.setCount(count);
         orderDetailCreResDTO.setQuantity(quantity);
         orderDetailCreResDTO.setQuantityDelivery(quantityDelivery);
         orderDetailCreResDTO.setAmount(amount);
@@ -155,7 +153,6 @@ public class OrderServiceImpl implements IOrderService {
             orderDetail.setProduct(product);
             orderDetail.setOrder(order);
             orderDetail.setPrice(product.getPrice());
-            orderDetail.setCount(count);
             orderDetail.setQuantity(quantity);
             orderDetail.setQuantityDelivery(quantityDelivery);
             orderDetail.setAmount(amount);
@@ -172,8 +169,7 @@ public class OrderServiceImpl implements IOrderService {
             BigDecimal price = orderDetail.getPrice();
             BigDecimal newAmount = price.multiply(BigDecimal.valueOf(newQuantity));
             orderDetail.setQuantity(newQuantity);
-            orderDetail.setCount(newQuantity);
-            orderDetail.setQuantityDelivery(quantityDelivery);
+            orderDetail.setQuantityDelivery(orderDetail.getQuantityDelivery());
             orderDetail.setAmount(newAmount);
             orderDetail.setStatus(EOrderDetailStatus.NEW);
             orderDetailRepository.save(orderDetail);
@@ -279,5 +275,6 @@ public class OrderServiceImpl implements IOrderService {
         return count;
 
     }
+
 
 }

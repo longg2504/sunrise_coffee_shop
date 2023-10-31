@@ -8,7 +8,6 @@ SELECT
     pd.id AS productId,
     pd.title AS productTitle,
     od.note AS note,
-    od.count AS count,
     od.quantity AS quantity,
     u.title AS unitTitle,
     od.updated_at AS updatedAt

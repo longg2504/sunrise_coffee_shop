@@ -10,7 +10,6 @@ public interface IOrderDetailKitchenWaiterDTO {
     String getProductTitle();
     String getNote();
 
-    Long getCount();
     Long getQuantity();
     String getUnitTitle();
     Date getUpdatedAt();

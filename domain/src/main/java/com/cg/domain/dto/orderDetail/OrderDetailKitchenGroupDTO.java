@@ -20,17 +20,15 @@ public class OrderDetailKitchenGroupDTO {
     private Long productId;
     private String productTitle;
     private String note;
-    private Long count;
     private Long quantity;
     private String unitTitle;
     //com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO(java.lang.Long, java.lang.String, java.lang.String, java.lang.Long, java.lang.String)'
 
 
-    public OrderDetailKitchenGroupDTO(Long productId, String productTitle, String note, Long count, Long quantity, String unitTitle) {
+    public OrderDetailKitchenGroupDTO(Long productId, String productTitle, String note, Long quantity, String unitTitle) {
         this.productId = productId;
         this.productTitle = productTitle;
         this.note = note;
-        this.count = count;
         this.quantity = quantity;
         this.unitTitle = unitTitle;
     }
