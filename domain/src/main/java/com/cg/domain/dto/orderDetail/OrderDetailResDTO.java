@@ -21,7 +21,6 @@ public class OrderDetailResDTO {
     private String unitTitle;
     private BigDecimal price;
     private Long quantity;
-    private Long quantityDelivery;
     private String status;
     private BigDecimal amount;
     private String note;
@@ -29,12 +28,11 @@ public class OrderDetailResDTO {
     private String productTitle;
     private AvatarResDTO productAvatar;
 
-    public OrderDetailResDTO(Long id, String unitTitle, BigDecimal price, Long quantity, Long quantityDelivery, EOrderDetailStatus status, BigDecimal amount, String note, Long productId, String productTitle, Avatar productAvatar) {
+    public OrderDetailResDTO(Long id, String unitTitle, BigDecimal price, Long quantity, EOrderDetailStatus status, BigDecimal amount, String note, Long productId, String productTitle, Avatar productAvatar) {
         this.id = id;
         this.unitTitle = unitTitle;
         this.price = price;
         this.quantity = quantity;
-        this.quantityDelivery = quantityDelivery;
         this.status = String.valueOf(status);
         this.amount = amount;
         this.note = note;

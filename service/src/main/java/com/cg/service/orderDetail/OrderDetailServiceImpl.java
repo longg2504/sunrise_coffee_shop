@@ -181,7 +181,6 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                         .setOrder(orderItemCooking.getOrder())
                         .setProduct(orderItemCooking.getProduct())
                         .setQuantity(1L)
-                        .setQuantityDelivery(0L)
                         .setStatus(EOrderDetailStatus.WAITING)
                         .setNote(orderItemCooking.getNote())
                         .setPrice(orderItemCooking.getPrice())
@@ -549,6 +548,7 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                 BigDecimal newAmountWaiter = orderDetailWaiter.getPrice().multiply(BigDecimal.valueOf(newQuantityWaiter));
                 orderDetailWaiter.setQuantity(newQuantityWaiter);
                 orderDetailWaiter.setAmount(newAmountWaiter);
+                orderDetailWaiter.setStatus(EOrderDetailStatus.DELIVERY);
                 orderDetailRepository.save(orderDetailWaiter);
                 orderDetailRepository.deleteById(orderDetailDelivery.get().getId());
             }
@@ -556,6 +556,10 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                 orderDetailWaiter.setStatus(EOrderDetailStatus.DELIVERY);
                 orderDetailRepository.save(orderDetailWaiter);
             }
+        }
+        else {
+            orderDetailWaiter.setStatus(EOrderDetailStatus.DELIVERY);
+            orderDetailRepository.save(orderDetailWaiter);
         }
 
     }

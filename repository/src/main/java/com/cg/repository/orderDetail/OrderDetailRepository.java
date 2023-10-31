@@ -22,7 +22,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.title, " +
             "od.price, " +
             "od.quantity, " +
-            "od.quantityDelivery," +
             "od.amount, " +
             "od.product.unit ," +
             "od.note," +
@@ -40,7 +39,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.unit.title," +
             "od.product.price," +
             "od.quantity," +
-            "od.quantityDelivery," +
             "od.status," +
             "od.amount," +
             "od.note," +
@@ -69,7 +67,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.title, " +
             "od.price, " +
             "od.quantity," +
-            "od.quantityDelivery, " +
             "od.amount, " +
             "od.note," +
             "od.status, " +
@@ -88,7 +85,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.product.title, " +
             "od.price," +
             "od.quantity ," +
-            "od.quantityDelivery, " +
             "od.amount," +
             "od.note," +
             "od.status," +

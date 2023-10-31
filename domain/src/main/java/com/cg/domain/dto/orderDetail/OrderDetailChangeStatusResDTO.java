@@ -21,19 +21,17 @@ public class OrderDetailChangeStatusResDTO {
     private String title;
     private BigDecimal price;
     private Long quantity;
-    private Long quantityDelivery;
     private BigDecimal amount;
     private String note;
     private String status;
     private AvatarResDTO avatar;
 
-    public OrderDetailChangeStatusResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity, Long quantityDelivery, BigDecimal amount, String note, EOrderDetailStatus status, Avatar avatar) {
+    public OrderDetailChangeStatusResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity, BigDecimal amount, String note, EOrderDetailStatus status, Avatar avatar) {
         this.id = id;
         this.productId = productId;
         this.title = title;
         this.price = price;
         this.quantity = quantity;
-        this.quantityDelivery = quantityDelivery;
         this.amount = amount;
         this.note = note;
         this.status = String.valueOf(status);
