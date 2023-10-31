@@ -20,7 +20,6 @@ public class OrderDetailCreResDTO {
     private String title;
     private BigDecimal price;
     private Long quantity;
-    private Long quantityDelivery;
     private BigDecimal amount;
     private String note;
     private BigDecimal totalAmount;

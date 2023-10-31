@@ -34,9 +34,6 @@ public class OrderDetail extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
-    @Column(scale = 0)
-    private Long quantityDelivery;
-
     @Column(precision = 12 , scale = 0 , nullable = false)
     private BigDecimal price;
 

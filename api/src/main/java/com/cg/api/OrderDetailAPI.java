@@ -384,7 +384,7 @@ public class OrderDetailAPI {
     }
 
 
-    //change-status-one-product-of-table-from waiting-to-delivery
+    //change-status-one-product-of-table-from-waiting-to-stock-out
     @PostMapping("/kitchen/product/change-status-waiting-to-stock-out")
     public ResponseEntity<?> changeStatusFromWaitingToStockOutOfProduct(@RequestParam("orderDetailId") String orderDetailStr) {
         if (!validateUtils.isNumberValid(orderDetailStr)) {
@@ -418,7 +418,7 @@ public class OrderDetailAPI {
 
     //change-all-status-of-product-in-table-from-waiter-to-stock-out
     @PostMapping("/kitchen/table/change-status-waiting-to-stock-out-to-product")
-    public ResponseEntity<?> changeStatusFromWaitingToStockOutToProductOfOrder(@RequestParam("orderDetailId") String orderDetailStr) {
+        public ResponseEntity<?> changeStatusFromWaitingToStockOutToProductOfOrder(@RequestParam("orderDetailId") String orderDetailStr) {
         if (!validateUtils.isNumberValid(orderDetailStr)) {
             throw new DataInputException("ID chi tiết hóa đơn phải là ký tự số !!!");
         }
