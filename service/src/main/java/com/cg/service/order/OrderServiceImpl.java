@@ -96,10 +96,12 @@ public class OrderServiceImpl implements IOrderService {
         });
 
         OrderDetail orderDetail = new OrderDetail();
+        Long count = orderCreReqDTO.getQuantity();
         Long quantity = orderCreReqDTO.getQuantity();
         Long quantityDelivery = 0L;
         BigDecimal price = product.getPrice();
         BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
+
 
         orderDetail.setProduct(product);
         orderDetail.setQuantity(quantity);
@@ -135,6 +137,7 @@ public class OrderServiceImpl implements IOrderService {
     public OrderDetailUpResDTO upOrderDetail(OrderUpReqDTO orderUpReqDTO, Order order, Product product, User user) {
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(order);
         OrderDetail orderDetail = new OrderDetail();
+        Long quantityDelivery = 0L;
         if (orderDetails.size() == 0) {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
@@ -142,7 +145,8 @@ public class OrderServiceImpl implements IOrderService {
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote(), orderUpReqDTO.getStatus());
         if (orderDetailOptional.isEmpty()) {
             Long quantity = orderUpReqDTO.getQuantity();
-            Long quantityDelivery = 0L;
+            Long count = orderUpReqDTO.getQuantity();
+
             BigDecimal price = product.getPrice();
             BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 
@@ -185,7 +189,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderChangeStatusResDTO upStatusOrderItemToWaiter(OrderChangeStatusReqDTO orderChangeStatusReqDTO, User user) {
+    public OrderChangeStatusResDTO upStatusOrderItemToCooking(OrderChangeStatusReqDTO orderChangeStatusReqDTO, User user) {
         Long tableId = orderChangeStatusReqDTO.getTableId();
         Optional<Order> orderOptional = orderRepository.findByTableId(tableId);
         if (!orderOptional.isPresent()) {
@@ -271,5 +275,6 @@ public class OrderServiceImpl implements IOrderService {
         return count;
 
     }
+
 
 }

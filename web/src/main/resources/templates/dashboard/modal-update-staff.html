@@ -4,7 +4,7 @@
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal create staff</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal update staff</h1>
                     <button type="button" class="btn-close btnClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -17,24 +17,24 @@
                                 <div class="col-6">
                                     <div class="row">
                                         <div class="col-lg-6 form-group">
-                                            <label for="fullNameUp" class="form-label">Họ tên</label>
+                                            <label for="fullNameUp" class="form-label">Full name</label>
                                             <input type="text" class="form-control" id="fullNameUp" name="fullNameUp">
                                             <div class="form-message"></div>
                                         </div>
                                         <div class="col-lg-6 form-group">
-                                            <label for="dobUp" class="form-label">Ngày sinh</label>
+                                            <label for="dobUp" class="form-label">Date of Birth</label>
                                             <input type="date" class="form-control" id="dobUp" name="dobUp">
                                             <div class="form-message"></div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-6 form-group">
-                                            <label for="phoneUp" class="form-label">Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phoneUp" name="phoneUp">
+                                            <label for="phoneUp" class="form-label">Phone Number</label>
+                                            <input type="number" class="form-control" id="phoneUp" name="phoneUp">
                                             <div class="form-message"></div>
                                         </div>
                                         <div class="col-lg-6 form-group">
-                                            <label for="provinceUp">Tỉnh/Thành phố</label>
+                                            <label for="provinceUp">Province</label>
                                             <select class="form-select" name="provinceUp" id="provinceUp"></select>
                                             <div class="form-message"></div>
                                         </div>
@@ -42,19 +42,19 @@
                                     <div class="row">
 
                                         <div class="col-lg-6 form-group">
-                                            <label for="districtUp">Quận/Huyện</label>
+                                            <label for="districtUp">District</label>
                                             <select class="form-select" name="districtUp" id="districtUp"></select>
                                             <div class="form-message"></div>
                                         </div>
                                         <div class="col-lg-6 form-group">
-                                            <label for="wardUp">Phường/Xã</label>
+                                            <label for="wardUp">Ward</label>
                                             <select class="form-select" name="wardUp" id="wardUp"></select>
                                             <div class="form-message"></div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-6 form-group">
-                                            <label for="addressUp" class="form-label">Địa chỉ</label>
+                                            <label for="addressUp" class="form-label">Address</label>
                                             <input type="text" class="form-control" id="addressUp" name="addressUp">
                                             <div class="form-message"></div>
                                         </div>
@@ -92,6 +92,13 @@
                         </div>
                         <!--                        <div id="loading">-->
                         <!--                        </div>-->
+                        <div class="modal-loading-overlay" id="modalLoadingOverlay">
+                            <div class="spinner loader">
+                                <div class="spinner-sector spinner-sector-red"></div>
+                                <div class="spinner-sector spinner-sector-blue"></div>
+                                <div class="spinner-sector spinner-sector-green"></div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">

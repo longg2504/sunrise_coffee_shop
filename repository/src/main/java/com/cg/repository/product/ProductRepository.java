@@ -42,37 +42,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<ProductDTO> findProductByKeySearch(@Param("keySearch") String keySearch, Pageable pageable);
 
     List<ProductDTO> findAllByDeletedFalse(Sort sort);
-    @Query("select new com.cg.domain.dto.product.ProductDTO (" +
-            "p.id, " +
-            "p.title, " +
-            "p.price, " +
-            "p.unit, " +
-            "p.category, " +
-            "p.productAvatar) " +
-            "from Product as p " +
-            "where (p.title like %:title%) and p.deleted=false ")
-    Page<ProductDTO> findAllByDeletedFalse(String title,Pageable pageable);
-    @Query("select new com.cg.domain.dto.product.ProductDTO (" +
-            "p.id, " +
-            "p.title, " +
-            "p.price, " +
-            "p.unit, " +
-            "p.category, " +
-            "p.productAvatar) " +
-            "from Product as p " +
-            "where (p.title like %:title%) and p.deleted=false ")
-    List<ProductDTO> findAllByDeletedFalseAndTitleLike(String title);
-    @Query("SELECT NEW com.cg.domain.dto.product.ProductDTO ( " +
-            "pro.id, " +
-            "pro.title, " +
-            "pro.price, " +
-            "pro.unit, " +
-            "pro.category, " +
-            "pro.productAvatar " +
-            ") " +
-            "FROM Product as pro " +
-            "WHERE pro.deleted = false " +
-            "ORDER BY pro.id ASC"
-    )
-    Page<ProductDTO> findAllProductDTOPage(Pageable pageable);
+
+
+//    @Query(value = "CALL sp_top10_product_best_seller", nativeQuery = true)
+//    List<ProductBestSeller> getTop10ProductBestSeller();
 }

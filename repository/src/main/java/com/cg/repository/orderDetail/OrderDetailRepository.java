@@ -35,7 +35,33 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
     )
     List<OrderDetailByTableResDTO> getOrderDetailByTableResDTO(@Param("orderId") Long orderId);
 
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailResDTO (" +
+            "od.id," +
+            "od.product.unit.title," +
+            "od.product.price," +
+            "od.quantity," +
+            "od.quantityDelivery," +
+            "od.status," +
+            "od.amount," +
+            "od.note," +
+            "od.product.id," +
+            "od.product.title," +
+            "od.product.productAvatar" +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "WHERE od.deleted = false " +
+            "AND od.order.id = :orderId"
+    )
+    List<OrderDetailResDTO> getOrderDetailResDTOByOrderId(@Param("orderId") Long orderId);
+
+
     List<OrderDetail> findAllByOrder(Order order);
+
+    List<OrderDetail> findAllByOrderAndStatus(Order order, EOrderDetailStatus status);
+
+    List<OrderDetail> findAllByProductIdAndNoteAndStatusOrderByIdAsc(Long productId, String note, EOrderDetailStatus status);
+
+    List<OrderDetail> findAllByProductIdAndNoteAndStatus(Long productId, String note, EOrderDetailStatus status);
 
     @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailProductUpResDTO (" +
             "od.id, " +
@@ -75,6 +101,13 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
     )
 
     List<OrderDetailChangeStatusResDTO> findAllOrderDetailByStatus(@Param("orderId") Long orderId, @Param("orderDetailStatus")EOrderDetailStatus orderDetailStatus);
+    @Query("SELECT od " +
+            "FROM OrderDetail AS od " +
+            "WHERE od.order.id = :orderId " +
+            "AND od.product.id = :productId " +
+            "AND od.note = :note " +
+            "AND od.status = :orderDetailStatus ")
+    Optional<OrderDetail> findByOrderIdAndProductIdAndNoteAndOrderDetailStatus(@Param("orderId") Long orderId, @Param("productId") Long productId, @Param("note") String note, @Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
 
 
     @Query("SELECT odt FROM OrderDetail AS odt WHERE odt.order.id = :orderId")
@@ -130,7 +163,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "WHERE od.status = :orderDetailStatus " +
             "GROUP BY od.order.tableOrder.id, od.product.id, od.note "
     )
-    List<OrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
+    List<OrderDetailKitchenWaiterDTO> getOrderDetailWaiterGroupByTableAndProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
 
     @Query(value = "SELECT * FROM v_get_order_detail_waiter_group_by_table_and_product", nativeQuery = true)
     List<IOrderDetailKitchenWaiterDTO> getOrderDetailByStatusWaiterGroupByTableAndProduct();
@@ -140,7 +173,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.order.tableOrder.title, " +
             "od.product.id, " +
             "od.product.title, " +
-            "od.note," +
+            "od.note, " +
             "od.quantity," +
             "od.product.unit.title," +
             "od.status," +

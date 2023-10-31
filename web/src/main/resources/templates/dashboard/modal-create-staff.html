@@ -17,55 +17,55 @@
                 <div class="col-6">
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="fullNameCre" class="form-label">Họ tên</label>
+                      <label for="fullNameCre" class="form-label">Full Name</label>
                       <input type="text" class="form-control" id="fullNameCre" name="fullNameCre">
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="dobCre" class="form-label">Ngày sinh</label>
+                      <label for="dobCre" class="form-label">Date of Birth</label>
                       <input type="date" class="form-control" id="dobCre" name="dobCre">
                       <div class="form-message"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="phoneCre" class="form-label">Số điện thoại</label>
-                      <input type="text" class="form-control" id="phoneCre" name="phoneCre">
+                      <label for="phoneCre" class="form-label">Phone Number</label>
+                      <input type="number" class="form-control" id="phoneCre" name="phoneCre">
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="provinceCre">Tỉnh/Thành phố</label>
+                      <label for="provinceCre">Province</label>
                       <select class="form-select" name="provinceCre" id="provinceCre"></select>
                       <div class="form-message"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="districtCre">Quận/Huyện</label>
+                      <label for="districtCre">District</label>
                       <select class="form-select" name="districtCre" id="districtCre"></select>
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="wardCre">Phường/Xã</label>
+                      <label for="wardCre">Ward</label>
                       <select class="form-select" name="wardCre" id="wardCre"></select>
                       <div class="form-message"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="addressCre" class="form-label">Địa chỉ</label>
+                      <label for="addressCre" class="form-label">Address</label>
                       <input type="text" class="form-control" id="addressCre" name="addressCre">
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="userNameCre" class="form-label">Tài khoản</label>
+                      <label for="userNameCre" class="form-label">Username</label>
                       <input type="email" class="form-control" id="userNameCre" name="userNameCre">
                       <div class="form-message"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="roleCre">Vai trò</label>
+                      <label for="roleCre">Role</label>
                       <select class="form-select" name="roleCre" id="roleCre">
                         <option value="2" selected>BARISTA</option>
                         <option value="3" selected>CASHIER</option>
@@ -105,8 +105,13 @@
                 </div>
               </div>
             </div>
-            <!--                        <div id="loading">-->
-            <!--                        </div>-->
+            <div class="modal-loading-overlay" id="modalLoadingOverlay">
+              <div class="spinner loader">
+                <div class="spinner-sector spinner-sector-red"></div>
+                <div class="spinner-sector spinner-sector-blue"></div>
+                <div class="spinner-sector spinner-sector-green"></div>
+              </div>
+            </div>
           </form>
         </div>
         <div class="modal-footer">

@@ -43,7 +43,7 @@ public class ProductAPI {
         search =  '%' + search + '%';
         Page<ProductDTO> productDTOS = productService.findProductByKeySearch(search,pageable);
         if (productDTOS.isEmpty()) {
-            throw new ResourceNotFoundException("Không có sản phẩm nào vui lòng kiểm tra lại hệ thống");
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }
@@ -135,15 +135,6 @@ public class ProductAPI {
         });
         productService.deleteByIdTrue(product);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-    @GetMapping("/sorted")
-    public ResponseEntity<?> getAllProductSorted(@RequestParam(value = "sort_by", defaultValue = "price") String sortBy,
-                                                 @RequestParam(value = "direction", defaultValue = "asc") String direction) {
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        List<ProductDTO> productDTOS = productService.findAllByDeletedFalse(sort);
-        return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }
 
 }

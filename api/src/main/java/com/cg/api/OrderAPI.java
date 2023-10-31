@@ -1,5 +1,6 @@
 package com.cg.api;
 
+import com.cg.domain.dto.socket.Notification;
 import com.cg.domain.dto.order.OrderChangeStatusReqDTO;
 import com.cg.domain.dto.order.OrderChangeStatusResDTO;
 import com.cg.domain.dto.order.OrderCreReqDTO;
@@ -25,11 +26,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/orders")
 public class OrderAPI {
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
     @Autowired
     private IOrderService orderService;
 
@@ -146,9 +149,19 @@ public class OrderAPI {
         Order order = orders.get(0);
 
         if (tableOrder.getStatus() == ETableStatus.BUSY){
+
             OrderDetailUpResDTO orderDetailUpResDTO = orderService.upOrderDetail(orderUpReqDTO, order, product, userOptional.get());
+
+            Notification notification = new Notification();
+            notification.setType(Notification.NotificationType.RECEPTION);
+            notification.setSender("USER");
+            notification.setData(new Notification.Data(tableOrder.getId(), String.format("Bàn %s đã được cập nhật", tableOrder.getTitle())));
+
+            messagingTemplate.convertAndSend("/topic/notification", notification);
             return new ResponseEntity<>(orderDetailUpResDTO ,HttpStatus.OK);
         }
+
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -176,7 +189,7 @@ public class OrderAPI {
         return new ResponseEntity<>(orderDetail.getOrder().getTableOrder(), HttpStatus.OK);
     }
 
-    @PostMapping("/change-status-waiting")
+    @PostMapping("/change-status-cooking")
     public ResponseEntity<?> changeStatusWaiting(@RequestBody OrderChangeStatusReqDTO orderChangeStatusReqDTO){
         String username = appUtils.getPrincipalUsername();
         Optional<User> userOptional = userService.findByName(username);
@@ -199,7 +212,7 @@ public class OrderAPI {
             throw new DataInputException("Bàn đang rảnh không thể gửi thông báo tới bếp khi bàn đang rảnh!!!");
         }
 
-        OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToWaiter(orderChangeStatusReqDTO, userOptional.get());
+        OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
         return  new ResponseEntity<>(orderChangeStatusResDTO, HttpStatus.OK);
     }
 }

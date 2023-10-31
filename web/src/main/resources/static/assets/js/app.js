@@ -99,7 +99,12 @@ class App {
             text: t,
         });
     }
-
+static showSuccess(m) {
+    iziToast.success({
+        title: 'OK',
+        message: m,
+    });
+}
     static IziToast = class {
         static showSuccessAlert(m) {
             iziToast.success({
@@ -124,7 +129,7 @@ class App {
         static showDeleteConfirmDialog() {
             return Swal.fire({
                 icon: 'warning',
-                text: 'Bạn có chắc chắn muốn xoá ',
+                text: 'Bạn có muốn khóa tài khoản này không',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
