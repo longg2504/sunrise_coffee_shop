@@ -13,4 +13,6 @@ public interface IOrderDetailKitchenGroupDTO {
 
     String getStatus();
 
+    String getTableName();
+
 }

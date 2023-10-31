@@ -24,10 +24,11 @@ public class OrderDetailKitchenGroupDTO {
     private Long quantity;
     private String unitTitle;
     private String status;
+    private String tableName;
     //com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO(java.lang.Long, java.lang.String, java.lang.String, java.lang.Long, java.lang.String)'
 
 
-    public OrderDetailKitchenGroupDTO(Long orderDetailId,Long productId, String productTitle, String note, Long quantity, String unitTitle,EOrderDetailStatus status) {
+    public OrderDetailKitchenGroupDTO(Long orderDetailId,Long productId, String productTitle, String note, Long quantity, String unitTitle,EOrderDetailStatus status,String tableName) {
         this.orderDetailId = orderDetailId;
         this.productId = productId;
         this.productTitle = productTitle;
@@ -35,5 +36,6 @@ public class OrderDetailKitchenGroupDTO {
         this.quantity = quantity;
         this.unitTitle = unitTitle;
         this.status = String.valueOf(status);
+        this.tableName = tableName;
     }
 }

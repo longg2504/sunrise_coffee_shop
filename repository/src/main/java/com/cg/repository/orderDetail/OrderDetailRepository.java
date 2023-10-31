@@ -130,7 +130,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
             "od.note, " +
             "SUM(od.quantity), " +
             "od.product.unit.title," +
-            "od.status" +
+            "od.status," +
+            "od.order.tableOrder.title" +
             ") " +
             "FROM OrderDetail AS od " +
             "JOIN Product AS pd " +
