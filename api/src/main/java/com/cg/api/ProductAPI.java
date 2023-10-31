@@ -137,13 +137,4 @@ public class ProductAPI {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @GetMapping("/sorted")
-    public ResponseEntity<?> getAllProductSorted(@RequestParam(value = "sort_by", defaultValue = "price") String sortBy,
-                                                 @RequestParam(value = "direction", defaultValue = "asc") String direction) {
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        List<ProductDTO> productDTOS = productService.findAllByDeletedFalse(sort);
-        return new ResponseEntity<>(productDTOS, HttpStatus.OK);
-    }
-
 }

@@ -107,8 +107,35 @@ input.error {
 
 .spinner.loader {
     position: absolute; /* Loader */
-    top: 50%; /* Đặt top để nằm giữa dọc */
-    left: 50%; /* Đặt left để nằm giữa ngang */
+    top: 20%; /* Đặt top để nằm giữa dọc */
+    left: 45%; /* Đặt left để nằm giữa ngang */
     transform: translate(-50%, -50%); /* Để căn giữa loader */
     display: none; /* Ẩn loader ban đầu */
+}
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: none;
+    z-index: 9999;
+}
+.nav-link.active {
+    background: linear-gradient(195deg, #EC407A 0%, #D81B60 100%) !important;
+}
+.add {
+    background: #6DE22E;
+    color: black;
+    font-weight: 400;
+}
+.add:hover {
+    color: #fff;
+    background-color: #6DE22E;
+}
+.active>.page-link {
+    background-color: #f06294;
+    border-color: #EC407A;
+    color: #fff;
 }
