@@ -123,25 +123,12 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
-    @Override
-    public Page<ProductDTO> findAllByDeletedFalse(String title, Pageable pageable) {
-        return productRepository.findAllByDeletedFalse(title,pageable);
-    }
 
     @Override
     public List<ProductDTO> findAllByDeletedFalse(Sort sort) {
         return productRepository.findAllByDeletedFalse(sort);
     }
 
-    @Override
-    public List<ProductDTO> findAllByDeletedFalseAndTitleLike(String title) {
-        return productRepository.findAllByDeletedFalseAndTitleLike(title);
-    }
-
-    @Override
-    public Page<ProductDTO> findAllProductDTOPage(Pageable pageable) {
-        return productRepository.findAllProductDTOPage(pageable);
-    }
 
     @Override
     public Page<ProductDTO> findProductByKeySearch(String keySearch, Pageable pageable) {

@@ -17,9 +17,9 @@
         <div class="row">
             <div class="col-12">
                 <div>
-                    <button type="button" class="btn btn-primary" id="btnShowModalCreate">
+                    <button type="button" class="btn add" id="btnShowModalCreate">
                         <i class="material-icons opacity-10">add</i>
-                        Thêm món
+                        Add product
                     </button>
                 </div>
                 <div class="card my-4">
@@ -30,17 +30,15 @@
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table class="table align-items-center text-center mb-0" id="tbProduct">
+                            <table class="table table-hover align-items-center text-center mb-0 " id="tbProduct">
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Ảnh</th>
-                                    <th>Tên món</th>
-                                    <th>Giá
-                                        <i id="sortByPrice" class="fas fa-arrows-alt-v"></i>
-                                    </th>
-                                    <th>Đơn vị</th>
-                                    <th>Loại</th>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Price</th>
+                                    <th>Unit</th>
+                                    <th>Category</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -49,7 +47,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="row">
+                        <div class="row" id="scrollButton">
                             <nav id="paginationNav">
                                 <ul class="pagination justify-content-center">
                                     <!-- Các nút phân trang sẽ được thêm vào đây -->
@@ -62,7 +60,6 @@
                             <div class="spinner-sector spinner-sector-green"></div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -70,11 +67,9 @@
     </div>
     <th:block th:replace="/layout/dashboard_layout/footer"/>
 </main>
-
 <th:block th:replace="/layout/dashboard_layout/javascript"/>
 <th:block th:replace="/dashboard/modal-create :: modal-create"></th:block>
 <th:block th:replace="/dashboard/modal-update :: modal-update"></th:block>
-
 <script src="/assets/jquery/jquery-3.7.0.min.js"></script>
 <script src="/assets/jquery/jquery.validate.js"></script>
 <script src="/assets/bootstrap/v.5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -100,27 +95,25 @@
         }
     }
     page.elements.tbProductBody = $('#tbProduct tbody')
-
     page.elements.loader = $(".loader");
 
     page.elements.btnShowModalCreate = $('#btnShowModalCreate');
     page.dialogs.elements.frmCreateProduct = $('#frmCreateProduct');
     page.dialogs.elements.modalCreate = $('#modalCreate')
     page.dialogs.elements.errorCreateArea = $('#modalCreate .modal-body .modal-alert-danger')
-    page.dialogs.elements.productTitle = $('#productTitle')
-    page.dialogs.elements.productPrice = $('#productPrice')
-    page.dialogs.elements.unitSelectCreate = $('#unitSelectCreate')
-    page.dialogs.elements.categorySelectCreate = $('#categorySelectCreate')
+    page.dialogs.elements.titleCre = $('#titleCre')
+    page.dialogs.elements.priceCre = $('#priceCre')
+    page.dialogs.elements.unitCre = $('#unitCre')
+    page.dialogs.elements.categoryCre = $('#categoryCre')
     page.dialogs.elements.btnCreate = $('#btnCreate')
-
 
     page.dialogs.elements.frmUpdateProduct = $('#frmUpdateProduct');
     page.dialogs.elements.modalUpdate = $('#modalUpdate')
     page.dialogs.elements.errorUpdateArea = $('#modalUpdate .modal-body .modal-alert-danger')
-    page.dialogs.elements.productTitleUp = $('#productTitleUp')
-    page.dialogs.elements.productPriceUp = $('#productPriceUp')
-    page.dialogs.elements.unitSelectUp = $('#unitSelectUp')
-    page.dialogs.elements.categorySelectUp = $('#categorySelectUp')
+    page.dialogs.elements.titleUp = $('#titleUp')
+    page.dialogs.elements.priceUp = $('#priceUp')
+    page.dialogs.elements.unitUp = $('#unitUp')
+    page.dialogs.elements.categoryUp = $('#categoryUp')
     page.dialogs.elements.btnUpdate = $('#btnUpdate')
 
     page.dialogs.elements.wrapper = $("section .wrapper");
@@ -150,13 +143,20 @@
     function hideLoader() {
         page.elements.loader.css('display', 'none');
     }
-    page.commands.renderProduct = (product) => {
+    // Hiển thị loading spinner trong modal
+    function showModalLoading() {
+        $("#modalLoadingOverlay").show();
+    }
+    // Ẩn loading spinner trong modal
+    function hideModalLoading() {
+        $("#modalLoadingOverlay").hide();
+    }
+    page.commands.renderProduct = (product, index) => {
         avatar = product.productAvatar;
         let imageThumbnail = (avatar && avatar.fileFolder && avatar.fileName) ?
             App.BASE_URL_CLOUD_IMAGE + "/" + App.IMAGE_SCALE_W_100_h_80_Q_90 + "/" + avatar.fileFolder + "/" + avatar.fileName :
             '';
         let prices = product.price.toLocaleString('vi', {style: 'currency', currency: 'VND'});
-
         return `
                 <tr>
                     <td>${product.id}</td>
@@ -176,23 +176,54 @@
                 </tr>
             `
     }
-
-
+    document.getElementById("scrollButton").addEventListener("click", function() {
+        const targetElement = document.getElementById("targetElement");
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        }
+    });
     page.commands.displayPagination = (totalPages, currentPage) => {
         page.elements.pagination.empty();
+        const maxVisiblePages = 2; // Số trang tối đa hiển thị
+        const ellipsis = '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
 
-        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + 0 + ', 10, keySearch)">First</a></li>';
+        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(0, 10, keySearch)">First</a></li>';
         page.elements.pagination.append(firstBtn);
 
-        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (currentPage - 2) + ', 10, keySearch)">Pre</a></li>';
+        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (currentPage - 2) + ', 10, keySearch)"><</a></li>';
         page.elements.pagination.append(previousBtn);
 
-        for (let i = 1; i <= totalPages; i++) {
-            let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
-            page.elements.pagination.append(pageBtn);
+        if (totalPages <= maxVisiblePages) {
+            // Hiển thị tất cả các trang nếu tổng số trang nhỏ hơn hoặc bằng maxVisiblePages
+            for (let i = 1; i <= totalPages; i++) {
+                let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                page.elements.pagination.append(pageBtn);
+            }
+        } else {
+            // Hiển thị 3 trang và sử dụng dấu "..."
+            if (currentPage <= maxVisiblePages - 1) {
+                for (let i = 1; i <= maxVisiblePages; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+                page.elements.pagination.append(ellipsis);
+            } else if (currentPage >= totalPages - maxVisiblePages + 1) {
+                page.elements.pagination.append(ellipsis);
+                for (let i = totalPages - maxVisiblePages + 1; i <= totalPages; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+            } else {
+                page.elements.pagination.append(ellipsis);
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+                page.elements.pagination.append(ellipsis);
+            }
         }
 
-        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (currentPage) + ', 10, keySearch)">Next</a></li>';
+        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (currentPage) + ', 10, keySearch)">></a></li>';
         page.elements.pagination.append(nextBtn);
 
         let lastBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllProduct(' + (totalPages - 1) + ', 10, keySearch)">Last</li>';
@@ -200,6 +231,7 @@
     };
 
     page.commands.getAllProduct = (pageProduct,pageSize,keySearch) => {
+        currentPage = pageProduct;
         showLoader();
         $.ajax({
             headers: {
@@ -217,7 +249,7 @@
                 page.elements.tbProductBody.empty();
                 $.each(data.content, (index, product) => {
                     const str = page.commands.renderProduct(product)
-                    page.elements.tbProductBody.prepend(str)
+                    page.elements.tbProductBody.append(str)
                 })
                 page.commands.displayPagination(data.totalPages, data.number + 1);
             })
@@ -234,7 +266,6 @@
             url: page.url.getAllProducts + '/' + productId
         });
     }
-
     page.commands.getCategories = () => {
         $.ajax({
             headers: {
@@ -246,49 +277,27 @@
         })
             .done((data) => {
                 console.log(data)
-                page.dialogs.elements.categorySelectCreate.empty();
-                page.dialogs.elements.categorySelectUp.empty();
-
+                page.dialogs.elements.categoryCre.empty();
+                page.dialogs.elements.categoryUp.empty();
                 $.each(data, function (index, item) {
-                    page.dialogs.elements.categorySelectCreate.append($('<option>').val(item.id).text(item.title));
-                    page.dialogs.elements.categorySelectUp.append($('<option>').val(item.id).text(item.title));
+                    page.dialogs.elements.categoryCre.append($('<option>').val(item.id).text(item.title));
+                    page.dialogs.elements.categoryUp.append($('<option>').val(item.id).text(item.title));
                 })
             })
             .fail((jqXHR, textStatus, errorThrown) => {
                 console.log('Error: ' + textStatus + ' ' + errorThrown);
             })
     }
-    page.commands.getAllProductSorted = (sortBy, direction) => {
-        page.elements.tbProductBody.empty();
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:9000/api/products/sorted?sort_by=' + sortBy + '&direction=' + direction
-        })
-            .done((data) => {
-                data.forEach(item => {
-                    const str = page.commands.renderProduct(item);
-                    page.elements.tbProductBody.prepend(str);
-                });
-            })
-            .fail((error) => {
-                console.log(error);
-            })
-    }
-
     page.dialogs.commands.loadImageToCanvas = (imageFile, fileType, imageUrl) => {
         page.dialogs.elements.imagePreview.css("display", "");
         page.dialogs.elements.wrapper.addClass("active");
         page.dialogs.elements.wrapperContent.css("opacity", 0);
-
         let imageObj = new Image();
-
         imageObj.onload = function () {
             page.dialogs.elements.contextCreate.canvas.width = imageObj.width;
             page.dialogs.elements.contextCreate.canvas.height = imageObj.height;
             page.dialogs.elements.contextCreate.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
-
         };
-
         if (fileType === "BINARY") {
             imageObj.src = URL.createObjectURL(imageFile);
         } else {
@@ -299,16 +308,12 @@
         page.dialogs.elements.imagePreview.css("display", "");
         page.dialogs.elements.wrapper.addClass("active");
         page.dialogs.elements.wrapperContent.css("opacity", 0);
-
         let imageObj = new Image();
-
         imageObj.onload = function () {
             page.dialogs.elements.contextUpdate.canvas.width = imageObj.width;
             page.dialogs.elements.contextUpdate.canvas.height = imageObj.height;
             page.dialogs.elements.contextUpdate.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
-
         };
-
         if (fileType === "BINARY") {
             imageObj.src = URL.createObjectURL(imageFile);
         } else {
@@ -317,13 +322,9 @@
     }
     page.commands.changeImagePreviewCreate = () => {
         let imageFile = page.dialogs.elements.imageFileCreate[0].files[0];
-
-
         if (imageFile) {
             let reader = new FileReader();
-
             reader.readAsDataURL(imageFile);
-
             reader.onload = function (e) {
                 if (e.target.readyState === FileReader.DONE) {
                     page.dialogs.commands.loadImageToCanvas(imageFile, "BINARY", null);
@@ -335,13 +336,9 @@
     }
     page.commands.changeImagePreviewUpdate = () => {
         let imageFile = page.dialogs.elements.imageFileUpdate[0].files[0];
-
-
         if (imageFile) {
             let reader = new FileReader();
-
             reader.readAsDataURL(imageFile);
-
             reader.onload = function (e) {
                 if (e.target.readyState === FileReader.DONE) {
                     page.dialogs.commands.loadImageToCanvasUpdate(imageFile, "BINARY", null);
@@ -374,8 +371,6 @@
             fixedContentPos: false
         });
     }
-
-
     page.commands.clearForm = () => {
         $('.btnClose').on('click', () => {
             page.dialogs.elements.clearImagePreview();
@@ -389,16 +384,15 @@
             page.dialogs.elements.frmUpdateProduct.trigger("reset");
         })
     }
-
     page.commands.createProduct = () => {
         showLoader();
         page.dialogs.elements.btnCreate.prop('disabled', true);
 
         let formData = new FormData();
-        formData.append("title", page.dialogs.elements.productTitle.val().toString());
-        formData.append("price", page.dialogs.elements.productPrice.val().toString());
-        formData.append("unitId", page.dialogs.elements.unitSelectCreate.val());
-        formData.append("categoryId", page.dialogs.elements.categorySelectCreate.val());
+        formData.append("title", page.dialogs.elements.titleCre.val().toString());
+        formData.append("price", page.dialogs.elements.priceCre.val().toString());
+        formData.append("unitId", page.dialogs.elements.unitCre.val());
+        formData.append("categoryId", page.dialogs.elements.categoryCre.val());
         formData.append("productAvatar", page.dialogs.elements.imageFileCreate[0].files[0]);
 
         $.ajax({
@@ -423,7 +417,6 @@
             page.dialogs.elements.btnCreate.prop('disabled', false);
         });
     }
-
     page.commands.showModalUpdate = (productId) => {
 
         page.commands.getProductById(productId).then((data) => {
@@ -431,10 +424,10 @@
             console.log(product)
             avatar = product.productAvatar;
 
-            page.dialogs.elements.productTitleUp.val(product.title);
-            page.dialogs.elements.productPriceUp.val(product.price);
-            page.dialogs.elements.unitSelectUp.val(product.unit.id);
-            page.dialogs.elements.categorySelectUp.val(product.category.id);
+            page.dialogs.elements.titleUp.val(product.title);
+            page.dialogs.elements.priceUp.val(product.price);
+            page.dialogs.elements.unitUp.val(product.unit.id);
+            page.dialogs.elements.categoryUp.val(product.category.id);
             page.dialogs.commands.loadImageToCanvasUpdate(null, "", avatar.fileUrl);
             page.dialogs.elements.modalUpdate.modal('show');
             page.dialogs.elements.errorUpdateArea.empty();
@@ -442,20 +435,16 @@
 
     }
     page.dialogs.commands.updateProduct = () => {
-
         showLoader();
         page.dialogs.elements.btnUpdate.prop('disabled', true);
-
         let formData = new FormData();
-        formData.append("title", page.dialogs.elements.productTitleUp.val().toString());
-        formData.append("price", page.dialogs.elements.productPriceUp.val().toString());
-        formData.append("unitId", page.dialogs.elements.unitSelectUp.val().toString());
-        formData.append("categoryId", page.dialogs.elements.categorySelectUp.val());
-
+        formData.append("title", page.dialogs.elements.titleUp.val().toString());
+        formData.append("price", page.dialogs.elements.priceUp.val().toString());
+        formData.append("unitId", page.dialogs.elements.unitUp.val().toString());
+        formData.append("categoryId", page.dialogs.elements.categoryUp.val());
         if (page.dialogs.elements.imageFileUpdate[0].files[0] != null) {
             formData.append("productAvatar", page.dialogs.elements.imageFileUpdate[0].files[0]);
         }
-
         $.ajax({
             type: "PATCH",
             contentType: false,
@@ -467,10 +456,9 @@
             const str = page.commands.renderProduct(data);
             const currentRow = $('#tr_' + productId);
             currentRow.replaceWith(str);
-            page.commands.getAllProduct(keySearch,0,10);
-            page.dialogs.elements.modalUpdate.modal('hide');
             App.SweetAlert.showSuccessAlert("Cập nhật thành công")
-
+            page.commands.getAllProduct(currentPage,10,keySearch);
+            page.dialogs.elements.modalUpdate.modal('hide');
         }).fail((err) => {
             App.SweetAlert.showErrorAlert(err.responseJSON.message);
         }).always(function () {
@@ -478,9 +466,7 @@
             page.dialogs.elements.btnUpdate.prop('disabled', false);
         });
     }
-
     page.commands.showDeleteConfirm = () => {
-
         App.SweetAlert.showDeleteConfirmDialog()
             .then((result) => {
                 if (result.isConfirmed) {
@@ -490,7 +476,6 @@
     }
     page.commands.deleteProduct = () => {
         showLoader();
-
         $.ajax({
             type: "DELETE",
             headers: {
@@ -499,21 +484,20 @@
             },
             url: page.url.delete + '/' + productId
         }).done((data) => {
-
             App.SweetAlert.showSuccessAlert("Xoá món thành công");
-
             $("#tr_" + product.id).remove();
-
             page.commands.handleImagePopup();
-            page.commands.getAllProduct(keySearch,0,10);
-
+            if($("#tbProduct tbody tr").length > 1){
+                page.commands.getAllProduct(currentPage,10,keySearch);
+            }else{
+                page.commands.getAllProduct(currentPage - 1,10,keySearch);
+            }
         }).fail(function (jqXHR) {
             App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);
         }).always(function () {
             hideLoader();
         });
     }
-
 
     page.initializeControlEvent = () => {
         page.elements.btnShowModalCreate.on('click', () => {
@@ -573,7 +557,6 @@
 
         page.elements.keySearch.on('input', function () {
             const keySearch = $(this).val();
-            // $('#formSearch').trigger("submit");
             page.commands.getAllProduct(0,10,keySearch);
 
         })
@@ -593,119 +576,9 @@
         })
 
     }
-    page.dialogs.elements.frmCreateProduct.validate({
-        rules: {
-            productTitle: {
-                required: true,
-            },
-            productPrice: {
-                required: true,
-                min: 100,
-                max: 999999999,
-                number: true
-            },
-            unitSelectCreate: {
-                required: true
-            },
-            categorySelectCreate: {
-                required: true,
-                number: true
 
-            }
-        },
-        messages: {
-            productTitle: {
-                required: "Vui lòng nhập tên sản phẩm.",
-            },
-            productPrice: {
-                required: "Vui lòng nhập giá.",
-                number: "Giá sản phẩm phải là số.",
-                min: "Giá sản phẩm tối thiểu là 100 VNĐ.",
-                max: "Giá sản phẩm tối đa là 999.999.999 VNĐ."
-            },
-            unitSelectCreate: {
-                required: "Vui lòng nhập loại sản phẩm."
-            },
-            categorySelectCreate: {
-                required: "Vui lòng nhập loại sản phẩm.",
-                number: "Mã danh mục không đúng. Vui lòng chọn lại."
-            }
-        },
-        errorLabelContainer: "#modalCreate .modal-alert-danger",
-        errorPlacement: function (error, element) {
-            error.appendTo("#modalCreate .modal-alert-danger");
-        },
-        showErrors: function (errorMap, errorList) {
-            if (this.numberOfInvalids() > 0) {
-                $("#modalCreate .modal-alert-danger").removeClass("hide").addClass("show");
-            } else {
-                $("#modalCreate .modal-alert-danger").removeClass("show").addClass("hide").empty();
-                $("#frmCreateProduct input.error").removeClass("error");
-            }
-            this.defaultShowErrors();
-        },
-        submitHandler: function () {
-            page.commands.createProduct();
-        }
-    })
-    page.dialogs.elements.frmUpdateProduct.validate({
-        rules: {
-            productTitleUp: {
-                required: true,
-            },
-            productPriceUp: {
-                required: true,
-                min: 100,
-                max: 999999999,
-                number: true
-            },
-            unitSelectUp: {
-                required: true
-            },
-            categorySelectUp: {
-                required: true,
-                number: true
-
-            }
-        },
-        messages: {
-            productTitleUp: {
-                required: "Vui lòng nhập tên sản phẩm.",
-            },
-            productPriceUp: {
-                required: "Vui lòng nhập giá.",
-                number: "Giá sản phẩm phải là số.",
-                min: "Giá sản phẩm tối thiểu là 100 VNĐ.",
-                max: "Giá sản phẩm tối đa là 999.999.999 VNĐ."
-            },
-
-            unitSelectUp: {
-                required: "Vui lòng nhập loại sản phẩm."
-            },
-            categorySelectUp: {
-                required: "Vui lòng nhập loại sản phẩm.",
-                number: "Mã danh mục không đúng. Vui lòng chọn lại."
-            }
-        },
-        errorLabelContainer: "#modalUpdate .modal-alert-danger",
-        errorPlacement: function (error, element) {
-            error.appendTo("#modalUpdate .modal-alert-danger");
-        },
-        showErrors: function (errorMap, errorList) {
-            if (this.numberOfInvalids() > 0) {
-                $("#modalUpdate .modal-alert-danger").removeClass("hide").addClass("show");
-            } else {
-                $("#modalUpdate .modal-alert-danger").removeClass("show").addClass("hide").empty();
-                $("#frmUpdateProduct input.error").removeClass("error");
-            }
-            this.defaultShowErrors();
-        },
-        submitHandler: function () {
-            page.dialogs.commands.updateProduct();
-        }
-    })
     page.loadData = () => {
-        page.commands.getAllProduct(0,10,keySearch);
+        page.commands.getAllProduct(currentPage,10,keySearch);
         page.commands.getCategories();
     }
     $(() => {
@@ -713,5 +586,7 @@
         page.initializeControlEvent();
     })
 </script>
+<script src="/assets/js/product-validation.js"></script>
+
 </body>
 </html>

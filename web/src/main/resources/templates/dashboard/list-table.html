@@ -17,9 +17,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="col-sm-8">
-                    <button type="button" class="btn btn-primary" id="btnShowModalCreate">
+                    <button type="button" class="btn add" id="btnShowModalCreate">
                         <i class="material-icons opacity-10">add</i>
-                        Thêm bàn
+                        Add Table
                     </button>
                 </div>
                 <div class="card my-4">
@@ -34,8 +34,8 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Bàn</th>
-                                    <th>Tầng</th>
+                                    <th>Table</th>
+                                    <th>Zone</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -119,26 +119,56 @@
     function hideLoader() {
         page.elements.loader.css('display', 'none');
     }
+
     page.commands.displayPagination = (totalPages, currentPage) => {
         page.elements.pagination.empty();
+        const maxVisiblePages = 2; // Số trang tối đa hiển thị
+        const ellipsis = '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
 
-        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + 0 + ', 10, keySearch)">First</a></li>';
+        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(0, 10, keySearch)">First</a></li>';
         page.elements.pagination.append(firstBtn);
 
-        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (currentPage - 2) + ', 10, keySearch)">Pre</a></li>';
+        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (currentPage - 2) + ', 10, keySearch)"><</a></li>';
         page.elements.pagination.append(previousBtn);
 
-        for (let i = 1; i <= totalPages; i++) {
-            let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
-            page.elements.pagination.append(pageBtn);
+        if (totalPages <= maxVisiblePages) {
+            // Hiển thị tất cả các trang nếu tổng số trang nhỏ hơn hoặc bằng maxVisiblePages
+            for (let i = 1; i <= totalPages; i++) {
+                let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                page.elements.pagination.append(pageBtn);
+            }
+        } else {
+            // Hiển thị 3 trang và sử dụng dấu "..."
+            if (currentPage <= maxVisiblePages - 1) {
+                for (let i = 1; i <= maxVisiblePages; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+                page.elements.pagination.append(ellipsis);
+            } else if (currentPage >= totalPages - maxVisiblePages + 1) {
+                page.elements.pagination.append(ellipsis);
+                for (let i = totalPages - maxVisiblePages + 1; i <= totalPages; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+            } else {
+                page.elements.pagination.append(ellipsis);
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+                page.elements.pagination.append(ellipsis);
+            }
         }
 
-        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (currentPage) + ', 10, keySearch)">Next</a></li>';
+        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (currentPage) + ', 10, keySearch)">></a></li>';
         page.elements.pagination.append(nextBtn);
 
         let lastBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (totalPages - 1) + ', 10, keySearch)">Last</li>';
         page.elements.pagination.append(lastBtn);
     };
+
+
     page.commands.getAllTableOrder = (pageTable,pageSize,keySearch) => {
         showLoader();
         $.ajax({

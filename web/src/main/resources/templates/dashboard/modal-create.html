@@ -18,22 +18,22 @@
                 <div class="col-6">
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="productTitle" class="form-label">Title</label>
-                      <input type="text" class="form-control" id="productTitle" name="productTitle"
+                      <label for="titleCre" class="form-label">Title</label>
+                      <input type="text" class="form-control" id="titleCre" name="titleCre"
                              placeholder="Enter title product">
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="productPrice" class="form-label">Price</label>
-                      <input type="text" class="form-control" id="productPrice" name="productPrice"
+                      <label for="priceCre" class="form-label">Price</label>
+                      <input type="text" class="form-control" id="priceCre" name="priceCre"
                              placeholder="Enter price">
                       <div class="form-message"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-lg-6 form-group">
-                      <label for="unitSelectCreate" class="form-label">Unit</label>
-                      <select class="form-select" name="unitSelectCreate" id="unitSelectCreate">
+                      <label for="unitCre" class="form-label">Unit</label>
+                      <select class="form-select" name="unitCre" id="unitCre">
                         <option value="1">Ly</option>
                         <option value="2">Hộp</option>
                         <option value="3">Gói</option>
@@ -42,8 +42,8 @@
                       <div class="form-message"></div>
                     </div>
                     <div class="col-lg-6 form-group">
-                      <label for="categorySelectCreate">Category</label>
-                      <select class="form-select" name="category" id="categorySelectCreate">
+                      <label for="categoryCre">Category</label>
+                      <select class="form-select" name="categoryCre" id="categoryCre">
                         <option value="" selected disabled>Select Category</option>
                       </select>
                       <div class="form-message"></div>
@@ -82,6 +82,13 @@
             </div>
             <!--                        <div id="loading">-->
             <!--                        </div>-->
+            <div class="modal-loading-overlay" id="modalLoadingOverlay">
+              <div class="spinner loader">
+                <div class="spinner-sector spinner-sector-red"></div>
+                <div class="spinner-sector spinner-sector-blue"></div>
+                <div class="spinner-sector spinner-sector-green"></div>
+              </div>
+            </div>
           </form>
         </div>
         <div class="modal-footer">

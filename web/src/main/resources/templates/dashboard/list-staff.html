@@ -17,9 +17,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="col-sm-8">
-                    <button type="button" class="btn btn-primary" id="btnShowModalCreate">
+                    <button type="button" class="btn add" id="btnShowModalCreate">
                         <i class="material-icons opacity-10">add</i>
-                        Thêm nhân viên
+                        Add staff
                     </button>
                 </div>
                 <div class="card my-4">
@@ -36,15 +36,15 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Ảnh</th>
-                                    <th>Họ tên</th>
-                                    <th>Ngày sinh</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Tỉnh/Thành phố</th>
-                                    <th>Quận/Huyện</th>
-                                    <th>Phường/Xã</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Vai trò</th>
+                                    <th>Avatar</th>
+                                    <th>Full Name</th>
+                                    <th>Date of Birth</th>
+                                    <th>Phone Number</th>
+                                    <th>Province</th>
+                                    <th>District</th>
+                                    <th>Ward</th>
+                                    <th>Address</th>
+                                    <th>Role</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -53,7 +53,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="row">
+                        <div class="row" id="scrollButton">
                             <nav id="paginationNav">
                                 <ul class="pagination justify-content-center">
                                     <!-- Các nút phân trang sẽ được thêm vào đây -->
@@ -156,6 +156,7 @@
     let user = new User();
     let staffId = 0;
     let keySearch = "";
+    let currentPage =0;
     page.commands.renderStaff = (staff) => {
         avatar = staff.staffAvatar;
         let imageThumbnail = (avatar && avatar.fileFolder && avatar.fileName) ?
@@ -180,32 +181,67 @@
                             <i class="fas fa-user-edit"></i>
                         </button>
                         <button class="btn btn-outline-danger delete" data-id="${staff.id}" >
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-lock"></i>
                         </button>
                     </td>
                 </tr>
             `
     }
+    document.getElementById("scrollButton").addEventListener("click", function() {
+        const targetElement = document.getElementById("targetElement");
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: "smooth" });
+        }
+    });
+
     page.commands.displayPagination = (totalPages, currentPage) => {
         page.elements.pagination.empty();
+        const maxVisiblePages = 2; // Số trang tối đa hiển thị
+        const ellipsis = '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
 
-        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + 0 + ', 10, keySearch)">First</a></li>';
+        let firstBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(0, 10, keySearch)">First</a></li>';
         page.elements.pagination.append(firstBtn);
 
-        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (currentPage - 2) + ', 10, keySearch)">Pre</a></li>';
+        let previousBtn = '<li class="page-item' + (currentPage === 1 ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (currentPage - 2) + ', 10, keySearch)"><</a></li>';
         page.elements.pagination.append(previousBtn);
 
-        for (let i = 1; i <= totalPages; i++) {
-            let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
-            page.elements.pagination.append(pageBtn);
+        if (totalPages <= maxVisiblePages) {
+            // Hiển thị tất cả các trang nếu tổng số trang nhỏ hơn hoặc bằng maxVisiblePages
+            for (let i = 1; i <= totalPages; i++) {
+                let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                page.elements.pagination.append(pageBtn);
+            }
+        } else {
+            // Hiển thị 3 trang và sử dụng dấu "..."
+            if (currentPage <= maxVisiblePages - 1) {
+                for (let i = 1; i <= maxVisiblePages; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+                page.elements.pagination.append(ellipsis);
+            } else if (currentPage >= totalPages - maxVisiblePages + 1) {
+                page.elements.pagination.append(ellipsis);
+                for (let i = totalPages - maxVisiblePages + 1; i <= totalPages; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+            } else {
+                page.elements.pagination.append(ellipsis);
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    let pageBtn = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (i - 1) + ', 10, keySearch)">' + i + '</a></li>';
+                    page.elements.pagination.append(pageBtn);
+                }
+                page.elements.pagination.append(ellipsis);
+            }
         }
 
-        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (currentPage) + ', 10, keySearch)">Next</a></li>';
+        let nextBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (currentPage) + ', 10, keySearch)">></a></li>';
         page.elements.pagination.append(nextBtn);
 
         let lastBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllStaff(' + (totalPages - 1) + ', 10, keySearch)">Last</li>';
         page.elements.pagination.append(lastBtn);
     };
+
 
     function showLoader() {
         page.elements.loader.css('display', 'block');
@@ -214,6 +250,15 @@
     function hideLoader() {
         page.elements.loader.css('display', 'none');
     }
+    // Hiển thị loading spinner trong modal
+    // function showModalLoading() {
+    //     $("#modalLoadingOverlay").show();
+    // }
+    //
+    // // Ẩn loading spinner trong modal
+    // function hideModalLoading() {
+    //     $("#modalLoadingOverlay").hide();
+    // }
 
     page.commands.getStaffById = (id) => {
         return $.ajax({
@@ -222,6 +267,7 @@
         });
     }
     page.commands.getAllStaff = (pageStaff,pageSize,keySearch) => {
+        currentPage = pageStaff;
         showLoader();
         $.ajax({
             headers: {
@@ -509,7 +555,7 @@
 
     }
 
-    page.commands.updateStaff = () => {
+    page.commands.updateStaff = () => {;
         showLoader();
         const provinceId = page.dialogs.elements.provinceUp.val();
         const provinceName = page.dialogs.elements.provinceUp.find('option:selected').text();
@@ -567,8 +613,7 @@
                 currentRow.replaceWith(str);
                 const formattedDob = moment(staff.dob).format("DD-MM-YYYY");
                 page.dialogs.elements.dobUp.val(formattedDob);
-
-                page.commands.getAllStaff(0,10,keySearch);
+                page.commands.getAllStaff(currentPage,10,keySearch);
                 page.dialogs.elements.modalUpdate.modal('hide');
                 App.SweetAlert.showSuccessAlert("Cập nhật thành công")
             })
@@ -591,7 +636,6 @@
     }
     page.commands.deleteStaff = () => {
         showLoader();
-
         $.ajax({
             type: "DELETE",
             headers: {
@@ -600,13 +644,15 @@
             },
             url: page.url.delete + '/' + staffId,
         }).done((data) => {
-
-            App.SweetAlert.showSuccessAlert("Xoá thành công");
-
+            App.SweetAlert.showSuccessAlert("Khóa tài khoản thành công");
             $("#tr_" + staffId).remove();
-            console.log("ịui", $("#tr_" + staffId));
             page.commands.handleImagePopup();
-            page.commands.getAllStaff(0,10,keySearch);
+            if($("#tbStaff tbody tr").length > 1){
+                page.commands.getAllStaff(currentPage,10,keySearch);
+            }else{
+                page.commands.getAllStaff(currentPage - 1,10,keySearch);
+            }
+
 
         }).fail(function (jqXHR) {
             App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);
@@ -704,7 +750,7 @@
         })
     }
     page.loadData = () => {
-        page.commands.getAllStaff(0,10,keySearch);
+        page.commands.getAllStaff(currentPage,10,keySearch);
 
         page.commands.getAllProvinces().then(() => {
             const provinceId = page.dialogs.elements.provinceCre.val();
@@ -721,125 +767,8 @@
         page.initializeControlEvent();
     })
 
-    page.dialogs.elements.frmCreateStaff.validate({
-        rules: {
-            fullNameCre: {
-                required: true,
-                minlength: 5,
-                maxlength: 25
-            },
-            phoneCre: {
-                required: true,
-            },
-            userNameCre: {
-                required: true,
-                isEmail: true
-            },
-            dobCre: {
-                required: true,
-            },
-            addressCre: {
-                required: true
-            }
-
-        },
-        messages: {
-            fullNameCre: {
-                required: "Vui lòng nhập họ và tên",
-                minlength: 'Họ tên tối thiểu là 5 ký tự',
-                maxlength: 'Họ tên tối đa là 25 ký tự'
-            },
-            phoneCre: {
-                required: "Vui lòng nhập số điện thoại",
-            },
-            userNameCre: {
-                required: "Vui lòng nhập tài khoản",
-            },
-            dobCre: {
-                required: "Vui lòng nhập ngày sinh",
-            },
-            addressCre: {
-                required: "Vui lòng nhập địa chỉ "
-            }
-
-
-        },
-        errorLabelContainer: "#modalCreate .modal-alert-danger",
-        errorPlacement: function (error, element) {
-            error.appendTo("#modalCreate .modal-alert-danger");
-        },
-        showErrors: function (errorMap, errorList) {
-            if (this.numberOfInvalids() > 0) {
-                $("#modalCreate .modal-alert-danger").removeClass("hide").addClass("show");
-            } else {
-                $("#modalCreate .modal-alert-danger").removeClass("show").addClass("hide").empty();
-                $("#frmCreateStaff input.error").removeClass("error");
-            }
-            this.defaultShowErrors();
-        },
-        submitHandler: function () {
-            page.commands.handleCreateStaff();
-        }
-
-
-    })
-    page.dialogs.elements.frmUpdateStaff.validate({
-        rules: {
-            fullNameUp: {
-                required: true,
-                minlength: 5,
-                maxlength: 25
-
-            },
-            phoneUp: {
-                required: true,
-                isNumberWithSpace: true
-            },
-            addressUp: {
-                required: true,
-            }
-
-        },
-        messages: {
-            fullNameUp: {
-                required: "Vui lòng nhập họ và tên",
-                minlength: 'Họ tên tối thiểu là 5 ký tự',
-                maxlength: 'Họ tên tối đa là 25 ký tự'
-
-            },
-            phoneUp: {
-                required: "Vui lòng nhập số điện thoại",
-                isNumberWithSpace: "Vui lòng nhập phone bằng ký tự số"
-            },
-            addressUp: {
-                required: "Vui lòng nhập địa chỉ",
-            }
-        },
-        errorLabelContainer: "#modalUpdate .modal-alert-danger",
-        errorPlacement: function (error, element) {
-            error.appendTo("#modalUpdate .modal-alert-danger");
-        },
-        showErrors: function (errorMap, errorList) {
-            if (this.numberOfInvalids() > 0) {
-                $("#modalUpdate .modal-alert-danger").removeClass("hide").addClass("show");
-            } else {
-                $("#modalUpdate .modal-alert-danger").removeClass("show").addClass("hide").empty();
-                $("#formUpdate input.error").removeClass("error");
-            }
-            this.defaultShowErrors();
-        },
-        submitHandler: function () {
-            page.commands.updateStaff();
-        }
-    })
-    $.validator.addMethod("isEmail", function (value, element) {
-        return this.optional(element) || /[A-Za-z0-9+_.-]+@[a-z]+\.[a-z]+/.test(value);
-    }, "Vui lòng nhập đúng định dạng email");
-
-    $.validator.addMethod("isNumberWithSpace", function (value, element) {
-        return this.optional(element) || /^\s*[0-9,\s]+\s*$/i.test(value);
-    }, "Vui lòng nhập giá trị số");
-
 </script>
+<script src="/assets/js/staff-validation.js"></script>
+
 </body>
 </html>
