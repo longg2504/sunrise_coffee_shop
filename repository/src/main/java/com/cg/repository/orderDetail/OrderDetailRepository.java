@@ -124,17 +124,19 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
 
 
     @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO (" +
+            "od.id," +
             "od.product.id, " +
             "od.product.title, " +
             "od.note, " +
             "SUM(od.quantity), " +
-            "od.product.unit.title" +
+            "od.product.unit.title," +
+            "od.status" +
             ") " +
             "FROM OrderDetail AS od " +
             "JOIN Product AS pd " +
             "ON od.product.id = pd.id " +
             "WHERE od.status = :orderDetailStatus " +
-            "GROUP BY od.product.id, od.note "
+            "GROUP BY od.id, od.product.id, od.product.title, od.status, od.product.unit.title,od.note "
     )
     List<OrderDetailKitchenGroupDTO> getOrderItemByStatusGroupByProduct(@Param("orderDetailStatus") EOrderDetailStatus orderDetailStatus);
 
