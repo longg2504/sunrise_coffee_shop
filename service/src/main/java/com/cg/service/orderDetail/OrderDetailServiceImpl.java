@@ -605,6 +605,127 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
+    public void changeStatusFromWaiterToDoneOfProduct(OrderDetail orderDetailWaiter) {
+        Order order = orderDetailWaiter.getOrder();
+        Product product = orderDetailWaiter.getProduct();
+        String note = orderDetailWaiter.getNote();
+
+        Optional<OrderDetail> orderDetailDoneOptional = this.findByOrderIdAndProductIdAndNoteAndStatusDone(order.getId(), product.getId(), note);
+        if (!orderDetailDoneOptional.isPresent()) {
+            if (orderDetailWaiter.getQuantity() == 1) {
+                orderDetailWaiter.setStatus(EOrderDetailStatus.DONE);
+                orderDetailRepository.save(orderDetailWaiter);
+            }
+            else {
+                Long newQuantityWaiter = orderDetailWaiter.getQuantity() - 1;
+                BigDecimal newAmountWaiter = orderDetailWaiter.getPrice().multiply(BigDecimal.valueOf(newQuantityWaiter));
+                orderDetailWaiter.setQuantity(newQuantityWaiter);
+                orderDetailWaiter.setAmount(newAmountWaiter);
+                orderDetailRepository.save(orderDetailWaiter);
+
+                OrderDetail newOrderItem = new OrderDetail()
+                        .setOrder(orderDetailWaiter.getOrder())
+                        .setProduct(orderDetailWaiter.getProduct())
+                        .setStatus(EOrderDetailStatus.DONE)
+                        .setNote(orderDetailWaiter.getNote())
+                        .setPrice(orderDetailWaiter.getPrice())
+                        .setQuantity(1L)
+                        .setAmount(orderDetailWaiter.getPrice())
+                        ;
+                orderDetailRepository.save(newOrderItem);
+            }
+        }
+        else {
+            OrderDetail orderDetailDone = orderDetailDoneOptional.get();
+
+            if (orderDetailWaiter.getQuantity() == 1) {
+                orderDetailRepository.deleteById(orderDetailWaiter.getId());
+            }
+            else {
+                Long newQuantityWaiter = orderDetailWaiter.getQuantity() - 1;
+                BigDecimal newAmountWaiter = orderDetailWaiter.getPrice().multiply(BigDecimal.valueOf(newQuantityWaiter));
+                orderDetailWaiter.setQuantity(newQuantityWaiter);
+                orderDetailWaiter.setAmount(newAmountWaiter);
+                orderDetailRepository.save(orderDetailWaiter);
+            }
+
+            Long newQuantityDone = orderDetailDone.getQuantity() + 1;
+            BigDecimal newAmountDone = orderDetailWaiter.getPrice().multiply(BigDecimal.valueOf(newQuantityDone));
+            orderDetailDone.setQuantity(newQuantityDone);
+            orderDetailDone.setAmount(newAmountDone);
+            orderDetailRepository.save(orderDetailDone);
+        }
+    }
+
+    @Override
+    public void changeStatusFromWaiterToDoneToProductOfOrder(OrderDetail orderDetailWaiter) {
+        Order order = orderDetailWaiter.getOrder();
+        Product product = orderDetailWaiter.getProduct();
+        String note = orderDetailWaiter.getNote();
+
+        Optional<OrderDetail> orderDetailDone = this.findByOrderIdAndProductIdAndNoteAndStatusDone(order.getId(), product.getId(), note);
+
+        if(orderDetailDone.isPresent()){
+            if(orderDetailWaiter.getNote().equals(orderDetailDone.get().getNote())){
+                Long newQuantityWaiter = orderDetailWaiter.getQuantity() + orderDetailDone.get().getQuantity();
+                BigDecimal newAmountWaiter = orderDetailWaiter.getPrice().multiply(BigDecimal.valueOf(newQuantityWaiter));
+                orderDetailWaiter.setQuantity(newQuantityWaiter);
+                orderDetailWaiter.setAmount(newAmountWaiter);
+                orderDetailWaiter.setStatus(EOrderDetailStatus.DONE);
+                orderDetailRepository.save(orderDetailWaiter);
+                orderDetailRepository.deleteById(orderDetailDone.get().getId());
+            }
+            else {
+                orderDetailWaiter.setStatus(EOrderDetailStatus.DONE);
+                orderDetailRepository.save(orderDetailWaiter);
+            }
+        }
+        else {
+            orderDetailWaiter.setStatus(EOrderDetailStatus.DONE);
+            orderDetailRepository.save(orderDetailWaiter);
+        }
+    }
+
+    @Override
+    public void changeStatusFromWaiterToDoneAllProductOfTable(Order order) {
+        String tableName = order.getTableOrder().getTitle();
+
+        List<OrderDetail> orderDetailWaiterList = this.findAllByOrderAndStatus(order, EOrderDetailStatus.WAITING);
+
+        List<OrderDetail> orderDetailDoneList = this.findAllByOrderAndStatus(order, EOrderDetailStatus.DONE);
+
+        if(orderDetailWaiterList.size() == 0) {
+            throw new DataInputException(String.format("Hóa đơn '%s' không có danh sách sản phẩm tương tứng trạng thái", tableName));
+        }
+
+        if(orderDetailDoneList.size() == 0) {
+            for (OrderDetail item : orderDetailWaiterList) {
+                item.setStatus(EOrderDetailStatus.DONE);
+            }
+            orderDetailRepository.saveAll(orderDetailWaiterList);
+        }
+        else {
+            for(OrderDetail orderDetailWaiter : orderDetailWaiterList) {
+                Optional<OrderDetail> orderDetailDone = orderDetailRepository.findByOrderIdAndProductIdAndNoteAndOrderDetailStatus(order.getId(), orderDetailWaiter.getProduct().getId(), orderDetailWaiter.getNote(), EOrderDetailStatus.DONE);
+
+                if(orderDetailDone.isPresent()){
+                    Long newQuantity = orderDetailWaiter.getQuantity() + orderDetailDone.get().getQuantity();
+                    orderDetailDone.get().setQuantity(newQuantity);
+                    BigDecimal newAmount = orderDetailWaiter.getPrice().multiply(BigDecimal.valueOf(newQuantity));
+                    orderDetailDone.get().setAmount(newAmount);
+                    orderDetailDone.get().setStatus(EOrderDetailStatus.DONE);
+                    orderDetailRepository.save(orderDetailDone.get());
+                    orderDetailRepository.delete(orderDetailWaiter);
+                }
+                else {
+                    orderDetailWaiter.setStatus(EOrderDetailStatus.DONE);
+                    orderDetailRepository.save(orderDetailWaiter);
+                }
+            }
+        }
+    }
+
+    @Override
     public void changeStatusFromWaiterToStockOutOfProduct(OrderDetail orderDetailWaiter) {
         Order order = orderDetailWaiter.getOrder();
         Product product = orderDetailWaiter.getProduct();
