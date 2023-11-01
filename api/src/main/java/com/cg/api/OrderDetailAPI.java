@@ -316,6 +316,91 @@ public class OrderDetailAPI {
         return new ResponseEntity<>(orderDetailResDTOS, HttpStatus.OK);
     }
 
+
+    //change-status-one-product-of-table-from-waiting-to-done
+    @PostMapping("/kitchen/product/change-status-waiting-to-done-one-product-of-table")
+    public ResponseEntity<?> changeStatusFromWaitingToDoneOfProduct(@RequestParam("orderDetailId") String orderDetailStr) {
+        if (!validateUtils.isNumberValid(orderDetailStr)) {
+            throw new DataInputException("ID chi tiết hóa đơn phải là ký tự số !!!");
+        }
+        Long orderDetailId = Long.parseLong(orderDetailStr);
+
+        OrderDetail orderDetail = orderDetailService.findById(orderDetailId).orElseThrow(() -> {
+            throw new DataInputException("ID chi tiết Hóa đơn không tồn tại !!!");
+        });
+
+        if (!orderDetail.getStatus().equals(EOrderDetailStatus.WAITING)) {
+            String tableName = orderDetail.getOrder().getTableOrder().getTitle();
+            throw new DataInputException(String.format("Hóa đơn '%s' không có sản phẩm tương tứng trạng thái !!!", tableName));
+        }
+
+        Order order = orderDetail.getOrder();
+        if (order.getPaid()) {
+            throw new DataInputException("Hóa đơn này đã thanh toán !!!");
+        }
+
+        orderDetailService.changeStatusFromWaiterToDoneOfProduct(orderDetail);
+
+        List<IOrderDetailKitchenWaiterDTO> itemsWaiter = orderDetailService.getOrderDetailByStatusWaiterGroupByTableAndProduct();
+
+        return new ResponseEntity<>(itemsWaiter, HttpStatus.OK);
+    }
+
+    //change-status-all-product-of-table-from-waiting-to-done
+    @PostMapping("/kitchen/table/change-status-waiting-to-done-all-product-of-table")
+    public ResponseEntity<?> changeStatusFromWaitingToDoneAllProductOfOrder(@RequestParam("orderDetailId") String orderDetailStr) {
+
+        if (!validateUtils.isNumberValid(orderDetailStr)) {
+            throw new DataInputException("ID chi tiết hóa đơn phải là ký tự số !!!");
+        }
+
+        Long orderDetailId = Long.parseLong(orderDetailStr);
+
+        OrderDetail orderDetail = orderDetailService.findById(orderDetailId).orElseThrow(() -> {
+            throw new DataInputException("ID chi tiết hóa đơn không tồn tại !!!");
+        });
+
+        if (!orderDetail.getStatus().equals(EOrderDetailStatus.WAITING)) {
+            String tableName = orderDetail.getOrder().getTableOrder().getTitle();
+            throw new DataInputException(String.format("Hóa đơn '%s' không có sản phẩm tương tứng trạng thái !!!", tableName));
+        }
+
+        Order order = orderDetail.getOrder();
+        if (order.getPaid()) {
+            throw new DataInputException("Hóa đơn này đã thanh toán !!!");
+        }
+
+        orderDetailService.changeStatusFromWaiterToDoneToProductOfOrder(orderDetail);
+
+        List<IOrderDetailKitchenWaiterDTO> itemsWaiter = orderDetailService.getOrderDetailByStatusWaiterGroupByTableAndProduct();
+
+        return new ResponseEntity<>(itemsWaiter, HttpStatus.OK);
+    }
+
+    //change-all-product-status-in-table-from-waiter-to-done
+    @PostMapping("/kitchen/table/change-status-waiting-to-done-all-products")
+    public ResponseEntity<?> changeStatusFromWaitingToDoneToTableAll(@RequestParam("orderId") String orderStr) {
+        if (!validateUtils.isNumberValid(orderStr)) {
+            throw new DataInputException("ID hóa đơn phải là ký tự số");
+        }
+
+        Long orderId = Long.parseLong(orderStr);
+
+        Order order = orderService.findById(orderId).orElseThrow(() -> {
+            throw new DataInputException("Hóa đơn không hợp lệ");
+        });
+
+        if (order.getPaid()) {
+            throw new DataInputException("Hóa đơn này đã thanh toán");
+        }
+
+        orderDetailService.changeStatusFromWaiterToDoneAllProductOfTable(order);
+
+        List<OrderDetailResDTO> orderDetailResDTOS = orderDetailService.getOrderDetailResDTOByOrderId(order.getId());
+
+        return new ResponseEntity<>(orderDetailResDTOS, HttpStatus.OK);
+    }
+
     //change-status-one-product-of-table-from-cooking-to-stock-out
     @PostMapping("/kitchen/table/change-status-cooking-to-stock-out")
     public ResponseEntity<?> changeStatusFromCookingToStockOutOfProduct(@RequestParam("orderDetailId") String orderDetailStr) {

@@ -1,6 +1,7 @@
 package com.cg.repository.bill;
 
 import com.cg.domain.entity.Bill;
+import com.cg.domain.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,6 +33,8 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     )
     Optional<Bill> findBillByOrderId(@Param("orderId") Long orderId);
 
+    Optional<Bill> findBillByOrderAndPaid(Order order, Boolean paid);
 
+    
 
 }

@@ -33,7 +33,6 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
     List<OrderDetailKitchenTableDTO> getOrderDetailByStatusAndTable(EOrderDetailStatus orderDetailStatus, Long tableId);
     List<IOrderDetailKitchenTableDTO> getOrderItemByStatusCookingAndTable(Long tableId);
 
-
     OrderDetailKitchenWaiterDTO changeStatusFromCookingToWaiterOfProduct(OrderDetail orderItemCooking);
     
     void changeStatusFromCookingToWaitingAllToProductOfOrder(OrderDetail orderDetail);
@@ -53,6 +52,12 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
     void changeStatusFromWaiterToDeliveryToProductOfOrder(OrderDetail orderDetailWaiter);
 
     void changeStatusFromWaiterToDeliveryAllProductOfTable(Order order);
+
+    void changeStatusFromWaiterToDoneOfProduct(OrderDetail orderDetailWaiter);
+
+    void changeStatusFromWaiterToDoneToProductOfOrder(OrderDetail orderDetailWaiter);
+
+    void changeStatusFromWaiterToDoneAllProductOfTable(Order order);
 
     void changeStatusFromWaiterToStockOutOfProduct(OrderDetail orderDetailWaiter);
 

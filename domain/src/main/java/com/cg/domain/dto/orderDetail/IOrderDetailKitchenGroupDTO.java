@@ -2,7 +2,7 @@ package com.cg.domain.dto.orderDetail;
 
 public interface IOrderDetailKitchenGroupDTO {
 
-    Long getOrderDetailId();
+
     Long getProductId();
     String getProductTitle();
     String getNote();
@@ -13,6 +13,5 @@ public interface IOrderDetailKitchenGroupDTO {
 
     String getStatus();
 
-    String getTableName();
 
 }
