@@ -3,6 +3,7 @@
 
 <head>
     <th:block th:replace="/layout/dashboard_layout/head" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">
@@ -82,10 +83,14 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="width: 400px; height: 400px">
+        <div class="row" style="display: inline-block; margin-right: 30%">
             <canvas id="myPieChart"></canvas>
         </div>
-       <th:block th:replace="/layout/dashboard_layout/footer" />
+
+        <div class="row" style="display: inline-block">
+            <canvas id="myChart" style="height: 300px"></canvas>
+        </div>
+        <th:block th:replace="/layout/dashboard_layout/footer" />
     </div>
 </main>
 
@@ -120,6 +125,40 @@
                 }
             }
         }
+    });
+
+    $(document).ready(function() {
+        // Lấy tham chiếu đến thẻ canvas
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        // Tạo dữ liệu cho biểu đồ (ví dụ: biểu đồ cột)
+        const data = {
+            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
+            datasets: [{
+                label: 'Doanh thu',
+                data: [12, 19, 3, 5, 2,10],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Cấu hình biểu đồ
+        const options = {
+            scales: {
+                y: {
+
+                    beginAtZero: true
+                }
+            }
+        };
+
+        // Tạo biểu đồ
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: options
+        });
     });
 </script>
 </body>
