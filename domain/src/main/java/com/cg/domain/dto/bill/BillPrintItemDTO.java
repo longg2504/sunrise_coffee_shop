@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -20,4 +20,11 @@ public class BillPrintItemDTO {
     private BigDecimal price;
     private BigDecimal amount;
 
+    public BillPrintItemDTO(String productTitle, Long quantity, String unitTitle, BigDecimal price, BigDecimal amount) {
+        this.productTitle = productTitle;
+        this.quantity = quantity;
+        this.unitTitle = unitTitle;
+        this.price = price;
+        this.amount = amount;
+    }
 }

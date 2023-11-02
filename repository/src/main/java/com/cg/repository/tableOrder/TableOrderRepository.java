@@ -22,7 +22,8 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
             "to.status, " +
             "to.zone" +
             ")" +
-            "FROM TableOrder AS to")
+            "FROM TableOrder AS to " +
+            "WHERE to.deleted = false")
     List<TableOrderDTO> findAllTableOrder();
 
     @Query("SELECT NEW com.cg.domain.dto.tableOrder.TableOrderDTO (" +

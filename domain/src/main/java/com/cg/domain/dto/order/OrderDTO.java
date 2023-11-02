@@ -3,6 +3,7 @@ package com.cg.domain.dto.order;
 import com.cg.domain.dto.orderDetail.OrderDetailDTO;
 import com.cg.domain.dto.staff.StaffDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
+import com.cg.domain.entity.Order;
 import com.cg.domain.entity.TableOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,15 @@ public class OrderDTO {
         this.totalAmount = totalAmount;
         this.tableOrder = tableOrder.toTableOrderDTO();
         this.updatedAt = updatedAt;
+
+    }
+
+    public Order toOrder() {
+        return new Order()
+                .setId(id)
+                .setTotalAmount(totalAmount)
+                .setTableOrder(tableOrder.toTableOrder())
+                ;
 
     }
 }

@@ -1,5 +1,6 @@
 package com.cg.service.orderDetail;
 
+import com.cg.domain.dto.bill.BillPrintItemDTO;
 import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
@@ -947,5 +948,21 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
         orderRepository.save(order);
 
     }
+
+    @Override
+    public List<OrderDetail> getAllByOrder(Order order) {
+        return orderDetailRepository.getAllByOrder(order);
+    }
+
+    @Override
+    public List<BillPrintItemDTO> getAllBillPrintItemDTOByOrderId(Long orderId) {
+        return orderDetailRepository.getAllBillPrintItemDTOByOrderId(orderId);
+    }
+
+    @Override
+    public List<OrderDetailDTO> getOrderItemDTOByOrderId(Long orderId) {
+        return orderDetailRepository.getOrderItemDTOByOrderId(orderId);
+    }
+
 
 }

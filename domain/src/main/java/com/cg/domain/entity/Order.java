@@ -1,5 +1,6 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.order.OrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,4 +38,12 @@ public class Order extends BaseEntity {
     private List<OrderDetail> orderDetails;
 
     private Boolean paid;
+
+
+    public OrderDTO toOrderDTO() {
+        return new OrderDTO()
+                .setId(id)
+                .setTotalAmount(totalAmount)
+                .setTableOrder(tableOrder.toTableOrderDTO());
+    }
 }

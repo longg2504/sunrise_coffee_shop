@@ -272,5 +272,10 @@ public class OrderServiceImpl implements IOrderService {
 
     }
 
+    @Override
+    public Optional<Order> getByTableOrderAndPaid(TableOrder tableOrder, Boolean paid) {
+        return orderRepository.getByTableOrderAndPaid(tableOrder, paid);
+    }
+
 
 }

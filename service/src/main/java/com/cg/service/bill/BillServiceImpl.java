@@ -1,4 +1,376 @@
 package com.cg.service.bill;
 
-public class BillServiceImpl {
+import com.cg.domain.dto.bill.*;
+import com.cg.domain.dto.orderDetail.OrderDetailDTO;
+import com.cg.domain.dto.report.*;
+import com.cg.domain.entity.*;
+import com.cg.domain.enums.EOrderDetailStatus;
+import com.cg.domain.enums.ETableStatus;
+import com.cg.exception.DataInputException;
+import com.cg.exception.UnauthorizedException;
+import com.cg.repository.bill.BillRepository;
+import com.cg.repository.billBackUp.BillBackupRepository;
+import com.cg.repository.order.OrderRepository;
+import com.cg.repository.orderDetail.OrderDetailRepository;
+import com.cg.repository.tableOrder.TableOrderRepository;
+import com.cg.repository.tableOrderBackup.TableOrderBackupRepository;
+import com.cg.service.billBackup.IBillBackupService;
+import com.cg.service.order.IOrderService;
+import com.cg.service.orderDetail.IOrderDetailService;
+import com.cg.service.staff.IStaffService;
+import com.cg.service.tableOrder.ITableOrderService;
+import com.cg.service.tableOrderBackup.ITableOrderBackupService;
+import com.cg.utils.AppUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Transactional
+public class BillServiceImpl implements IBillService {
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    IBillService billService;
+
+    @Autowired
+    private IStaffService staffService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private IOrderService orderService;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private IOrderDetailService orderDetailService;
+
+    @Autowired
+    private TableOrderRepository tableOrderRepository;
+
+    @Autowired
+    private ITableOrderService tableOrderService;
+
+    @Autowired
+    private AppUtils appUtils;
+
+    @Autowired
+    private ITableOrderBackupService tableOrderBackupService;
+
+    @Autowired
+    private TableOrderBackupRepository tableOrderBackupRepository;
+
+    @Autowired
+    private IBillBackupService billBackupService;
+
+    @Autowired
+    private BillBackupRepository billBackupRepository;
+
+
+    @Override
+    public List<Bill> findAll() {
+        return billRepository.findAll();
+    }
+
+    @Override
+    public Optional<Bill> findById(Long id) {
+        return billRepository.findById(id);
+    }
+
+    @Override
+    public Bill save(Bill bill) {
+        return billRepository.save(bill);
+    }
+
+    @Override
+    public void delete(Bill bill) {
+
+    }
+
+    @Override
+    public void deleteById(Long id) {
+
+    }
+
+    @Override
+    public BillPrintTempDTO print(Order order) {
+        Bill bill = billService.findBillByOrderId(order.getId()).orElseThrow(() -> {
+            throw new DataInputException("ID hóa đơn không tồn tại.");
+        });
+
+        List<BillPrintItemDTO> items = orderDetailRepository.getAllBillPrintItemDTOByOrderId(order.getId());
+
+        return bill.toBillPrintTempDTO(items, order.getCreatedAt());
+
+    }
+
+    @Override
+    public void pay(Long orderId, Long chargePercent, BigDecimal chargeMoney, Long discountPercent, BigDecimal discountMoney, BigDecimal totalAmount, BigDecimal transferPay, BigDecimal cashPay) {
+        Optional<TableOrderBackup> tableBackupOptional = tableOrderBackupService.findByOrderCurrentId(orderId);
+
+        if(tableBackupOptional.isPresent()) {
+
+            List<BillBackup> currentTableBillBackup = billBackupService.findAllByOrderId(tableBackupOptional.get().getOrderCurrentId());
+
+            if (currentTableBillBackup.size() == 0) {
+                throw new DataInputException("đơn hàng hiện tại không hợp lệ, vui lòng kiểm tra lại dữ liệu !!!");
+            }
+
+            List<BillBackup> targetTableBillBackup = billBackupService.findAllByOrderId(tableBackupOptional.get().getOrderTargetId());
+
+            if (targetTableBillBackup.size() == 0) {
+                throw new DataInputException("đơn hàng muốn tách không hợp lệ, vui lòng kiểm tra lại dữ liệu !!!");
+            }
+
+            billBackupRepository.deleteAll(currentTableBillBackup);
+            billBackupRepository.deleteAll(targetTableBillBackup);
+            tableOrderBackupRepository.delete(tableBackupOptional.get());
+        }
+
+
+
+        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
+            throw new UnauthorizedException("Vui lòng xác thực");
+        });
+
+        Order order = orderService.findById(orderId).orElseThrow(() -> {
+            throw new DataInputException("ID order không tồn tại.");
+        });
+
+        order.setPaid(true);
+        order = orderRepository.save(order);
+
+        List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
+        orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+
+        orderDetailRepository.saveAll(orderItems);
+
+        Optional<Bill> billOptional = billRepository.findBillByOrderId(order.getId());
+
+        Bill bill = billOptional.get()
+                .setOrder(order)
+                .setStaff(staff)
+                .setTable(order.getTableOrder())
+                .setOrderPrice(order.getTotalAmount())
+                .setChargePercent(chargePercent)
+                .setChargeMoney(chargeMoney)
+                .setDiscountPercent(discountPercent)
+                .setDiscountMoney(discountMoney)
+                .setTotalAmount(totalAmount)
+                .setTransferPay(transferPay)
+                .setCashPay(cashPay)
+                .setPaid(true);
+        billRepository.save(bill);
+
+
+        TableOrder table = order.getTableOrder();
+        table.setStatus(ETableStatus.EMPTY);
+        tableOrderRepository.save(table);
+    }
+
+    // don't use this api !!!
+    @Override
+    public BillResDTO createBillWithOrders(BillCreateDTO billCreateDTO) {
+        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
+            throw new DataInputException("Tên nhân viên không hợp lệ");
+        });
+
+        Order order = orderService.findById(billCreateDTO.getOrderId()).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
+
+
+        List<OrderDetailDTO> orderItemList = orderDetailService.getOrderItemDTOByOrderId(order.getId());
+
+        for (OrderDetailDTO item : orderItemList) {
+            if (item.toOrderDetail().getStatus() == EOrderDetailStatus.WAITING) {
+                throw new DataInputException("Hiện tại vẫn còn sản phẩm đang chờ, Không thể thanh toán!");
+            }
+        }
+
+        Long discountPercent = billCreateDTO.getDiscountPercent();
+
+        Long chargePercent = billCreateDTO.getChargePercent();
+
+        if (discountPercent == 0 && chargePercent == 0) {
+            Bill bill = new Bill()
+                    .setOrder(order)
+                    .setStaff(staff)
+                    .setTable(order.getTableOrder())
+                    .setDiscountPercent(discountPercent)
+                    .setDiscountMoney(BigDecimal.ZERO)
+                    .setChargePercent(chargePercent)
+                    .setChargeMoney(BigDecimal.ZERO)
+                    .setOrderPrice(order.getTotalAmount())
+                    .setTotalAmount(order.getTotalAmount())
+                    .setPaid(false)
+                    .setCashPay(BigDecimal.ZERO)
+                    .setTransferPay(BigDecimal.ZERO)
+                    ;
+            billRepository.save(bill);
+            return bill.toBillResDTO();
+        } else {
+            if (chargePercent == 0) {
+
+                BigDecimal discountMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(billCreateDTO.getDiscountPercent())).divide(BigDecimal.valueOf(100L));
+                BigDecimal totalAmountBill = order.getTotalAmount().subtract(discountMoney);
+                Bill bill = new Bill()
+                        .setOrder(order)
+                        .setStaff(staff)
+                        .setTable(order.getTableOrder())
+                        .setDiscountPercent(billCreateDTO.getDiscountPercent())
+                        .setDiscountMoney(discountMoney)
+                        .setChargePercent(chargePercent)
+                        .setChargeMoney(BigDecimal.ZERO)
+                        .setOrderPrice(order.getTotalAmount())
+                        .setTotalAmount(totalAmountBill)
+                        .setPaid(false)
+                        .setCashPay(BigDecimal.ZERO)
+                        .setTransferPay(BigDecimal.ZERO);
+                billRepository.save(bill);
+                return bill.toBillResDTO();
+            } else if (discountPercent == 0) {
+                BigDecimal chargeMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(billCreateDTO.getChargePercent())).divide(BigDecimal.valueOf(100L));
+                BigDecimal totalAmountBill = order.getTotalAmount().add(chargeMoney);
+                Bill bill = new Bill()
+                        .setOrder(order)
+                        .setStaff(staff)
+                        .setTable(order.getTableOrder())
+                        .setDiscountPercent(discountPercent)
+                        .setDiscountMoney(BigDecimal.ZERO)
+                        .setChargePercent(chargePercent)
+                        .setChargeMoney(chargeMoney)
+                        .setOrderPrice(order.getTotalAmount())
+                        .setTotalAmount(totalAmountBill)
+                        .setPaid(false)
+                        .setCashPay(BigDecimal.ZERO)
+                        .setTransferPay(BigDecimal.ZERO)
+                        ;
+                billRepository.save(bill);
+                return bill.toBillResDTO();
+            } else {
+                BigDecimal chargeMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(chargePercent)).divide(BigDecimal.valueOf(100L));
+                BigDecimal discountMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(discountPercent)).divide(BigDecimal.valueOf(100L));
+                BigDecimal totalAmountBill = order.getTotalAmount().add(chargeMoney).subtract(discountMoney);
+                Bill bill = new Bill()
+                        .setOrder(order)
+                        .setStaff(staff)
+                        .setTable(order.getTableOrder())
+                        .setDiscountPercent(discountPercent)
+                        .setDiscountMoney(discountMoney)
+                        .setChargePercent(chargePercent)
+                        .setChargeMoney(chargeMoney)
+                        .setOrderPrice(order.getTotalAmount())
+                        .setTotalAmount(totalAmountBill)
+                        .setPaid(false)
+                        .setCashPay(BigDecimal.ZERO)
+                        .setTransferPay(BigDecimal.ZERO)
+                        ;
+                billRepository.save(bill);
+                return bill.toBillResDTO();
+            }
+        }
+
+    }
+
+    @Override
+    public Optional<Bill> findBillByOrderId(Long orderId) {
+        return billRepository.findBillByOrderId(orderId);
+    }
+
+    @Override
+    public Optional<Bill> findByOrderAndPaid(Order order, Boolean paid) {
+        return billRepository.findBillByOrderAndPaid(order, paid);
+    }
+
+    @Override
+    public List<Bill> findALlByOrderIdAndPaid(Long orderId, Boolean paid) {
+        return billRepository.findAllByOrderIdAndPaid(orderId, paid);
+    }
+
+    @Override
+    public List<YearReportDTO> getReportByYear(int year) {
+        return billRepository.getReportByYear(year);
+    }
+
+    @Override
+    public List<IYearReportDTO> getReportByCurrentYear() {
+        return billRepository.getReportByCurrentYear();
+    }
+
+    @Override
+    public List<I6MonthAgoReportDTO> getReport6MonthAgo() {
+        return billRepository.getReport6MonthAgo();
+    }
+
+    @Override
+    public YearReportDTO getReportByMonth(int month, int year) {
+        return billRepository.getReportByMonth(month, year);
+    }
+
+    @Override
+    public IReportDTO getReportOfCurrentDay() {
+        return billRepository.getReportOfCurrentDay();
+    }
+
+    @Override
+    public IReportDTO getReportOfCurrentMonth() {
+        return billRepository.getReportOfCurrentMonth();
+    }
+
+    @Override
+    public ReportDTO getReportOfDay(String day) {
+        return billRepository.getReportOfDay(day);
+    }
+
+    @Override
+    public List<IDayToDayReportDTO> getReportFrom10DaysAgo() {
+        return billRepository.getReportFrom10DaysAgo();
+    }
+
+    @Override
+    public List<DayToDayReportDTO> getReportFromDayToDay(String startDay, String endDay) {
+        return billRepository.getReportFromDayToDay(startDay, endDay);
+    }
+
+    @Override
+    public List<BillOfTheDayDTO> countBillCurrentDay(String day) {
+        return billRepository.countBillCurrentDay(day);
+    }
+
+    @Override
+    public Page<BillGetAllResDTO> findAll(BillFilterReqDTO billFilterReqDTO, Pageable pageable) {
+        return billRepository.findAll(billFilterReqDTO, pageable).map(Bill::toBillGetAllResDTO);
+    }
+
+
+
+    @Override
+    public PayDTO payOfDay() {
+        return billRepository.payOfDay();
+    }
+
+    @Override
+    public Page<BillGetAllResDTO> getBillsByDay(String day, Pageable pageable) {
+        return billRepository.getBillsByDay(day, pageable);
+    }
+
+    @Override
+    public List<BillGetTwoDayDTO> getBillsNotPaging(String day) {
+        return billRepository.getBillsNotPaging(day);
+    }
+
+    @Override
+    public List<BillGetTwoDayDTO> getBillsNotPaging(Date day) {
+        return billRepository.getBillsNotPaging(day);
+    }
 }
