@@ -161,6 +161,11 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
+    public Optional<Staff> findByUsername(String username) {
+        return staffRepository.findByUsername(username);
+    }
+
+    @Override
     public void deleteByIdTrue(Staff staff) {
         staff.setDeleted(true);
         staffRepository.save(staff);

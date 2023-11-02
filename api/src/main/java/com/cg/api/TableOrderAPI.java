@@ -5,12 +5,16 @@ import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
+import com.cg.domain.enums.ETableStatus;
 import com.cg.exception.DataInputException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.service.tableOrder.ITableOrderService;
 import com.cg.service.zone.IZoneService;
 import com.cg.utils.AppUtils;
 import com.cg.utils.ValidateUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +22,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tableOrders")
@@ -63,4 +72,181 @@ public class TableOrderAPI {
         TableOrderCreateResDTO tableOrderCreateResDTO = tableOrderService.createTableOrder(tableOrderCreateReqDTO, zone);
         return new ResponseEntity<>(tableOrderCreateResDTO, HttpStatus.OK);
     }
+
+    @PostMapping("/change-table")
+    public ResponseEntity<?> changeAllProductToNewTable(HttpServletRequest request) throws IOException {
+
+
+        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+        ObjectMapper mapper = new JsonMapper();
+        JsonNode json = mapper.readTree(body);
+
+        String oldTableIdStr;
+        String newTableIdStr;
+
+        try {
+            oldTableIdStr = json.get("oldTableId").asText();
+            newTableIdStr = json.get("newTableId").asText();
+        } catch (Exception e) {
+            throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
+        }
+
+        if (!validateUtils.isNumberValid(oldTableIdStr)) {
+            throw new DataInputException("ID bàn cũ phải là ký tự số");
+        }
+
+        if (!validateUtils.isNumberValid(newTableIdStr)) {
+            throw new DataInputException("ID bàn mới phải là ký tự số");
+        }
+
+        Long oldTableId = Long.parseLong(oldTableIdStr);
+
+        Long newTableId = Long.parseLong(newTableIdStr);
+
+        Optional<TableOrder> optionalAppTable = tableOrderService.findById(newTableId);
+
+        if (!optionalAppTable.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        TableOrder newAppTable = optionalAppTable.get();
+
+        ETableStatus eTableStatus = ETableStatus.fromString(newAppTable.getStatus().toString().toUpperCase());
+
+        if (!eTableStatus.equals(ETableStatus.EMPTY)) {
+            throw new DataInputException("Trạng thái bàn mới không hợp lệ, vui lòng kiểm tra lại.");
+        }
+
+
+        tableOrderService.changeAllProductToNewTable(oldTableId, newTableId);
+
+
+        List<TableOrderDTO> tableDTOs = tableOrderService.findAllTableOrder();
+
+        return new ResponseEntity<>(tableDTOs, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/combine-tables")
+    public ResponseEntity<?> combineTables(HttpServletRequest request) throws IOException {
+
+        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+        ObjectMapper mapper = new JsonMapper();
+        JsonNode json = mapper.readTree(body);
+
+        String currentTableIdStr;
+        String targetTableIdStr;
+
+        try {
+            currentTableIdStr = json.get("currentTableId").asText();
+            targetTableIdStr = json.get("targetTableId").asText();
+        } catch (Exception e) {
+            throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
+        }
+
+        if (!validateUtils.isNumberValid(currentTableIdStr)) {
+            throw new DataInputException("ID bàn hiện tại phải là ký tự số");
+        }
+
+        if (!validateUtils.isNumberValid(targetTableIdStr)) {
+            throw new DataInputException("ID bàn mục tiêu phải là ký tự số");
+        }
+
+        Long currentTableId = Long.parseLong(currentTableIdStr);
+
+        Long targetTableId = Long.parseLong(targetTableIdStr);
+
+        Optional<TableOrder> optionalCurrentAppTable = tableOrderService.findById(currentTableId);
+
+        if (!optionalCurrentAppTable.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Optional<TableOrder> optionalTargetAppTable = tableOrderService.findById(targetTableId);
+
+        if (!optionalTargetAppTable.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        TableOrder currentTable = optionalCurrentAppTable.get();
+
+        TableOrder targetTable = optionalTargetAppTable.get();
+
+        ETableStatus eCurrentTableStatus = ETableStatus.fromString(currentTable.getStatus().toString().toUpperCase());
+
+        ETableStatus eTargetTableStatus = ETableStatus.fromString(targetTable.getStatus().toString().toUpperCase());
+
+        if (!eCurrentTableStatus.equals(ETableStatus.BUSY)) {
+            throw new DataInputException("Trạng thái bàn hiện tại không hợp lệ, vui lòng kiểm tra lại.");
+        }
+
+        if (!eTargetTableStatus.equals(ETableStatus.BUSY)) {
+            throw new DataInputException("Trạng thái bàn muốn gộp không hợp lệ, vui lòng kiểm tra lại.");
+        }
+
+        tableOrderService.combineTable(currentTable, targetTable);
+
+        TableOrderDTO currentTableDTO = currentTable.toTableOrderDTO();
+
+        TableOrderDTO targetTableDTO = targetTable.toTableOrderDTO();
+
+        Map<String, TableOrderDTO> result = new HashMap<>();
+        result.put("currentTable", currentTableDTO);
+        result.put("targetTable", targetTableDTO);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+//    @PostMapping("/un-combine-tables")
+//    public ResponseEntity<?> unCombineTables(HttpServletRequest request) throws IOException {
+//
+//        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+//
+//        ObjectMapper mapper = new JsonMapper();
+//        JsonNode json = mapper.readTree(body);
+//
+//        String currentTableIdStr;
+//
+//        try {
+//            currentTableIdStr = json.get("currentTableId").asText();
+//        } catch (Exception e) {
+//            throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
+//        }
+//
+//        if (!validateUtils.isNumberValid(currentTableIdStr)) {
+//            throw new DataInputException("ID bàn hiện tại phải là ký tự số");
+//        }
+//
+//        Long currentTableId = Long.parseLong(currentTableIdStr);
+//
+//        Optional<TableOrder> optionalCurrentAppTable = tableOrderService.findById(currentTableId);
+//
+//        if (!optionalCurrentAppTable.isPresent()) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        TableOrder currentTable = optionalCurrentAppTable.get();
+//
+//        ETableStatus eCurrentTableStatus = ETableStatus.fromString(currentTable.getStatus().toString().toUpperCase());
+//
+//        if (!eCurrentTableStatus.equals(ETableStatus.BUSY)) {
+//            throw new DataInputException("Trạng thái bàn hiện tại không hợp lệ, vui lòng kiểm tra lại.");
+//        }
+//
+//        TableOrder targetTable = tableOrderService.unCombineTable(currentTable);
+//
+//        TableOrderDTO currentTableDTO = currentTable.toTableOrderDTO();
+//
+//        TableOrderDTO targetTableDTO = targetTable.toTableOrderDTO();
+//
+//        Map<String, TableOrderDTO> result = new HashMap<>();
+//        result.put("currentTable", currentTableDTO);
+//        result.put("targetTable", targetTableDTO);
+//
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
+
 }
+

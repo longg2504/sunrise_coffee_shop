@@ -36,7 +36,7 @@ public interface IOrderService extends IGeneralService<Order,Long> {
 
     int countProductInOrderItem(List<IOrderDetailKitchenTableDTO> orderItemList);
 
-
+    Optional<Order> getByTableOrderAndPaid(TableOrder tableOrder, Boolean paid);
 
 
 

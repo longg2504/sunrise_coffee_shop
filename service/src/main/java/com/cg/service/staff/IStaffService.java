@@ -31,4 +31,6 @@ public interface IStaffService extends IGeneralService<Staff,Long> {
     void deleteByIdTrue(Staff staff);
 
     Staff update(StaffUpReqDTO staffUpReqDTO , Long staffId);
+
+    Optional<Staff> findByUsername(String username);
 }

@@ -1,5 +1,6 @@
 package com.cg.repository.orderDetail;
 
+import com.cg.domain.dto.bill.BillPrintItemDTO;
 import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
@@ -16,6 +17,41 @@ import java.util.Optional;
 
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
+
+    List<OrderDetail> getAllByOrder(Order order);
+
+    @Query("SELECT NEW com.cg.domain.dto.bill.BillPrintItemDTO (" +
+            "od.product.title, " +
+            "SUM(od.quantity), " +
+            "od.product.unit.title, " +
+            "od.price, " +
+            "SUM(od.amount) " +
+            ") " +
+            "FROM OrderDetail AS od " +
+            "WHERE od.deleted = false " +
+            "AND od.order.id = :orderId " +
+            "GROUP BY od.product.title, od.product.unit.title, od.price"
+    )
+    List<BillPrintItemDTO> getAllBillPrintItemDTOByOrderId(@Param("orderId") Long orderId);
+
+
+    @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailDTO (" +
+            "oi.id, " +
+            "oi.product, " +
+            "oi.quantity, " +
+            "oi.price, " +
+            "oi.amount, " +
+            "oi.note, " +
+            "oi.status" +
+            ") " +
+            "FROM OrderDetail AS oi " +
+            "WHERE oi.deleted = false " +
+            "AND oi.order.id = :orderId "
+    )
+    List<OrderDetailDTO> getOrderItemDTOByOrderId(@Param("orderId") Long orderId);
+
+
+
     @Query("SELECT NEW com.cg.domain.dto.orderDetail.OrderDetailByTableResDTO(" +
             "od.id, " +
             "od.product.id, " +

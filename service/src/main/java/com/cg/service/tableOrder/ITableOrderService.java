@@ -19,4 +19,13 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
 
     TableOrderCreateResDTO createTableOrder(TableOrderCreateReqDTO tableOrderCreateReqDTO, Zone zone);
 
+    void changeAllProductToNewTable(Long oldTableId, Long newTableId);
+
+    void combineTable(TableOrder currentTable, TableOrder targetTable);
+
+//    TableOrder unCombineTable(TableOrder currentTable);
+
+    List<TableOrderDTO> findAllTableOrder();
+
+
 }

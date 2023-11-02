@@ -73,4 +73,13 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
 
     Optional<Staff> findByUser(User user);
 
+    @Query("SELECT " +
+            "sf " +
+            "FROM Staff AS sf " +
+            "JOIN User AS us " +
+            "ON sf.user = us " +
+            "AND us.username = :username"
+    )
+    Optional<Staff> findByUsername(@Param("username") String username);
+
 }

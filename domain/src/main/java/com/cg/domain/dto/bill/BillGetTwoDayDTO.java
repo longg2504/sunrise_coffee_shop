@@ -12,7 +12,6 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -51,4 +50,20 @@ public class BillGetTwoDayDTO {
                 ;
     }
 
+    public BillGetTwoDayDTO(Long id, Date createdAt, BigDecimal orderPrice, BigDecimal discountMoney, Long discountPercent, BigDecimal chargeMoney, Long chargePercent, BigDecimal totalAmount, Long tableId, String tableName, Long orderId, Long staffId, String staffName, Boolean paid) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.orderPrice = orderPrice;
+        this.discountMoney = discountMoney;
+        this.discountPercent = discountPercent;
+        this.chargeMoney = chargeMoney;
+        this.chargePercent = chargePercent;
+        this.totalAmount = totalAmount;
+        this.tableId = tableId;
+        this.tableName = tableName;
+        this.orderId = orderId;
+        this.staffId = staffId;
+        this.staffName = staffName;
+        this.paid = paid;
+    }
 }

@@ -1,5 +1,6 @@
 package com.cg.service.orderDetail;
 
+import com.cg.domain.dto.bill.BillPrintItemDTO;
 import com.cg.domain.dto.orderDetail.*;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
@@ -70,6 +71,12 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
     void changeStatusFromDeliveryToDoneToTableAll(Order order);
 
     void deleteOrderDetailStockOut(OrderDetail orderDetail);
+
+    List<OrderDetail> getAllByOrder(Order order);
+
+    List<BillPrintItemDTO> getAllBillPrintItemDTOByOrderId(Long orderId);
+
+    List<OrderDetailDTO> getOrderItemDTOByOrderId(@Param("orderId") Long orderId);
 
 
 
