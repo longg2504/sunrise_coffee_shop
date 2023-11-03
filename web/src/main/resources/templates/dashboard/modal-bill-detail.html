@@ -1,0 +1,35 @@
+<th:block th:fragment="modal-bill-detail">
+
+  <div class="modal fade" id="mdBillDetail" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+       data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Bill Detail</h1>
+          <button type="button" class="btn-close btnCloseMdBillDetail" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="modal-alert-danger hide">
+          </div>
+
+          <table id="tbBillDetail" class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Product title</th>
+              <th scope="col">Date of payment</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total Money</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</th:block>

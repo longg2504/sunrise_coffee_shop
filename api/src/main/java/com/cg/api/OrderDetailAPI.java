@@ -232,6 +232,38 @@ public class OrderDetailAPI {
 
     }
 
+    //change-status-all-product-from-cooking-to-stock-out-of-group-product
+    @PostMapping("/kitchen/product/change-status-cooking-to-stock-out-all-product")
+    public ResponseEntity<?> changeStatusAllProductFromCookingToStockOutOfGroupProduct(HttpServletRequest request) throws IOException {
+        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+        ObjectMapper mapper = new JsonMapper();
+        JsonNode json = mapper.readTree(body);
+
+        String productIdStr;
+        String note;
+
+        try {
+            productIdStr = json.get("productId").asText();
+            note = Objects.equals(json.get("note").asText(), null) ? null : json.get("note").asText();
+        } catch (Exception e) {
+            throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
+        }
+
+        if (!validateUtils.isNumberValid(productIdStr)) {
+            throw new DataInputException("ID sản phẩm phải là ký tự số");
+        }
+
+        Long productId = Long.parseLong(productIdStr);
+
+        orderDetailService.changeStatusFromCookingToStockOutToAllProductsOfGroup(productId, note);
+
+        Map<String, List<?>> result = getAllItem();
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+
     //change-status-one-product-of-table-from-waiting-to-delivery
     @PostMapping("/kitchen/product/change-status-waiting-to-delivery-one-product-of-table")
     public ResponseEntity<?> changeStatusFromWaitingToDeliveryOfProduct(@RequestParam("orderDetailId") String orderDetailStr) {

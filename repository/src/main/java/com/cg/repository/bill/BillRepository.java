@@ -1,8 +1,6 @@
 package com.cg.repository.bill;
 
-import com.cg.domain.dto.bill.BillFilterReqDTO;
-import com.cg.domain.dto.bill.BillGetAllResDTO;
-import com.cg.domain.dto.bill.BillGetTwoDayDTO;
+import com.cg.domain.dto.bill.*;
 import com.cg.domain.dto.report.*;
 import com.cg.domain.entity.Bill;
 import com.cg.domain.entity.Order;
@@ -15,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import javax.persistence.criteria.Predicate;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +22,24 @@ import java.util.Optional;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificationExecutor<Bill> {
+
+    @Query("SELECT NEW com.cg.domain.dto.bill.BillDetailDTO (" +
+            "b.id," +
+            "b.totalAmount," +
+            "od.note," +
+            "od.price," +
+            "od.quantity," +
+            "p.title," +
+            "od.createdAt" +
+            ") " +
+            "FROM Bill AS b " +
+            "JOIN Order AS o ON b.order.id = o.id " +
+            "JOIN OrderDetail AS od ON od.order.id = o.id " +
+            "JOIN Product AS p ON od.product.id = p.id " +
+            "WHERE b.id =  :billId"
+    )
+    List<BillDetailDTO> findBillById(@Param("billId") Long billId);
+
     @Query("SELECT NEW com.cg.domain.entity.Bill (" +
             "bi.id," +
             "bi.orderPrice," +

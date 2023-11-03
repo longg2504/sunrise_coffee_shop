@@ -1,5 +1,6 @@
 package com.cg.domain.entity;
 
+import com.cg.domain.dto.orderDetail.OrderDetailKitchenGroupDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailKitchenWaiterDTO;
 import com.cg.domain.dto.orderDetail.OrderDetailResDTO;
 import com.cg.domain.enums.EOrderDetailStatus;
@@ -58,6 +59,17 @@ public class OrderDetail extends BaseEntity {
                 .setUnitTitle(product.getUnit().getTitle())
                 .setStatus(String.valueOf(status))
                 .setUpdatedAt(getUpdatedAt())
+                ;
+    }
+
+    public OrderDetailKitchenGroupDTO toOrderDetailKitchenGroupDTO() {
+        return new OrderDetailKitchenGroupDTO()
+                .setProductId(product.getId())
+                .setProductTitle(product.getTitle())
+                .setNote(note)
+                .setQuantity(quantity)
+                .setUnitTitle(product.getUnit().getTitle())
+                .setStatus(String.valueOf(status))
                 ;
     }
 
