@@ -173,7 +173,7 @@ public class OrderAPI {
 
         Long orderId = orderDetail.getOrder().getId();
         Long tableId = orderDetail.getOrder().getTableOrder().getId();
-        if(orderDetail.getStatus().equals(EOrderDetailStatus.NEW)){
+        if(orderDetail.getStatus().equals(EOrderDetailStatus.NEW) || orderDetail.getStatus().equals(EOrderDetailStatus.STOCK_OUT)){
             orderDetailService.delete(orderDetail);
         }else{
             throw new DataInputException("Món này đang được làm không thể xoá");

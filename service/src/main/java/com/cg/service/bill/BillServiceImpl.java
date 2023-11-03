@@ -182,9 +182,9 @@ public class BillServiceImpl implements IBillService {
     // don't use this api !!!
     @Override
     public BillResDTO createBillWithOrders(Long tableId) {
-        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
-            throw new DataInputException("Tên nhân viên không hợp lệ");
-        });
+//        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
+//            throw new DataInputException("Tên nhân viên không hợp lệ");
+//        });
 
         Order order = orderService.findByTableId(tableId).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
         order.setPaid(true);
@@ -200,7 +200,7 @@ public class BillServiceImpl implements IBillService {
 
             Bill bill = new Bill()
                     .setOrder(order)
-                    .setStaff(staff)
+                    .setStaff(order.getStaff())
                     .setTable(order.getTableOrder())
                     .setDiscountPercent(0L)
                     .setDiscountMoney(BigDecimal.ZERO)
