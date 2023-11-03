@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Setter
 @Accessors(chain = true)
 public class OrderDetailProductUpResDTO {
-    private Long id;
+    private Long orderDetailId;
     private Long productId;
     private String title;
     private BigDecimal price;
@@ -27,8 +27,8 @@ public class OrderDetailProductUpResDTO {
     private String status;
     private AvatarResDTO avatar;
 
-    public OrderDetailProductUpResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity,BigDecimal amount, String note, Avatar avatar) {
-        this.id = id;
+    public OrderDetailProductUpResDTO(Long orderDetailId, Long productId, String title, BigDecimal price, Long quantity,BigDecimal amount, String note, Avatar avatar) {
+        this.orderDetailId = orderDetailId;
         this.productId = productId;
         this.title = title;
         this.price = price;
@@ -38,8 +38,8 @@ public class OrderDetailProductUpResDTO {
         this.avatar = avatar.toAvatarResDTO();
     }
 
-    public OrderDetailProductUpResDTO(Long id, Long productId, String title, BigDecimal price, Long quantity, BigDecimal amount, String note, EOrderDetailStatus status, Avatar avatar) {
-        this.id = id;
+    public OrderDetailProductUpResDTO(Long orderDetailId, Long productId, String title, BigDecimal price, Long quantity, BigDecimal amount, String note, EOrderDetailStatus status, Avatar avatar) {
+        this.orderDetailId = orderDetailId;
         this.productId = productId;
         this.title = title;
         this.price = price;
