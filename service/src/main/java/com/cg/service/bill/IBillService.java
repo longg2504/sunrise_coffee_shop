@@ -48,7 +48,7 @@ public interface IBillService extends IGeneralService<Bill, Long> {
 
     Page<BillGetAllResDTO> findAll(BillFilterReqDTO billFilterReqDTO, Pageable pageable);
 
-    BillResDTO createBillWithOrders(BillCreateDTO billCreateDTO);
+    BillResDTO createBillWithOrders(Long tableId);
 
     PayDTO payOfDay();
 
