@@ -154,7 +154,7 @@ public class BillServiceImpl implements IBillService {
         List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
         orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
 
-        orderDetailRepository.saveAll(orderItems);
+
 
         Optional<Bill> billOptional = billRepository.findBillByOrderId(order.getId());
 
@@ -181,106 +181,35 @@ public class BillServiceImpl implements IBillService {
 
     // don't use this api !!!
     @Override
-    public BillResDTO createBillWithOrders(BillCreateDTO billCreateDTO) {
+    public BillResDTO createBillWithOrders(Long tableId) {
         Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
             throw new DataInputException("Tên nhân viên không hợp lệ");
         });
 
-        Order order = orderService.findById(billCreateDTO.getOrderId()).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
+        Order order = orderService.findByTableId(tableId).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
+        order.setPaid(true);
+        order = orderRepository.save(order);
 
+        List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
+        orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+        orderDetailRepository.saveAll(orderItems);
 
-        List<OrderDetailDTO> orderItemList = orderDetailService.getOrderItemDTOByOrderId(order.getId());
-
-        for (OrderDetailDTO item : orderItemList) {
-            if (item.toOrderDetail().getStatus() == EOrderDetailStatus.WAITING) {
-                throw new DataInputException("Hiện tại vẫn còn sản phẩm đang chờ, Không thể thanh toán!");
-            }
-        }
-
-        Long discountPercent = billCreateDTO.getDiscountPercent();
-
-        Long chargePercent = billCreateDTO.getChargePercent();
-
-        if (discountPercent == 0 && chargePercent == 0) {
             Bill bill = new Bill()
                     .setOrder(order)
                     .setStaff(staff)
                     .setTable(order.getTableOrder())
-                    .setDiscountPercent(discountPercent)
+                    .setDiscountPercent(0L)
                     .setDiscountMoney(BigDecimal.ZERO)
-                    .setChargePercent(chargePercent)
-                    .setChargeMoney(BigDecimal.ZERO)
+                    .setChargePercent(0L)
+                    .setChargeMoney(order.getTotalAmount())
                     .setOrderPrice(order.getTotalAmount())
                     .setTotalAmount(order.getTotalAmount())
-                    .setPaid(false)
+                    .setPaid(true)
                     .setCashPay(BigDecimal.ZERO)
                     .setTransferPay(BigDecimal.ZERO)
                     ;
             billRepository.save(bill);
-            return bill.toBillResDTO();
-        } else {
-            if (chargePercent == 0) {
-
-                BigDecimal discountMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(billCreateDTO.getDiscountPercent())).divide(BigDecimal.valueOf(100L));
-                BigDecimal totalAmountBill = order.getTotalAmount().subtract(discountMoney);
-                Bill bill = new Bill()
-                        .setOrder(order)
-                        .setStaff(staff)
-                        .setTable(order.getTableOrder())
-                        .setDiscountPercent(billCreateDTO.getDiscountPercent())
-                        .setDiscountMoney(discountMoney)
-                        .setChargePercent(chargePercent)
-                        .setChargeMoney(BigDecimal.ZERO)
-                        .setOrderPrice(order.getTotalAmount())
-                        .setTotalAmount(totalAmountBill)
-                        .setPaid(false)
-                        .setCashPay(BigDecimal.ZERO)
-                        .setTransferPay(BigDecimal.ZERO);
-                billRepository.save(bill);
-                return bill.toBillResDTO();
-            } else if (discountPercent == 0) {
-                BigDecimal chargeMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(billCreateDTO.getChargePercent())).divide(BigDecimal.valueOf(100L));
-                BigDecimal totalAmountBill = order.getTotalAmount().add(chargeMoney);
-                Bill bill = new Bill()
-                        .setOrder(order)
-                        .setStaff(staff)
-                        .setTable(order.getTableOrder())
-                        .setDiscountPercent(discountPercent)
-                        .setDiscountMoney(BigDecimal.ZERO)
-                        .setChargePercent(chargePercent)
-                        .setChargeMoney(chargeMoney)
-                        .setOrderPrice(order.getTotalAmount())
-                        .setTotalAmount(totalAmountBill)
-                        .setPaid(false)
-                        .setCashPay(BigDecimal.ZERO)
-                        .setTransferPay(BigDecimal.ZERO)
-                        ;
-                billRepository.save(bill);
-                return bill.toBillResDTO();
-            } else {
-                BigDecimal chargeMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(chargePercent)).divide(BigDecimal.valueOf(100L));
-                BigDecimal discountMoney = order.getTotalAmount().multiply(BigDecimal.valueOf(discountPercent)).divide(BigDecimal.valueOf(100L));
-                BigDecimal totalAmountBill = order.getTotalAmount().add(chargeMoney).subtract(discountMoney);
-                Bill bill = new Bill()
-                        .setOrder(order)
-                        .setStaff(staff)
-                        .setTable(order.getTableOrder())
-                        .setDiscountPercent(discountPercent)
-                        .setDiscountMoney(discountMoney)
-                        .setChargePercent(chargePercent)
-                        .setChargeMoney(chargeMoney)
-                        .setOrderPrice(order.getTotalAmount())
-                        .setTotalAmount(totalAmountBill)
-                        .setPaid(false)
-                        .setCashPay(BigDecimal.ZERO)
-                        .setTransferPay(BigDecimal.ZERO)
-                        ;
-                billRepository.save(bill);
-                return bill.toBillResDTO();
-            }
-        }
-
-    }
+            return bill.toBillResDTO();}
 
     @Override
     public Optional<Bill> findBillByOrderId(Long orderId) {
