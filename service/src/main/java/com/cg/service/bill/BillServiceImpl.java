@@ -194,6 +194,10 @@ public class BillServiceImpl implements IBillService {
         orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
         orderDetailRepository.saveAll(orderItems);
 
+        TableOrder table = order.getTableOrder();
+        table.setStatus(ETableStatus.EMPTY);
+        tableOrderRepository.save(table);
+
             Bill bill = new Bill()
                     .setOrder(order)
                     .setStaff(staff)
