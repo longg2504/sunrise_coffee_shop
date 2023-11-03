@@ -377,6 +377,44 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
+    public List<OrderDetailKitchenGroupDTO> changeStatusFromCookingToStockOutToAllProductsOfGroup(Long productId, String note) {
+        List<OrderDetail> orderDetailsCooking = orderDetailRepository.findAllByProductIdAndNoteAndStatus(productId, note, EOrderDetailStatus.COOKING);
+
+        if(orderDetailsCooking.size() == 0){
+            throw new DataInputException("Không tìm thấy hóa đơn theo sản phẩm với trạng thái tương ứng !!!");
+        }
+
+        List<OrderDetailKitchenGroupDTO> orderDetailKitchenGroupDTOS = new ArrayList<>();
+
+        for(OrderDetail orderDetailCooking : orderDetailsCooking) {
+            Optional<OrderDetail> orderDetailStockOutOptional = this.findByOrderIdAndProductIdAndNoteAndStatusStock(orderDetailCooking.getOrder().getId(), productId, note);
+
+            if(!orderDetailStockOutOptional.isPresent()) {
+                orderDetailCooking.setStatus(EOrderDetailStatus.STOCK_OUT);
+                orderDetailRepository.save(orderDetailCooking);
+
+                OrderDetailKitchenGroupDTO item = orderDetailCooking.toOrderDetailKitchenGroupDTO();
+                orderDetailKitchenGroupDTOS.add(item);
+            }
+            else {
+                OrderDetail orderDetailStockOut = orderDetailStockOutOptional.get();
+
+                Long newQuantityStockOut = orderDetailStockOut.getQuantity() + orderDetailCooking.getQuantity();
+                BigDecimal newAmountStockOut  = orderDetailStockOut.getPrice().multiply(BigDecimal.valueOf(newQuantityStockOut));
+                orderDetailStockOut.setQuantity(newQuantityStockOut);
+                orderDetailStockOut.setAmount(newAmountStockOut);
+                orderDetailRepository.save(orderDetailStockOut);
+
+                OrderDetailKitchenGroupDTO item = orderDetailStockOut.toOrderDetailKitchenGroupDTO();
+                orderDetailKitchenGroupDTOS.add(item);
+
+                orderDetailRepository.delete(orderDetailCooking);
+            }
+        }
+        return orderDetailKitchenGroupDTOS;
+    }
+
+    @Override
     public OrderDetailKitchenWaiterDTO changeStatusFromCookingToWaiterToOneProductOfGroup(Long productId, String note) {
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByProductIdAndNoteAndStatusOrderByIdAsc(productId, note, EOrderDetailStatus.COOKING);
 

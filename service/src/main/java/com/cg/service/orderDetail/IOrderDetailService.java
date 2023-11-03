@@ -43,6 +43,7 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
     OrderDetailKitchenWaiterDTO changeStatusFromCookingToStockOutOfProduct(OrderDetail orderDetailCooking);
 
     void changeStatusFromCookingToStockOutToProduct(OrderDetail orderDetailCooking);
+    List<OrderDetailKitchenGroupDTO> changeStatusFromCookingToStockOutToAllProductsOfGroup(Long productId, String note);
 
     OrderDetailKitchenWaiterDTO changeStatusFromCookingToWaiterToOneProductOfGroup(Long productId, String note);
 
