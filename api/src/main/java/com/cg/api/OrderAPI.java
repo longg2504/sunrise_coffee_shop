@@ -213,6 +213,8 @@ public class OrderAPI {
         }
 
         OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
-        return  new ResponseEntity<>(orderChangeStatusResDTO, HttpStatus.OK);
+        Optional<Order> orderOptional = orderService.findByTableId(orderChangeStatusResDTO.getTableId());
+        List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderOptional.get().getId());
+        return  new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 }
