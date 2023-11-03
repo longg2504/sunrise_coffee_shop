@@ -7,6 +7,7 @@ import com.cg.domain.entity.Order;
 import com.cg.service.IGeneralService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -57,5 +58,8 @@ public interface IBillService extends IGeneralService<Bill, Long> {
     List<BillGetTwoDayDTO> getBillsNotPaging(String day);
 
     List<BillGetTwoDayDTO> getBillsNotPaging(Date day);
+
+    List<BillDetailDTO> findBillById(Long billId);
+
 
 }

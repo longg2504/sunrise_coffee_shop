@@ -86,6 +86,24 @@ public class BillAPI {
         return new ResponseEntity<>(billDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/billDetail/{billId}")
+    public ResponseEntity<?> showBillDetail(@PathVariable("billId") String billIdStr) {
+
+        if (!validateUtils.isNumberValid(billIdStr)) {
+            throw new DataInputException("Mã lịch sử không hợp lệ");
+        }
+        Long billId = Long.parseLong(billIdStr);
+
+        billService.findById(billId).orElseThrow(() -> {
+            throw new DataInputException("Mã lịch sử không tồn tại");
+        });
+
+        List<BillDetailDTO> billDetailDTOS = billService.findBillById(billId);
+
+        return new ResponseEntity<>(billDetailDTOS, HttpStatus.OK);
+    }
+
+
     @PostMapping("/get-all")
     public ResponseEntity<?> getAllBills(@RequestBody BillFilterReqDTO billFilterReqDTO, @PageableDefault(sort = "id", direction = Sort.Direction.ASC, size = 20) Pageable pageable) {
         int size = 20;
