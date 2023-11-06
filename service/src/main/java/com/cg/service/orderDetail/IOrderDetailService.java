@@ -2,10 +2,13 @@ package com.cg.service.orderDetail;
 
 import com.cg.domain.dto.bill.BillPrintItemDTO;
 import com.cg.domain.dto.orderDetail.*;
+import com.cg.domain.dto.product.IProductReportDTO;
+import com.cg.domain.dto.report.ProductReportDTO;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.service.IGeneralService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -79,9 +82,8 @@ public interface IOrderDetailService extends IGeneralService<OrderDetail,Long> {
 
     List<OrderDetailDTO> getOrderItemDTOByOrderId(@Param("orderId") Long orderId);
 
+    List<ProductReportDTO> getTop5ProductBestSell(int month, int year, Pageable pageable);
 
-
-
-
+    List<IProductReportDTO> getTop5BestSellCurrentMonth();
 
 }

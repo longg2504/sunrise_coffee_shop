@@ -2,6 +2,8 @@ package com.cg.service.orderDetail;
 
 import com.cg.domain.dto.bill.BillPrintItemDTO;
 import com.cg.domain.dto.orderDetail.*;
+import com.cg.domain.dto.product.IProductReportDTO;
+import com.cg.domain.dto.report.ProductReportDTO;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.entity.Product;
@@ -11,6 +13,7 @@ import com.cg.repository.order.OrderRepository;
 import com.cg.repository.orderDetail.OrderDetailRepository;
 import com.cg.service.order.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -1000,6 +1003,16 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     @Override
     public List<OrderDetailDTO> getOrderItemDTOByOrderId(Long orderId) {
         return orderDetailRepository.getOrderItemDTOByOrderId(orderId);
+    }
+
+    @Override
+    public List<ProductReportDTO> getTop5ProductBestSell(int month, int year, Pageable pageable) {
+        return orderDetailRepository.getTop5ProductBestSell(pageable,month,year);
+    }
+
+    @Override
+    public List<IProductReportDTO> getTop5BestSellCurrentMonth() {
+        return orderDetailRepository.getTop5BestSellCurrentMonth();
     }
 
 

@@ -1,5 +1,6 @@
 package com.cg.service.staff;
 
+import com.cg.domain.dto.staff.StaffCountDTO;
 import com.cg.domain.dto.staff.StaffCreReqDTO;
 import com.cg.domain.dto.staff.StaffDTO;
 import com.cg.domain.dto.staff.StaffUpReqDTO;
@@ -33,4 +34,6 @@ public interface IStaffService extends IGeneralService<Staff,Long> {
     Staff update(StaffUpReqDTO staffUpReqDTO , Long staffId);
 
     Optional<Staff> findByUsername(String username);
+
+    StaffCountDTO countStaff ();
 }

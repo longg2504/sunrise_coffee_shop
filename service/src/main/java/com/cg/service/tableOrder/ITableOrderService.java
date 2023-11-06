@@ -1,5 +1,6 @@
 package com.cg.service.tableOrder;
 
+import com.cg.domain.dto.tableOrder.TableOrderCountDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateReqDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
@@ -26,6 +27,8 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
 //    TableOrder unCombineTable(TableOrder currentTable);
 
     List<TableOrderDTO> findAllTableOrder();
+
+    TableOrderCountDTO countTable ();
 
 
 }

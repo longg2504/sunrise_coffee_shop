@@ -1,5 +1,6 @@
 package com.cg.service.tableOrder;
 
+import com.cg.domain.dto.tableOrder.TableOrderCountDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateReqDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
@@ -373,5 +374,10 @@ public class TableOrderServiceImpl implements ITableOrderService {
     @Override
     public List<TableOrderDTO> findAllTableOrder() {
         return tableOrderRepository.findAllTableOrder();
+    }
+
+    @Override
+    public TableOrderCountDTO countTable() {
+        return tableOrderRepository.countTable();
     }
 }

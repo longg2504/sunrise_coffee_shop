@@ -1,5 +1,6 @@
 package com.cg.repository.staff;
 
+import com.cg.domain.dto.staff.StaffCountDTO;
 import com.cg.domain.dto.staff.StaffDTO;
 import com.cg.domain.entity.Staff;
 import com.cg.domain.entity.User;
@@ -81,5 +82,14 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             "AND us.username = :username"
     )
     Optional<Staff> findByUsername(@Param("username") String username);
+
+    @Query("SELECT NEW com.cg.domain.dto.staff.StaffCountDTO (" +
+            "count(st.id) " +
+            ") " +
+            "FROM Staff AS st " +
+            "WHERE st.deleted = false "
+    )
+    StaffCountDTO countStaff ();
+
 
 }
