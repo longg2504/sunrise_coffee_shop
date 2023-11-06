@@ -1,6 +1,7 @@
 package com.cg.service.staff;
 
 import com.cg.domain.dto.locationRegion.LocationRegionUpReqDTO;
+import com.cg.domain.dto.staff.StaffCountDTO;
 import com.cg.domain.dto.staff.StaffCreReqDTO;
 import com.cg.domain.dto.staff.StaffDTO;
 import com.cg.domain.dto.staff.StaffUpReqDTO;
@@ -163,6 +164,11 @@ public class StaffServiceImpl implements IStaffService {
     @Override
     public Optional<Staff> findByUsername(String username) {
         return staffRepository.findByUsername(username);
+    }
+
+    @Override
+    public StaffCountDTO countStaff() {
+        return staffRepository.countStaff();
     }
 
     @Override

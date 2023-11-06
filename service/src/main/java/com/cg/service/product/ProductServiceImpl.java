@@ -1,5 +1,6 @@
 package com.cg.service.product;
 
+import com.cg.domain.dto.product.ProductCountDTO;
 import com.cg.domain.dto.product.ProductCreReqDTO;
 import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.dto.product.ProductUpReqDTO;
@@ -133,5 +134,10 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public Page<ProductDTO> findProductByKeySearch(String keySearch, Pageable pageable) {
         return productRepository.findProductByKeySearch(keySearch,pageable);
+    }
+
+    @Override
+    public ProductCountDTO countProduct() {
+        return productRepository.countProduct();
     }
 }

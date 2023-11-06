@@ -2,10 +2,13 @@ package com.cg.repository.orderDetail;
 
 import com.cg.domain.dto.bill.BillPrintItemDTO;
 import com.cg.domain.dto.orderDetail.*;
+import com.cg.domain.dto.product.IProductReportDTO;
+import com.cg.domain.dto.report.ProductReportDTO;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.domain.enums.ETableStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -229,4 +232,30 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
 
     @Query("Select o FROM OrderDetail o WHERE o.order.tableOrder.id = :id AND o.status = :status" )
     List<OrderDetail> getOrder(Long id, EOrderDetailStatus status);
+
+    @Query("SELECT NEW com.cg.domain.dto.report.ProductReportDTO (" +
+            "pd.id," +
+            "pd.title, " +
+            "pd.productAvatar.fileFolder, " +
+            "pd.productAvatar.fileName, " +
+            "SUM(oi.quantity), " +
+            "SUM(oi.amount) " +
+
+            ") " +
+            "FROM Product AS pd " +
+            "LEFT JOIN OrderDetail AS oi " +
+            "ON pd.id = oi.product.id " +
+            "WHERE (MONTH(Date_Format(oi.createdAt,'%Y/%m/%d')) = :month or oi.createdAt is null) " +
+            "AND (YEAR(Date_Format(oi.createdAt,'%Y/%m/%d')) = :year or oi.createdAt is null) " +
+            "AND pd.deleted = false " +
+            "AND pd.category.id <> 2 " +
+            "GROUP BY pd.id " +
+            "ORDER BY SUM(oi.quantity) DESC "
+    )
+    List<ProductReportDTO> getTop5ProductBestSell(Pageable pageable, @Param("month") int month, @Param("year") int year);
+
+    @Query(value = "SELECT * FROM v_get_top5_best_sell_current_month", nativeQuery = true)
+    List<IProductReportDTO> getTop5BestSellCurrentMonth();
+
+
 }

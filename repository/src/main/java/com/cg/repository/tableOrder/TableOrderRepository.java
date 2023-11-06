@@ -1,5 +1,6 @@
 package com.cg.repository.tableOrder;
 
+import com.cg.domain.dto.tableOrder.TableOrderCountDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
@@ -35,6 +36,16 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
             "FROM TableOrder AS to " +
             "WHERE to.title LIKE %:search%")
     Page<TableOrderDTO> findAllTableOrderByTitle(@Param("search") String search, Pageable pageable);
+
+
+    @Query("SELECT NEW com.cg.domain.dto.tableOrder.TableOrderCountDTO (" +
+            "count(tb.id) " +
+            ") " +
+            "FROM TableOrder AS tb " +
+            "WHERE tb.deleted = false "
+    )
+    TableOrderCountDTO countTable ();
+
 
 
 

@@ -1,5 +1,6 @@
 package com.cg.service.product;
 
+import com.cg.domain.dto.product.ProductCountDTO;
 import com.cg.domain.dto.product.ProductCreReqDTO;
 import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.dto.product.ProductUpReqDTO;
@@ -28,4 +29,6 @@ public interface IProductService extends IGeneralService<Product,Long> {
 
     List<ProductDTO> findAllByDeletedFalse(Sort sort);
     Page<ProductDTO> findProductByKeySearch(String keySearch, Pageable pageable);
+
+    ProductCountDTO countProduct();
 }

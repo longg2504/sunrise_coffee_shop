@@ -1,5 +1,6 @@
 package com.cg.repository.product;
 
+import com.cg.domain.dto.product.ProductCountDTO;
 import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.entity.Product;
 import org.springframework.data.domain.Page;
@@ -46,4 +47,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 //    @Query(value = "CALL sp_top10_product_best_seller", nativeQuery = true)
 //    List<ProductBestSeller> getTop10ProductBestSeller();
+
+
+    @Query("SELECT NEW com.cg.domain.dto.product.ProductCountDTO (" +
+            "count(p.id)" +
+            ") " +
+            "FROM Product AS p " +
+            "WHERE p.deleted = false "
+    )
+    ProductCountDTO countProduct();
 }
