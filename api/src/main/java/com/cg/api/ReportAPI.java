@@ -12,7 +12,6 @@ import com.cg.service.orderDetail.IOrderDetailService;
 import com.cg.service.product.IProductService;
 import com.cg.service.staff.IStaffService;
 import com.cg.service.tableOrder.ITableOrderService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
