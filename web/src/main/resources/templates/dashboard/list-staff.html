@@ -250,6 +250,22 @@
     function hideLoader() {
         page.elements.loader.css('display', 'none');
     }
+
+    // Tắt trường dữ liệu (input) khi bắt đầu tác vụ "create"
+    function disableSearchField() {
+        const searchField = document.getElementById("searchDisable"); // Thay thế "your-search-field-id" bằng ID thật của trường dữ liệu
+        if (searchField) {
+            searchField.disabled = true;
+        }
+    }
+
+    // Mở lại trường dữ liệu sau khi hoàn thành tác vụ "create"
+    function enableSearchField() {
+        const searchField = document.getElementById("searchDisable"); // Thay thế "your-search-field-id" bằng ID thật của trường dữ liệu
+        if (searchField) {
+            searchField.disabled = false;
+        }
+    }
     // Hiển thị loading spinner trong modal
     // function showModalLoading() {
     //     $("#modalLoadingOverlay").show();
@@ -459,12 +475,21 @@
     function formatDateForServer(dateString) {
         let parts = dateString.split('-');
         if (parts.length === 3) {
+            return parts[1] + '/' + parts[2] + '/' + parts[0];
+        }
+        return dateString;
+    }
+
+    function formatDateForServerUP(dateString) {
+        let parts = dateString.split('-');
+        if (parts.length === 3) {
             return parts[2] + '/' + parts[1] + '/' + parts[0];
         }
         return dateString;
     }
 
     page.commands.handleCreateStaff = () => {
+        disableSearchField()
         showLoader();
         page.dialogs.elements.btnCreate.prop('disabled', true);
         locationRegion.id = null;
@@ -483,7 +508,6 @@
         staff.fullName = page.dialogs.elements.fullNameCre.val();
         staff.phone = page.dialogs.elements.phoneCre.val();
         staff.dob = formatDateForServer(page.dialogs.elements.dobCre.val());
-
         staff.locationRegion = locationRegion;
         staff.user = user;
 
@@ -524,6 +548,7 @@
             })
             .always(function () {
                 hideLoader();
+                enableSearchField();
                 page.dialogs.elements.btnCreate.prop('disabled', false);
             })
     }
@@ -575,7 +600,7 @@
 
 
         const fullName = page.dialogs.elements.fullNameUp.val();
-        const dob = formatDateForServer(page.dialogs.elements.dobUp.val());
+        const dob = formatDateForServerUP(page.dialogs.elements.dobUp.val());
 
         const phone = page.dialogs.elements.phoneUp.val();
 
