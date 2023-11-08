@@ -2,6 +2,7 @@ package com.cg.api;
 
 import com.cg.domain.dto.order.OrderKitchenTableDTO;
 import com.cg.domain.dto.orderDetail.*;
+import com.cg.domain.dto.socket.Notification;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
 import com.cg.domain.enums.EOrderDetailStatus;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/order-details")
 public class OrderDetailAPI {
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
     @Autowired
     private IOrderService orderService;
     @Autowired
@@ -260,6 +264,14 @@ public class OrderDetailAPI {
 
         Map<String, List<?>> result = getAllItem();
 
+//        Notification notification = new Notification();
+//        notification.setType(Notification.NotificationType.RECEPTION);
+//        notification.setSender("USER");
+//        notification.setData(new Notification.Data(productId, String.format("%s đã hết!", )));
+//
+//        ///topic/reception OR /topic/kitchen
+//        messagingTemplate.convertAndSend("/topic/reception", notification);
+
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
@@ -375,6 +387,14 @@ public class OrderDetailAPI {
 
         List<IOrderDetailKitchenWaiterDTO> itemsWaiter = orderDetailService.getOrderDetailByStatusWaiterGroupByTableAndProduct();
 
+        Notification notification = new Notification();
+        notification.setType(Notification.NotificationType.RECEPTION);
+        notification.setSender("USER");
+        notification.setData(new Notification.Data(orderDetail.getId(), String.format("Một %s của %s đã được làm xong!", orderDetail.getProduct().getTitle(), orderDetail.getOrder().getTableOrder().getTitle())));
+
+        ///topic/reception OR /topic/kitchen
+        messagingTemplate.convertAndSend("/topic/reception", notification);
+
         return new ResponseEntity<>(itemsWaiter, HttpStatus.OK);
     }
 
@@ -405,6 +425,14 @@ public class OrderDetailAPI {
         orderDetailService.changeStatusFromWaiterToDoneToProductOfOrder(orderDetail);
 
         List<IOrderDetailKitchenWaiterDTO> itemsWaiter = orderDetailService.getOrderDetailByStatusWaiterGroupByTableAndProduct();
+
+        Notification notification = new Notification();
+        notification.setType(Notification.NotificationType.RECEPTION);
+        notification.setSender("USER");
+        notification.setData(new Notification.Data(orderDetail.getId(), String.format("Tất cả %s của %s đã được làm xong!", orderDetail.getProduct().getTitle(), orderDetail.getOrder().getTableOrder().getTitle())));
+
+        ///topic/reception OR /topic/kitchen
+        messagingTemplate.convertAndSend("/topic/reception", notification);
 
         return new ResponseEntity<>(itemsWaiter, HttpStatus.OK);
     }
@@ -559,6 +587,14 @@ public class OrderDetailAPI {
 
         orderDetailService.changeStatusFromWaiterToStockOutToProductOfOrder(orderDetail);
         List<IOrderDetailKitchenWaiterDTO> itemsWaiter = orderDetailService.getOrderDetailByStatusWaiterGroupByTableAndProduct();
+
+        Notification notification = new Notification();
+        notification.setType(Notification.NotificationType.RECEPTION);
+        notification.setSender("USER");
+        notification.setData(new Notification.Data(orderDetail.getId(), String.format("%s của %s đã hết!", orderDetail.getProduct().getTitle(), orderDetail.getOrder().getTableOrder().getTitle())));
+
+        ///topic/reception OR /topic/kitchen
+        messagingTemplate.convertAndSend("/topic/reception", notification);
 
         return new ResponseEntity<>(itemsWaiter, HttpStatus.OK);
     }
