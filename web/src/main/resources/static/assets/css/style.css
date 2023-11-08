@@ -139,3 +139,20 @@ input.error {
     border-color: #EC407A;
     color: #fff;
 }
+.widget.widget-tile {
+    padding: 24px 20px;
+    margin-bottom: 25px;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.widget {
+    background-color: #fff;
+    border-radius: 6px;
+}
+
+.title-table {
+    font-size: 28px;
+    font-weight: 600;
+}

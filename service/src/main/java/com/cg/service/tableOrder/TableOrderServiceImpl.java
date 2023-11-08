@@ -148,33 +148,6 @@ public class TableOrderServiceImpl implements ITableOrderService {
             throw new DataInputException("bàn không tồn tại, vui lòng kiểm tra lại dữ liệu !!!");
         }
 
-        Optional<TableOrderBackup> tableBackupOptional = iTableOrderBackupService.findByTableTargetId(newTable.get().getId());
-
-        if(tableBackupOptional.isPresent()) {
-            Optional<TableOrder> tableCombineOptional = this.findById(tableBackupOptional.get().getTableCurrentId());
-
-            TableOrder tableCombine = tableCombineOptional.get();
-
-            tableCombine.setStatus(ETableStatus.BUSY);
-            tableOrderRepository.save(tableCombine);
-
-            List<BillBackup> currentTableBillBackup = ibillBackupService.findAllByOrderId(tableBackupOptional.get().getOrderCurrentId());
-
-            if (currentTableBillBackup.size() == 0) {
-                throw new DataInputException("đơn hàng hiện tại không hợp lệ, vui lòng kiểm tra lại dữ liệu");
-            }
-
-            List<BillBackup> targetTableBillBackup = ibillBackupService.findAllByOrderId(tableBackupOptional.get().getOrderTargetId());
-
-            if (targetTableBillBackup.size() == 0) {
-                throw new DataInputException("đơn hàng muốn tách không hợp lệ, vui lòng kiểm tra lại dữ liệu");
-            }
-
-            billBackupRepository.deleteAll(currentTableBillBackup);
-            billBackupRepository.deleteAll(targetTableBillBackup);
-            tableOrderBackupRepository.delete(tableBackupOptional.get());
-        }
-
         Optional<Order> orderOptional = iOrderService.getByTableOrderAndPaid(oldTable.get(), false);
 
         if (!orderOptional.isPresent()) {
