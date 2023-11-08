@@ -27,6 +27,7 @@ class App {
 
     static API_STAFF = this.API_SERVER + '/staff'
 
+    static API_REPORT = this.API_SERVER + '/report'
 
     static BASE_URL_CLOUD_IMAGE = "https://res.cloudinary.com/dadtniwa8/image/upload";
     static IMAGE_SCALE_W_280_h_180_Q_100 = 'c_scale,w_280,h_180,q_100'
