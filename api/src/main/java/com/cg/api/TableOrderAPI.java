@@ -45,6 +45,16 @@ public class TableOrderAPI {
     @Autowired
     private ValidateUtils validateUtils;
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllTableOrder() {
+        List<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder();
+
+        if (tableOrderDTO.isEmpty()) {
+            throw new ResourceNotFoundException("Không có bàn nào vui lòng kiểm tra lại hệ thống");
+        }
+        return new ResponseEntity<>(tableOrderDTO, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllTableOrder(@RequestParam(defaultValue = "") String search, Pageable pageable) {
         Page<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder(search, pageable);
@@ -198,6 +208,7 @@ public class TableOrderAPI {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 //    @PostMapping("/un-combine-tables")
 //    public ResponseEntity<?> unCombineTables(HttpServletRequest request) throws IOException {

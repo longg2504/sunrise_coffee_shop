@@ -152,12 +152,6 @@ public class OrderAPI {
 
             OrderDetailUpResDTO orderDetailUpResDTO = orderService.upOrderDetail(orderUpReqDTO, order, product, userOptional.get());
 
-            Notification notification = new Notification();
-            notification.setType(Notification.NotificationType.RECEPTION);
-            notification.setSender("USER");
-            notification.setData(new Notification.Data(tableOrder.getId(), String.format("Bàn %s đã được cập nhật", tableOrder.getTitle())));
-
-            messagingTemplate.convertAndSend("/topic/notification", notification);
             return new ResponseEntity<>(orderDetailUpResDTO ,HttpStatus.OK);
         }
 
@@ -215,6 +209,14 @@ public class OrderAPI {
         OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
         Optional<Order> orderOptional = orderService.findByTableId(orderChangeStatusResDTO.getTableId());
         List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderOptional.get().getId());
+
+        Notification notification = new Notification();
+        notification.setType(Notification.NotificationType.RECEPTION);
+        notification.setSender("USER");
+        notification.setData(new Notification.Data(tableOrder.getId(), String.format("%s đã được cập nhật", tableOrder.getTitle())));
+
+        ///topic/reception OR /topic/kitchen
+        messagingTemplate.convertAndSend("/topic/kitchen", notification);
         return  new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 }
