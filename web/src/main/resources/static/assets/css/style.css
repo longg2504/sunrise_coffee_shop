@@ -156,3 +156,8 @@ input.error {
     font-size: 28px;
     font-weight: 600;
 }
+.small-select {
+    width: 50%; /* Điều chỉnh chiều rộng của ô select tại đây */
+    padding: 4px; /* Điều chỉnh khoảng cách trong ô select tại đây */
+    font-size: 12px; /* Điều chỉnh kích thước chữ tại đây */
+}

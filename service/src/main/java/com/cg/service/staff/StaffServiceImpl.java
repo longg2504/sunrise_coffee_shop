@@ -114,6 +114,7 @@ public class StaffServiceImpl implements IStaffService {
         locationRegionRepository.save(locationRegion);
 
         Avatar staffAvatar = new Avatar();
+
         avatarRepository.save(staffAvatar);
 
         uploadAndSaveStaffImage(staffAvatar, file);

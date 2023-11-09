@@ -25,8 +25,7 @@
                             <h4 class="mb-0" id="countStaff"></h4>
                         </div>
                     </div>
-                    <hr class="dark horizontal my-0">
-                    <div class="card-footer p-3">
+                    <div class="p-3">
                         <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>
                         </p>
                     </div>
@@ -43,8 +42,7 @@
                             <h4 class="mb-0" id="countTable"></h4>
                         </div>
                     </div>
-                    <hr class="dark horizontal my-0">
-                    <div class="card-footer p-3">
+                    <div class="p-3">
                         <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>
                         </p>
                     </div>
@@ -61,8 +59,7 @@
                             <h4 class="mb-0" id="countProduct"></h4>
                         </div>
                     </div>
-                    <hr class="dark horizontal my-0">
-                    <div class="card-footer p-3">
+                    <div class="p-3">
                         <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>
                         </p>
                     </div>
@@ -100,34 +97,32 @@
             </div>
         </div>
 
-
         <div class="row ">
-
-            <div class="col-12 col-lg-12">
-                <div class="col-12 mb-3 d-flex justify-content-center w-75">
-                    <span class="form-text my-auto title-table" style="text-align: center"> Chọn ngày để xem doanh thu:</span>
-                    <input type="date" class="form-control ml-4 w-25" id="dateCount">
-                </div>
+            <div class="col-12 mb-3 d-flex justify-content-center w-75">
+                <h3>Select a date to view revenue:</h3>
+<!--                <span class="form-text my-auto title-table"> Chọn ngày để xem doanh thu:</span>-->
+                <input type="date" class="form-control ml-4 w-15" id="dateCount">
+            </div>
+            <div class="col-12 col-lg-6 ">
                 <div class="widget widget-tile">
                     <div class="chart sparkline" id="spark1"></div>
                     <div class="data-info">
-
-                        <div class="desc" id="day-amount-title">Doanh thu trong ngày</div>
+                        <div class="desc" id="day-amount-title">Revenue of the day</div>
                         <div class="value">
                             <span class="indicator indicator-equal mdi mdi-chevron-right"></span>
-                            <span id="totalOfDay" class="number">0</span>
+                            <span id="totalOfDay" class="number"></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-12 ">
+            <div class="col-12 col-lg-6 ">
                 <div class="widget widget-tile">
                     <div class="chart sparkline" id="spark2"></div>
                     <div class="data-info">
-                        <div class="desc" id="day-bill-title">Hóa đơn trong ngày</div>
+                        <div class="desc" id="day-bill-title">Invoice of the day</div>
                         <div class="value">
                             <span class="indicator indicator-positive mdi mdi-chevron-up"></span>
-                            <span id="countOrderCurrentDay" class="number">0</span>
+                            <span id="countOrderCurrentDay" class="number"></span>
                         </div>
                     </div>
                 </div>
@@ -136,14 +131,15 @@
 
         <div class="row">
             <div class="col-12 mb-3 d-flex justify-content-center w-75">
-                <span class="form-text my-auto title-table"> Chọn tháng để xem doanh thu:</span>
-                <input type="month" class="form-control ml-4 w-25" id="monthCount">
+<!--                <span class="form-text my-auto title-table"> Chọn tháng để xem doanh thu:</span>-->
+                <h3>Select month to view revenue:</h3>
+                <input type="month" class="form-control ml-4 w-20" id="monthCount">
             </div>
             <div class="col-12 col-lg-6 ">
                 <div class="widget widget-tile">
                     <div class="chart sparkline" id="spark3"></div>
                     <div class="data-info">
-                        <div class="desc" id="month-amount-title">Doanh thu trong tháng</div>
+                        <div class="desc" id="month-amount-title">Revenue during the month</div>
                         <div class="value">
                             <span class="indicator indicator-positive mdi mdi-chevron-up"></span>
                             <span id="reportCurrentMonth" class="number">0</span>
@@ -151,25 +147,27 @@
                     </div>
                 </div>
             </div>
+        </div>
 
             <div class="col-12 col-lg-12 mb-3">
-                <div class="card">
+                <div class="card text-center">
                     <div class="card-header">
-                        <div class="row d-flex justify-content-between">
-                            <div class="ml-3 title-table">DOANH THU TỪNG THÁNG THEO NĂM</div>
-                            <div class="col-4 mr-3 d-flex">
-                                <select type="" class="form-control mr-1" id="yearReport"
-                                        name="yearReport">
+                        <div class="row d-flex align-items-center">
+                            <div class="col-6 ml-3"> <h3>REVENUE BY MONTH BY YEAR</h3></div>
+
+                            <div class="col-4 mr-3 d-flex align-items-center">
+                                <select type="" class="form-select mr-1 small-select" id="yearReport" name="yearReport">
                                     <option value="2023"> Năm 2023</option>
                                     <option value="2022"> Năm 2022</option>
                                 </select>
                             </div>
                         </div>
+
                     </div>
 <!--                    <div class="card-body">-->
 <!--                        <div id="reportByYearChart" style="width:100%; max-width:1000px;"></div>-->
 <!--                    </div>-->
-                    <div class="col-md-6" style="width: 400px;height: 400px">
+                    <div class="col-md-6" style=" margin: 0 auto; text-align: center;">
                         <canvas id="reportByYearChart"></canvas>
                     </div>
                 </div>
@@ -178,11 +176,12 @@
         <div class="col-12 col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <div class=" d-flex justify-content-between">
-                        <div class=" title-table my-auto" style="font-size: 26px !important;">
-                            DOANH THU THEO KHOẢNG NGÀY
-                        </div>
-                        <div class=" mt-2 d-flex" id="input-date">
+                    <div class="d-flex justify-content-between align-items-center">
+<!--                        <div class="title-table my-auto" style="font-size: 26px !important;">-->
+<!--                            DOANH THU THEO KHOẢNG NGÀY-->
+<!--                        </div>-->
+                        <h3>REVENUE BY DAY PERIOD</h3>
+                        <div class="mt-2 d-flex" id="input-date">
                             <div class="mr-2 form-label my-auto">
                                 Từ ngày
                             </div>
@@ -204,10 +203,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-flex justify-content-center"> <!-- Để canh giữa biểu đồ -->
                     <canvas id="myChartLine"></canvas>
                 </div>
             </div>
+        </div>
+        <div class="spinner loader">
+            <div class="spinner-sector spinner-sector-red"></div>
+            <div class="spinner-sector spinner-sector-blue"></div>
+            <div class="spinner-sector spinner-sector-green"></div>
         </div>
         <th:block th:replace="/layout/dashboard_layout/footer"/>
     </div>
@@ -240,10 +244,16 @@
     page.elements.inputDate = $("#input-date");
     page.elements.dateStartReport = $("#dateStartReport");
     page.elements.dateEndReport = $("#dateEndReport");
+    page.elements.loader = $(".loader");
 
     let month;
     let sort;
-
+    function showLoader() {
+        page.elements.loader.css('display', 'block');
+    }
+    function hideLoader() {
+        page.elements.loader.css('display', 'none');
+    }
     page.commands.renderTop5BestSeller = (product) => {
         if (product && product.fileFolder) {
             let image_thumbnail = `
@@ -291,7 +301,7 @@
     }
 
     page.commands.getAllTop5BestSeller = () => {
-        // showLoader();
+        showLoader();
         $.ajax({
             headers: {
                 'Accept': 'application/json',
@@ -313,7 +323,7 @@
                 App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
             })
             .always(function () {
-                // hideLoader();
+                hideLoader();
             });
     }
     $(document).ready(function() {
@@ -336,48 +346,75 @@
         const dateStartReport = $("#dateStartReport");
         const dateEndReport = $("#dateEndReport");
         const canvas = document.getElementById("myChartLine");
+
+        //khoảng thời gian hiện tại (7 ngày gần đây)
+        const currentDate = new Date();
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(currentDate.getDate() - 6); // 7 ngày trước
+
+        const startDay = formatDate(startDate);
+        const endDay = formatDate(endDate);
+        dateStartReport.val(startDay);
+        dateEndReport.val(endDay);
+        loadDataAndRenderChart();
         dateStartReport.on("change", loadDataAndRenderChart);
         dateEndReport.on("change", loadDataAndRenderChart);
         function loadDataAndRenderChart() {
             const startDay = dateStartReport.val();
             const endDay = dateEndReport.val();
+
             if (startDay && endDay) {
-                const url =App.API_REPORT + "/day/" + `${startDay}/${endDay}`;
+                const url = App.API_REPORT + "/day/" + `${startDay}/${endDay}`;
                 $.get(url, function (data) {
-                    console.log("data", data);
-                    renderLineChart(canvas, data);
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        console.log("data", data);
+                        renderLineChart(canvas, data);
+                    } else {
+                        renderLineChart(canvas, []);
+                        App.showErrorAlert("Dữ liệu không hợp lệ hoặc rỗng");
+                        console.error("Dữ liệu không hợp lệ hoặc rỗng");
+                    }
                 });
+            } else {
+                renderLineChart(canvas, []);
+                App.showErrorAlert("Vui lòng chọn khoảng thời gian");
             }
         }
 
         function renderLineChart(canvas, data) {
-            if (data && Array.isArray(data) && data.length > 0) {
-                const labels = data.map(item => {
-                    const dateParts = item.day.split('/');
-                    const formattedDate = `${dateParts[0]}/${dateParts[1]}`;
-                    return formattedDate;
-                });
-                const revenueData = data.map(item => item.totalAmount);
-                const chartData = {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: "Doanh thu",
-                            data: revenueData,
-                            fill: false,
-                            borderColor: "red",
-                        },
-                    ],
-                };
-                const ctx = canvas.getContext("2d");
-                new Chart(ctx, {
-                    type: "line",
-                    data: chartData,
-                });
-            } else {
-                App.showErrorAlert("Dữ liệu không hợp lệ hoặc rỗng")
-                console.error("Dữ liệu không hợp lệ hoặc rỗng");
+            const labels = data.map(item => {
+                const dateParts = item.day.split('/');
+                const formattedDate = `${dateParts[0]}/${dateParts[1]}`;
+                return formattedDate;
+            });
+            const revenueData = data.map(item => item.totalAmount);
+            const chartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Doanh thu",
+                        data: revenueData,
+                        fill: false,
+                        borderColor: "red",
+                    },
+                ],
+            };
+            const ctx = canvas.getContext("2d");
+            if (canvas.chart) {
+                canvas.chart.destroy();
             }
+            canvas.chart = new Chart(ctx, {
+                type: "line",
+                data: chartData,
+            });
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
     });
 //----------
@@ -385,24 +422,35 @@
         const dateCount = $("#dateCount");
         const totalOfDay = $("#totalOfDay");
         const dayAmountTitle = $("#day-amount-title");
-
+        function getCurrentDate() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const day = currentDate.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        const defaultDate = getCurrentDate();
+        dateCount.val(defaultDate);
+        function updateRevenueForDate(selectedDate) {
+            const url = App.API_REPORT + "/day/" + selectedDate;
+            $.get(url, function (data) {
+                if (data !== null && data.totalAmount !== undefined) {
+                    dayAmountTitle.text(`Revenue of the day ${formatDate(selectedDate)}`);
+                    totalOfDay.text(formatCurrency(data.totalAmount));
+                } else {
+                    dayAmountTitle.text("Không có dữ liệu");
+                    totalOfDay.text("0");
+                }
+            }).fail(function () {
+                dayAmountTitle.text("Ngày này chưa có doanh thu");
+                totalOfDay.text("0");
+            });
+        }
+        updateRevenueForDate(defaultDate);
         dateCount.on("change", function () {
             const selectedDate = dateCount.val();
-
             if (selectedDate) {
-                const url = App.API_REPORT + "/day/" + `${selectedDate}`;
-                $.get(url, function (data) {
-                    if (data !== null && data.totalAmount !== undefined) {
-                        dayAmountTitle.text(`Doanh thu trong ngày ${formatDate(selectedDate)}`);
-                        totalOfDay.text(formatCurrency(data.totalAmount));
-                    } else {
-                        dayAmountTitle.text("Không có dữ liệu");
-                        totalOfDay.text("0");
-                    }
-                }).fail(function () {
-                    dayAmountTitle.text("Ngày này chưa có doanh thu");
-                    totalOfDay.text("0");
-                });
+                updateRevenueForDate(selectedDate);
             } else {
                 dayAmountTitle.text("Vui lòng chọn một ngày");
                 totalOfDay.text("0");
@@ -421,21 +469,35 @@
         }
     });
 
+
     //------------ hóa đơn
     $(document).ready(function () {
         const countOrderCurrentDay = $("#countOrderCurrentDay");
         const dayBillTitle = $("#day-bill-title");
         const dateCount = $("#dateCount");
+        function getCurrentDate() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const day = currentDate.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        const defaultDate = getCurrentDate();
+        dateCount.val(defaultDate);
+        function updateOrderCountForDate(selectedDate) {
+            const url = App.API_REPORT + "/count-bill-day/" + selectedDate;
+            $.get(url, function (data) {
+                countOrderCurrentDay.text(data);
+            }).fail(function () {
+                dayBillTitle.text("Không thể tải dữ liệu");
+                countOrderCurrentDay.text("0");
+            });
+        }
+        updateOrderCountForDate(defaultDate);
         dateCount.on("change", function () {
             const selectedDate = dateCount.val();
             if (selectedDate) {
-                const url = App.API_REPORT + "/count-bill-day/" +`${selectedDate}`;
-                $.get(url, function (data) {
-                    countOrderCurrentDay.text(data);
-                }).fail(function () {
-                    dayBillTitle.text("Không thể tải dữ liệu");
-                    countOrderCurrentDay.text("0");
-                });
+                updateOrderCountForDate(selectedDate);
             } else {
                 dayBillTitle.text("Vui lòng chọn một ngày");
                 countOrderCurrentDay.text("0");
@@ -443,26 +505,29 @@
         });
     });
 
-//---theo tháng năm
+    //---theo tháng năm
     $(document).ready(function () {
         const reportCurrentMonth = $("#reportCurrentMonth");
         const monthAmountTitle = $("#month-amount-title");
         const monthCount = $("#monthCount");
-        loadReportBySelectedMonthYear();
-        monthCount.on("change", loadReportBySelectedMonthYear);
-        function loadReportBySelectedMonthYear() {
-            const selectedMonthYear = monthCount.val();
-            const selectedYear = selectedMonthYear.split("-")[0];
-            const selectedMonth = selectedMonthYear.split("-")[1];
-
+        function getCurrentMonthYear() {
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            return `${year}-${month}`;
+        }
+        const defaultMonthYear = getCurrentMonthYear();
+        monthCount.val(defaultMonthYear);
+        function updateRevenueForMonthYear(selectedMonthYear) {
+            const [selectedYear, selectedMonth] = selectedMonthYear.split('-');
             if (selectedYear && selectedMonth) {
-                const url = App.API_REPORT + "/month/" +`${selectedYear}-${selectedMonth}`;
+                const url = App.API_REPORT + "/month/" + `${selectedYear}-${selectedMonth}`;
                 $.get(url, function (data) {
                     if (data && data.totalAmount !== undefined) {
-                        monthAmountTitle.text(`Doanh thu trong tháng ${selectedMonth}/${selectedYear}`);
+                        monthAmountTitle.text(`Revenue during the month ${selectedMonth}/${selectedYear}`);
                         reportCurrentMonth.text(formatCurrency(data.totalAmount));
                     } else {
-                        App.showErrorAlert("\"Không có dữ liệu hoặc dữ liệu không hợp lệ\"")
+                        App.showErrorAlert("Không có dữ liệu hoặc dữ liệu không hợp lệ");
                         monthAmountTitle.text("Không có dữ liệu hoặc dữ liệu không hợp lệ");
                         reportCurrentMonth.text("0");
                     }
@@ -475,8 +540,11 @@
                 reportCurrentMonth.text("0");
             }
         }
-
-        // Hàm để định dạng tiền tệ
+        updateRevenueForMonthYear(defaultMonthYear);
+        monthCount.on("change", function () {
+            const selectedMonthYear = monthCount.val();
+            updateRevenueForMonthYear(selectedMonthYear);
+        });
         function formatCurrency(amount) {
             if (amount !== null && amount !== undefined) {
                 return amount.toLocaleString('vi', { style: 'currency', currency: 'VND' });
@@ -485,14 +553,18 @@
             }
         }
     });
-
 //----theo năm
     $(document).ready(function () {
         const yearReport = $("#yearReport");
         const chartContainer = document.getElementById("reportByYearChart");
-        loadReportByYear();
-        yearReport.on("change", loadReportByYear);
+        const currentYear = new Date().getFullYear();
+        yearReport.val(currentYear);
         let myChart;
+
+        loadReportByYear();
+
+        yearReport.on("change", loadReportByYear);
+
         function loadReportByYear() {
             const selectedYear = yearReport.val();
             if (selectedYear) {
@@ -508,10 +580,14 @@
                             myChart.destroy();
                         }
                         chartContainer.innerHTML = "Không có dữ liệu";
-                        App.showErrorAlert("Không có dữ liệu")
+                        App.showErrorAlert("Không có dữ liệu");
                     }
                 }).fail(function () {
-                    console.error("Lỗi khi tải dữ liệu cho năm " + selectedYear);
+                    if (myChart) {
+                        myChart.destroy();
+                    }
+                    chartContainer.innerHTML = "Lỗi khi tải dữ liệu";
+                    App.showErrorAlert("Lỗi khi tải dữ liệu cho năm " + selectedYear);
                 });
             }
         }
@@ -549,7 +625,6 @@
             });
         }
     });
-
         page.loadData = () => {
         page.commands.getAllTop5BestSeller();
     }
