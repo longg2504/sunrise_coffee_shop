@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 
@@ -18,13 +19,15 @@ public class JwtResponse {
     private String type = "Bearer";
     private String username;
     private String name;
+    private Avatar staffAvatar;
     private Collection<? extends GrantedAuthority> roles;
 
-    public JwtResponse(String accessToken, Long id, String username, String name, Collection<? extends GrantedAuthority> roles) {
+    public JwtResponse(String accessToken, Long id, String username, String name,Avatar staffAvatar ,Collection<? extends GrantedAuthority> roles) {
         this.token = accessToken;
         this.id = id;
         this.username = username;
         this.name = name;
+        this.staffAvatar = staffAvatar;
         this.roles = roles;
     }
 
@@ -36,6 +39,7 @@ public class JwtResponse {
                 ", type='" + type + '\'' +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
+                ", staffAvatar='" + staffAvatar + '\'' +
                 ", roles=" + roles +
                 '}';
     }

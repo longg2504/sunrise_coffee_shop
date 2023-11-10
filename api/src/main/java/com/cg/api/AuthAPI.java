@@ -104,7 +104,7 @@ public class AuthAPI {
         String jwt = jwtService.generateTokenLogin(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = userService.getByUsername(username);
-
+        Optional<Staff> staffOptional  = staffService.findByUser(currentUser);
         if (currentUser.isDeleted()) {
             throw new UnauthorizedException("Tài khoản của bạn đã bị đình chỉ!");
         }
@@ -114,7 +114,9 @@ public class AuthAPI {
                 currentUser.getId(),
                 userDetails.getUsername(),
                 currentUser.getUsername(),
+                staffOptional.get().getStaffAvatar(),
                 userDetails.getAuthorities()
+
         );
 
         ResponseCookie springCookie = ResponseCookie.from("JWT", jwt)
