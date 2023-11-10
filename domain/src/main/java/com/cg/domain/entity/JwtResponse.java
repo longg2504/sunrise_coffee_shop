@@ -31,6 +31,16 @@ public class JwtResponse {
         this.roles = roles;
     }
 
+    public JwtResponse(String accessToken, Long id, String username, String name,Collection<? extends GrantedAuthority> roles) {
+        this.token = accessToken;
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.roles = roles;
+    }
+
+
+
     @Override
     public String toString() {
         return "JwtResponse{" +

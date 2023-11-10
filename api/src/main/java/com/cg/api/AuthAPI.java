@@ -6,6 +6,7 @@ import com.cg.domain.entity.JwtResponse;
 import com.cg.domain.entity.Role;
 import com.cg.domain.entity.Staff;
 import com.cg.domain.entity.User;
+import com.cg.domain.enums.ERole;
 import com.cg.exception.DataInputException;
 import com.cg.exception.EmailExistsException;
 import com.cg.exception.ForBiddenException;
@@ -100,24 +101,39 @@ public class AuthAPI {
             e.printStackTrace();
             throw new DataInputException("Dữ liệu không đúng! Vui lòng kiểm tra lại!");
         }
-
         String jwt = jwtService.generateTokenLogin(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = userService.getByUsername(username);
-        Optional<Staff> staffOptional  = staffService.findByUser(currentUser);
+
+        JwtResponse jwtResponse;
+
+
         if (currentUser.isDeleted()) {
             throw new UnauthorizedException("Tài khoản của bạn đã bị đình chỉ!");
         }
 
-        JwtResponse jwtResponse = new JwtResponse(
-                jwt,
-                currentUser.getId(),
-                userDetails.getUsername(),
-                currentUser.getUsername(),
-                staffOptional.get().getStaffAvatar(),
-                userDetails.getAuthorities()
+        if(currentUser.getRole().getCode().equals("ADMIN")) {
 
-        );
+             jwtResponse = new JwtResponse(
+                    jwt,
+                    currentUser.getId(),
+                    userDetails.getUsername(),
+                    currentUser.getUsername(),
+                    userDetails.getAuthorities()
+
+            );
+        } else{
+            Optional<Staff> staffOptional = staffService.findByUser(currentUser);
+             jwtResponse = new JwtResponse(
+
+                    jwt,
+                    currentUser.getId(),
+                    userDetails.getUsername(),
+                    currentUser.getUsername(),
+                    staffOptional.get().getStaffAvatar(),
+                    userDetails.getAuthorities()
+            );
+        }
 
         ResponseCookie springCookie = ResponseCookie.from("JWT", jwt)
                 .httpOnly(false)
