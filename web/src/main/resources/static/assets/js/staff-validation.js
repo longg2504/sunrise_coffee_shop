@@ -14,7 +14,10 @@ page.dialogs.elements.frmCreateStaff.validate({
         },
         dobCre: {
             required: true,
+            // date: true,
+            // customDateValidation: true,
         },
+
         addressCre: {
             required: true
         }
@@ -70,6 +73,11 @@ page.dialogs.elements.frmUpdateStaff.validate({
             required: true,
             isNumberWithSpace: true
         },
+        // dobUp: {
+        //     required: true,
+        //     date: true,
+        //     customDateValidation: true,
+        // },
         addressUp: {
             required: true,
         }
@@ -111,3 +119,10 @@ $.validator.addMethod("isEmail", function (value, element) {
 $.validator.addMethod("isNumberWithSpace", function (value, element) {
     return this.optional(element) || /^\s*[0-9,\s]+\s*$/i.test(value);
 }, "Vui lòng nhập giá trị số");
+
+// $.validator.addMethod("customDateValidation", function(value, element) {
+//     const dob = new Date(value);
+//     const startDate = new Date('1990-01-01');
+//     const endDate = new Date('2000-12-31');
+//     return dob >= startDate && dob <= endDate;
+// }, "Ngày sinh phải nằm trong khoảng từ 1-1-1990 đến 31-12-2000.");

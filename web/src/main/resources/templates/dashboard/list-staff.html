@@ -261,7 +261,7 @@
 
     // Mở lại trường dữ liệu sau khi hoàn thành tác vụ "create"
     function enableSearchField() {
-        const searchField = document.getElementById("searchDisable"); // Thay thế "your-search-field-id" bằng ID thật của trường dữ liệu
+        const searchField = document.getElementById("searchDisable");
         if (searchField) {
             searchField.disabled = false;
         }
@@ -543,8 +543,8 @@
                 page.commands.handleImagePopup();
                 App.SweetAlert.showSuccessAlert("Thêm mới thành công")
             })
-            .fail((error) => {
-                App.SweetAlert.showErrorAlert(error.responseJSON.message);
+            .fail(() => {
+                App.SweetAlert.showErrorAlert("Avatar không được bỏ trống. Vui lòng upload Avatar!!!");
             })
             .always(function () {
                 hideLoader();
@@ -652,7 +652,7 @@
     }
     page.commands.showDeleteConfirm = () => {
 
-        App.SweetAlert.showDeleteConfirmDialog()
+        App.SweetAlert.showDeleteConfirmDialog("Bạn có muốn khóa tài khoản này không")
             .then((result) => {
                 if (result.isConfirmed) {
                     page.commands.deleteStaff();

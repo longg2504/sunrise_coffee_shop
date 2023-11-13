@@ -21,10 +21,6 @@ input.error {
 .error-area {
     color: red;
 }
-/*.spinner-border {*/
-/*    width: 5rem;*/
-/*    height: 5rem;*/
-/*}*/
 .modal-alert-danger {
     padding: 10px 35px;
     margin-bottom: 15px;
@@ -102,15 +98,15 @@ input.error {
     }
 }
 .container-fluid {
-    position: relative; /* Phần tử cha của loader */
+    position: relative;
 }
 
 .spinner.loader {
-    position: absolute; /* Loader */
-    top: 20%; /* Đặt top để nằm giữa dọc */
-    left: 45%; /* Đặt left để nằm giữa ngang */
-    transform: translate(-50%, -50%); /* Để căn giữa loader */
-    display: none; /* Ẩn loader ban đầu */
+    position: absolute;
+    top: 20%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    display: none;
 }
 .loading-overlay {
     position: absolute;
@@ -157,7 +153,8 @@ input.error {
     font-weight: 600;
 }
 .small-select {
-    width: 50%; /* Điều chỉnh chiều rộng của ô select tại đây */
-    padding: 4px; /* Điều chỉnh khoảng cách trong ô select tại đây */
-    font-size: 12px; /* Điều chỉnh kích thước chữ tại đây */
+    width: 50%;
+    padding: 4px;
+    font-size: 12px;
 }
+

@@ -127,10 +127,10 @@ static showSuccess(m) {
     }
 
     static SweetAlert = class {
-        static showDeleteConfirmDialog() {
+        static showDeleteConfirmDialog(t) {
             return Swal.fire({
                 icon: 'warning',
-                text: 'Bạn có muốn khóa tài khoản này không',
+                text: t,
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
