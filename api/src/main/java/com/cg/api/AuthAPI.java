@@ -149,7 +149,6 @@ public class AuthAPI {
                 .ok()
                 .header(HttpHeaders.SET_COOKIE, springCookie.toString())
                 .body(jwtResponse)
-                ;
 
     }
 }
