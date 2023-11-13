@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body class="g-sidenav-show  bg-gray-200">
 <th:block th:replace="/layout/dashboard_layout/left-sidebar :: left-sidebar-dashboard"/>
@@ -254,14 +255,14 @@
     function hideLoader() {
         page.elements.loader.css('display', 'none');
     }
-    page.commands.renderTop5BestSeller = (product) => {
+    page.commands.renderTop5BestSeller = (index,product) => {
         if (product && product.fileFolder) {
             let image_thumbnail = `
             ${App.BASE_URL_CLOUD_IMAGE}/${App.IMAGE_SCALE_W_100_h_80_Q_90}/${product.fileFolder}/${product.fileName}
         `;
             return `
                 <tr>
-                    <td class="text-center">${product.id}</td>
+                    <td class="text-center">${index+1}</td>
                     <td class="text-center">
                         <img src="${image_thumbnail}" alt=""/>
                     </td>
@@ -314,7 +315,7 @@
                 console.log(data)
                 page.elements.tbTop5ProductBody.empty();
                 $.each(data, (index, product) => {
-                    const str = page.commands.renderTop5BestSeller(product)
+                    const str = page.commands.renderTop5BestSeller(index,product)
                     page.elements.tbTop5ProductBody.append(str)
                 })
                 renderChart(data);

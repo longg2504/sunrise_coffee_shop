@@ -151,7 +151,7 @@
     function hideModalLoading() {
         $("#modalLoadingOverlay").hide();
     }
-    page.commands.renderProduct = (product, index) => {
+    page.commands.renderProduct = (product) => {
         avatar = product.productAvatar;
         let imageThumbnail = (avatar && avatar.fileFolder && avatar.fileName) ?
             App.BASE_URL_CLOUD_IMAGE + "/" + App.IMAGE_SCALE_W_100_h_80_Q_90 + "/" + avatar.fileFolder + "/" + avatar.fileName :
@@ -247,7 +247,7 @@
                 page.elements.tbProductBody.empty();
                 $.each(data.content, (index, product) => {
                     const str = page.commands.renderProduct(product)
-                    page.elements.tbProductBody.append(str)
+                    page.elements.tbProductBody.prepend(str)
                 })
                 page.commands.displayPagination(data.totalPages, data.number + 1);
             })
@@ -407,8 +407,11 @@
             page.dialogs.elements.modalCreate.modal('hide');
             page.commands.handleImagePopup();
             App.SweetAlert.showSuccessAlert("Thêm mới thành công")
-        }).fail((err) => {
-            App.SweetAlert.showErrorAlert(error.responseJSON.message);
+        }).fail(() => {
+            App.SweetAlert.showErrorAlert("Ảnh không được bỏ trống.Vui lòng upload ảnh!!!");
+            hideModalLoading();
+            hideLoader();
+            // App.SweetAlert.showErrorAlert(error.responseJSON.message);
             console.log(err)
         }).always(function () {
             hideLoader();
@@ -465,7 +468,7 @@
         });
     }
     page.commands.showDeleteConfirm = () => {
-        App.SweetAlert.showDeleteConfirmDialog()
+        App.SweetAlert.showDeleteConfirmDialog("Bạn có muốn xóa sản phẩm này không")
             .then((result) => {
                 if (result.isConfirmed) {
                     page.commands.deleteProduct();
@@ -482,7 +485,7 @@
             },
             url: page.url.delete + '/' + productId
         }).done((data) => {
-            App.SweetAlert.showSuccessAlert("Xoá món thành công");
+            App.SweetAlert.showSuccessAlert("Xoá sản phẩm thành công");
             $("#tr_" + product.id).remove();
             page.commands.handleImagePopup();
             if($("#tbProduct tbody tr").length > 1){
