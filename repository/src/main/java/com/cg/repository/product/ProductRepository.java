@@ -2,6 +2,7 @@ package com.cg.repository.product;
 
 import com.cg.domain.dto.product.ProductCountDTO;
 import com.cg.domain.dto.product.ProductDTO;
+import com.cg.domain.entity.Category;
 import com.cg.domain.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,4 +57,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE p.deleted = false "
     )
     ProductCountDTO countProduct();
+
+
+    @Query("SELECT NEW com.cg.domain.dto.product.ProductDTO (" +
+            "pr.id, " +
+            "pr.title, " +
+            "pr.price, " +
+            "pr.unit, " +
+            "pr.category, " +
+            "pr.productAvatar " +
+            ") " +
+            "From Product AS pr " +
+            "WHERE (:category IS NULL OR pr.category = :category) " +
+            "AND pr.title LIKE %:search% " +
+            "AND pr.deleted = false ")
+    Page<ProductDTO> findAllByCategoryAndSearch(@Param("category") Category category, @Param("search") String search, Pageable pageable);
+
 }

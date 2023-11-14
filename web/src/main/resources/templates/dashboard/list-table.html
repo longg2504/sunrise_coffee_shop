@@ -16,13 +16,42 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <div class="col-sm-8">
-                    <button type="button" class="btn add" id="btnShowModalCreate">
-                        <i class="material-icons opacity-10">add</i>
-                        Add Table
-                    </button>
-                </div>
-                <div class="card my-4">
+               <div class="row">
+                   <div class="col-sm-8">
+                       <button type="button" class="btn add" id="btnShowModalCreate">
+                           <i class="material-icons opacity-10">add</i>
+                           Add Table
+                       </button>
+                   </div>
+                   <div class="col-sm-3">
+                       <div class="mr-2">
+                           <select class="form-control select2-container search" id="zoneFilter">
+                               <option value="">--Tầng--</option>
+                               <option value="1" >Tầng 1</option>
+                               <option value="2" >Tầng 2</option>
+                               <option value="3" >Tầng 3</option>
+                           </select>
+                       </div>
+                   </div>
+<!--                  <div class="col-sm-4">-->
+<!--                      <div class="card" style="padding: 5px">-->
+<!--                          <div class="card-header p-3 pt-2">-->
+<!--                              <div class="icon icon-lg icon-shape bg-gradient-info shadow-dark text-center border-radius-xl mt-n4 position-absolute">-->
+<!--                                  <i class="material-icons opacity-10">table_bar</i>-->
+<!--                              </div>-->
+<!--                              <div class="text-end pt-1">-->
+<!--                                  <p class="text-sm mb-0 text-capitalize">Total number of employees</p>-->
+<!--                                  <h4 class="mb-0" id="countStaff"></h4>-->
+<!--                              </div>-->
+<!--                          </div>-->
+<!--                          <div class="p-3">-->
+<!--                              <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>-->
+<!--                              </p>-->
+<!--                          </div>-->
+<!--                      </div>-->
+<!--                  </div>-->
+               </div>
+                <div class="card my-4" style="padding: 5px">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                             <h6 class="text-white text-capitalize ps-3">Table Order</h6>
@@ -215,9 +244,8 @@
             data: JSON.stringify(data)
         })
             .done(() => {
-                App.SweetAlert.showSuccessAlert("Thêm mới thành công", function () {
-                    page.dialogs.elements.modalCreate.modal('hide');
-                });
+                page.dialogs.elements.modalCreate.modal('hide');
+                App.SweetAlert.showSuccessAlert("Thêm mới thành công")
             })
             .fail(function () {
                 App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
@@ -242,7 +270,9 @@
             page.dialogs.elements.frmCreateTable.validate().resetForm();
             page.dialogs.elements.frmCreateTable.find("input.error").removeClass("error");
             page.dialogs.elements.errorCreateArea.empty().removeClass("show").addClass("hide");
+            page.dialogs.elements.modalCreate.modal('hide');
         }
+
         page.dialogs.elements.modalCreate.on("hidden.bs.modal", function () {
             page.commands.closeModalCreate();
             page.commands.getAllTableOrder(0, 10, keySearch);

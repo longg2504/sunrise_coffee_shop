@@ -39,9 +39,9 @@ public class ProductAPI {
 
 
     @GetMapping
-    public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search, Pageable pageable) {
-        search =  '%' + search + '%';
-        Page<ProductDTO> productDTOS = productService.findProductByKeySearch(search,pageable);
+    public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search,@RequestParam (defaultValue = "") Category category, Pageable pageable) {
+//        search =  '%' + search + '%';
+        Page<ProductDTO> productDTOS = productService.findAllByCategoryAndSearch(category,search,pageable);
         if (productDTOS.isEmpty()) {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
@@ -136,5 +136,16 @@ public class ProductAPI {
         productService.deleteByIdTrue(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+//    @GetMapping("/search/{categoryId}")
+//    public ResponseEntity<?> getProductByCategory(@PathVariable("categoryId") String categoryIdStr,Pageable pageable) {
+//        if (!validateUtils.isNumberValid(categoryIdStr)) {
+//            throw new DataInputException("Mã danh mục không hợp lệ");
+//        }
+//        Long categoryId = Long.parseLong(categoryIdStr);
+//        Page<ProductDTO> productDTO = productService.findAllByCategoryLike(,pageable);
+//
+//        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+//    }
 
 }
