@@ -1,9 +1,6 @@
 package com.cg.service.tableOrder;
 
-import com.cg.domain.dto.tableOrder.TableOrderCountDTO;
-import com.cg.domain.dto.tableOrder.TableOrderCreateReqDTO;
-import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
-import com.cg.domain.dto.tableOrder.TableOrderDTO;
+import com.cg.domain.dto.tableOrder.*;
 import com.cg.domain.entity.*;
 import com.cg.domain.enums.ETableStatus;
 import com.cg.exception.DataInputException;
@@ -117,6 +114,7 @@ public class TableOrderServiceImpl implements ITableOrderService {
     public List<TableOrderDTO> findAllTablesWithoutSenderId(Long tableId) {
         return null;
     }
+
 
     @Override
     public TableOrderCreateResDTO createTableOrder(TableOrderCreateReqDTO tableOrderCreateReqDTO, Zone zone) {
@@ -350,5 +348,10 @@ public class TableOrderServiceImpl implements ITableOrderService {
     @Override
     public TableOrderCountDTO countTable() {
         return tableOrderRepository.countTable();
+    }
+
+    @Override
+    public List<TableOrderWithZoneCountDTO> countTableOrderByZone() {
+        return tableOrderRepository.countTableOrderByZone();
     }
 }

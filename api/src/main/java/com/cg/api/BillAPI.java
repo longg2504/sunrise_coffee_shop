@@ -1,6 +1,7 @@
 package com.cg.api;
 
 import com.cg.domain.dto.bill.*;
+import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.entity.Bill;
 import com.cg.domain.entity.Order;
 import com.cg.exception.DataInputException;
@@ -101,6 +102,22 @@ public class BillAPI {
         List<BillDetailDTO> billDetailDTOS = billService.findBillById(billId);
 
         return new ResponseEntity<>(billDetailDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("/date")
+    public ResponseEntity<?> getBillByDate(@RequestParam(required = false) Integer day, @RequestParam Integer month, @RequestParam Integer year, Pageable pageable){
+        return new ResponseEntity<>(billService.getBillByDate(year,month,day,pageable), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> getBillByStaffName(@RequestParam("") String staffName, Pageable pageable){
+        staffName =  '%' + staffName + '%';
+        Page<BillGetAllResDTO> billGetAllResDTOS = billService.getBillByStaff(staffName,pageable);
+        if (billGetAllResDTOS.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(billGetAllResDTOS, HttpStatus.OK);
     }
 
 

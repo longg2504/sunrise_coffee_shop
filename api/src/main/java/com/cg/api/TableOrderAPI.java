@@ -3,6 +3,7 @@ package com.cg.api;
 import com.cg.domain.dto.tableOrder.TableOrderCreateReqDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
+import com.cg.domain.dto.tableOrder.TableOrderWithZoneCountDTO;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.domain.enums.ETableStatus;
@@ -65,6 +66,7 @@ public class TableOrderAPI {
         return new ResponseEntity<>(tableOrderDTO, HttpStatus.OK);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getTableOrderById(@PathVariable Long id) {
         Optional<TableOrder> tableOrderOptional = tableOrderService.findById(id);
@@ -73,6 +75,12 @@ public class TableOrderAPI {
         }
 
         return new ResponseEntity<>(tableOrderOptional, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-count-table-by-zone")
+    public ResponseEntity<?> getCountTableByZone(){
+        List<TableOrderWithZoneCountDTO> tableOrderWithZoneCountDTO = tableOrderService.countTableOrderByZone();
+        return new ResponseEntity<>(tableOrderWithZoneCountDTO, HttpStatus.OK);
     }
 
     @PostMapping("/create")

@@ -77,8 +77,18 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
+    public List<StaffDTO> findAllStaffDTOPageWithDeleted() {
+        return staffRepository.findAllStaffDTOPageWithDeleted();
+    }
+
+    @Override
     public Page<StaffDTO> findStaffByKeySearch(String keySearch, Pageable pageable) {
         return staffRepository.findStaffByKeySearch(keySearch,pageable);
+    }
+
+    @Override
+    public Page<StaffDTO> findStaffByRole(Long roleId, Pageable pageable) {
+        return staffRepository.findStaffByRole(roleId, pageable);
     }
 
     @Override

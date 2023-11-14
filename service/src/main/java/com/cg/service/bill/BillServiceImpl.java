@@ -314,4 +314,35 @@ public class BillServiceImpl implements IBillService {
         return billRepository.findBillById(billId);
     }
 
+    @Override
+    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,Pageable pageable) {
+        LocalDate start = getDate(year,month,day);
+        if(day == null){
+            return billRepository.getAllBillByDate(start,getLastDayOfMonth(start),pageable);
+        }
+
+        return billRepository.getAllBillByDate(start, start,pageable);
+    }
+
+    @Override
+    public Page<BillGetAllResDTO> getBillByStaff(String staffName, Pageable pageable) {
+        return billRepository.getBillByStaff(staffName, pageable);
+    }
+
+    public LocalDate getDate(int year, int month, Integer day) {
+        if (day == null) {
+            // Trả về ngày đầu tháng
+            return LocalDate.of(year, month, 1);
+        } else {
+            // Trả về ngày tháng của năm
+            return LocalDate.of(year, month, day);
+        }
+    }
+
+    public LocalDate getLastDayOfMonth(LocalDate date) {
+        return date.with(TemporalAdjusters.lastDayOfMonth());
+    }
+
+
+
 }

@@ -18,7 +18,7 @@ public class ZoneServiceImpl implements IZoneService{
     private ZoneRepository zoneRepository;
     @Override
     public List<Zone> findAll() {
-        return null;
+        return zoneRepository.findAll();
     }
 
     @Override

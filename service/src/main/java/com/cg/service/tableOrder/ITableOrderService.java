@@ -1,9 +1,6 @@
 package com.cg.service.tableOrder;
 
-import com.cg.domain.dto.tableOrder.TableOrderCountDTO;
-import com.cg.domain.dto.tableOrder.TableOrderCreateReqDTO;
-import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
-import com.cg.domain.dto.tableOrder.TableOrderDTO;
+import com.cg.domain.dto.tableOrder.*;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.service.IGeneralService;
@@ -18,6 +15,7 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
 
     List<TableOrderDTO> findAllTablesWithoutSenderId(@Param("tableId") Long tableId);
 
+
     TableOrderCreateResDTO createTableOrder(TableOrderCreateReqDTO tableOrderCreateReqDTO, Zone zone);
 
     void changeAllProductToNewTable(Long oldTableId, Long newTableId);
@@ -29,6 +27,8 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
     List<TableOrderDTO> findAllTableOrder();
 
     TableOrderCountDTO countTable ();
+
+    List<TableOrderWithZoneCountDTO> countTableOrderByZone();
 
 
 }

@@ -2,6 +2,7 @@ package com.cg.repository.tableOrder;
 
 import com.cg.domain.dto.tableOrder.TableOrderCountDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
+import com.cg.domain.dto.tableOrder.TableOrderWithZoneCountDTO;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,17 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
     )
     TableOrderCountDTO countTable ();
 
+    @Query("SELECT NEW com.cg.domain.dto.tableOrder.TableOrderWithZoneCountDTO(" +
+            "count(tb.id)," +
+            "z.title " +
+            ") " +
+            "FROM TableOrder AS tb " +
+            "JOIN Zone AS z " +
+            "ON tb.zone.id = z.id " +
+            "WHERE tb.deleted = false " +
+            "GROUP BY z.title "
 
-
+    )
+    List<TableOrderWithZoneCountDTO> countTableOrderByZone();
 
 }

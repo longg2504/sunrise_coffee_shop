@@ -1,5 +1,6 @@
 package com.cg.service.role;
 
+import com.cg.domain.dto.role.RoleDTO;
 import com.cg.domain.entity.Role;
 import com.cg.repository.role.RoleRepository;
 import lombok.Setter;
@@ -39,4 +40,5 @@ public class RoleServiceImpl implements IRoleService {
     public void deleteById(Long id) {
         roleRepository.deleteById(id);
     }
+
 }

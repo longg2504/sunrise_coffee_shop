@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,10 @@ public interface IBillService extends IGeneralService<Bill, Long> {
     List<BillGetTwoDayDTO> getBillsNotPaging(Date day);
 
     List<BillDetailDTO> findBillById(Long billId);
+
+    Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day, Pageable pageable);
+
+    Page<BillGetAllResDTO> getBillByStaff(String staffName, Pageable pageable);
 
 
 }

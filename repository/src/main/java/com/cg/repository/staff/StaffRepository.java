@@ -33,6 +33,21 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             "ORDER BY st.id ASC"
     )
     Page<StaffDTO> findAllStaffDTOPage(Pageable pageable);
+
+    @Query("SELECT NEW com.cg.domain.dto.staff.StaffDTO (" +
+            "st.id," +
+            "st.fullName," +
+            "st.dob," +
+            "st.phone," +
+            "st.locationRegion," +
+            "st.staffAvatar," +
+            "st.user" +
+            ") " +
+            "FROM Staff as st " +
+            "WHERE st.deleted = true " +
+            "ORDER BY st.id ASC"
+    )
+    List<StaffDTO> findAllStaffDTOPageWithDeleted();
     @Query("SELECT NEW com.cg.domain.dto.staff.StaffDTO" +
             "(" +
             "st.id," +
@@ -65,6 +80,25 @@ public interface StaffRepository extends JpaRepository<Staff,Long> {
             "AND st.deleted = false "
     )
     Page<StaffDTO> findStaffByKeySearch(@Param("keySearch") String keySearch, Pageable pageable);
+
+    @Query("SELECT NEW com.cg.domain.dto.staff.StaffDTO" +
+            "(" +
+            "st.id," +
+            "st.fullName," +
+            "st.dob," +
+            "st.phone," +
+            "st.locationRegion," +
+            "st.staffAvatar," +
+            "st.user" +
+            ") " +
+            "FROM Staff as st " +
+            "WHERE st.user.role.id = :roleId " +
+            "AND st.deleted = false " +
+            "AND st.user.role.code <> 'ADMIN' "
+    )
+    Page<StaffDTO> findStaffByRole(@Param("roleId") Long roleId, Pageable pageable);
+
+
 
     Optional<Staff> findByUserId(Long userId);
 

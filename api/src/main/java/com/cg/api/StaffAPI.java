@@ -92,6 +92,29 @@ public class StaffAPI {
         return new ResponseEntity<>(staffDTOS, HttpStatus.OK);
     }
 
+    @GetMapping("/get-all-staff-by-deleted-true")
+    public ResponseEntity<?> getAllStaffByDeletedTrue(){
+        List<StaffDTO> staffDTOS = staffService.findAllStaffDTOPageWithDeleted();
+        if(staffDTOS.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(staffDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping("/filter-staff-by-role/{roleId}")
+    public ResponseEntity<?> filterStaffByRole(@PathVariable("roleId") String roleIdStr, Pageable pageable){
+        if(!validateUtils.isNumberValid(roleIdStr)){
+            throw new DataInputException("Mã Role không hợp lệ vui lòng xem lại !!!");
+        }
+        Long roleId = Long.parseLong(roleIdStr);
+        Page<StaffDTO> staffDTOS = staffService.findStaffByRole(roleId, pageable);
+        if(staffDTOS.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(staffDTOS, HttpStatus.OK);
+
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createStaff(@ModelAttribute StaffCreReqDTO staffCreReqDTO, BindingResult bindingResult){
         new StaffCreReqDTO().validate(staffCreReqDTO, bindingResult);
