@@ -34,8 +34,14 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
             "to.zone " +
             ") " +
             "FROM TableOrder AS to " +
-            "WHERE to.title LIKE %:search%")
-    Page<TableOrderDTO> findAllTableOrderByTitle(@Param("search") String search, Pageable pageable);
+            "WHERE (:zone IS NULL OR to.zone = :zone) " +
+            "AND (:status = '' OR to.status = :status) " +
+            "AND to.title LIKE %:search%")
+    Page<TableOrderDTO> findAllTableOrderByTitle(
+            @Param("zone") Zone zone,
+            @Param("status") String status,
+            @Param("search") String search,
+            Pageable pageable);
 
 
     @Query("SELECT NEW com.cg.domain.dto.tableOrder.TableOrderCountDTO (" +

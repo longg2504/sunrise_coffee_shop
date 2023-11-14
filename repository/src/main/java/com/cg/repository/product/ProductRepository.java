@@ -2,6 +2,7 @@ package com.cg.repository.product;
 
 import com.cg.domain.dto.product.ProductCountDTO;
 import com.cg.domain.dto.product.ProductDTO;
+import com.cg.domain.entity.Category;
 import com.cg.domain.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,4 +57,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE p.deleted = false "
     )
     ProductCountDTO countProduct();
+
 }

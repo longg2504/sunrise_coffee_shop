@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
-    Page<TableOrderDTO> findAllTableOrder(String search, Pageable pageable);
+    Page<TableOrderDTO> findAllTableOrder(Zone zone, String status, String search, Pageable pageable);
 
     List<TableOrderDTO> findAllTablesWithoutSenderId(@Param("tableId") Long tableId);
 
