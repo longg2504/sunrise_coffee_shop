@@ -106,8 +106,8 @@ public class TableOrderServiceImpl implements ITableOrderService {
     }
 
     @Override
-    public Page<TableOrderDTO> findAllTableOrder(String search, Pageable pageable) {
-        return tableOrderRepository.findAllTableOrderByTitle(search, pageable);
+    public Page<TableOrderDTO> findAllTableOrder(Zone zone, String status,String search, Pageable pageable) {
+        return tableOrderRepository.findAllTableOrderByTitle(zone, status, search, pageable);
     }
 
     @Override

@@ -57,8 +57,11 @@ public class TableOrderAPI {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllTableOrder(@RequestParam(defaultValue = "") String search, Pageable pageable) {
-        Page<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder(search, pageable);
+    public ResponseEntity<?> getAllTableOrder(@RequestParam(defaultValue = "") Zone zone,
+                                              @RequestParam(defaultValue = "") String status,
+                                              @RequestParam(defaultValue = "") String search,
+                                              Pageable pageable) {
+        Page<TableOrderDTO> tableOrderDTO = tableOrderService.findAllTableOrder(zone,status,search, pageable);
 
         if (tableOrderDTO.isEmpty()) {
             throw new ResourceNotFoundException("Không có bàn nào vui lòng kiểm tra lại hệ thống");
