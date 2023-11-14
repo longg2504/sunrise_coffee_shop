@@ -31,4 +31,5 @@ public interface IProductService extends IGeneralService<Product,Long> {
     Page<ProductDTO> findProductByKeySearch(String keySearch, Pageable pageable);
 
     ProductCountDTO countProduct();
+    Page<ProductDTO> findAllByCategoryAndSearch(Category category,String search,Pageable pageable);
 }

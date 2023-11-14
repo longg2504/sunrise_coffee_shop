@@ -13,15 +13,30 @@
 <th:block th:replace="/layout/dashboard_layout/left-sidebar :: left-sidebar-product"/>
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <th:block th:replace="/layout/dashboard_layout/navbar:: navbar-product"/>
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <div>
-                    <button type="button" class="btn add" id="btnShowModalCreate">
-                        <i class="material-icons opacity-10">add</i>
-                        Add product
-                    </button>
-                </div>
+               <div class="row">
+                   <div class="col-sm-8">
+                       <button type="button" class="btn add" id="btnShowModalCreate">
+                           <i class="material-icons opacity-10">add</i>
+                           Add product
+                       </button>
+                   </div>
+                   <div class="col-sm-3">
+                       <div class="mr-2">
+                           <select class="form-control select2-container search" id="categoryFilter">
+                               <option value="">--Category--</option>
+                               <option value="1" >Trà sữa</option>
+                               <option value="2" >Nước ép</option>
+                               <option value="3" >Soda</option>
+                               <option value="4" >Cafe</option>
+                               <option value="5" >Trà</option>
+                           </select>
+                       </div>
+                   </div>
+               </div>
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
@@ -176,12 +191,55 @@
                 </tr>
             `
     }
+
     document.getElementById("scrollButton").addEventListener("click", function() {
         const targetElement = document.getElementById("targetElement");
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: "smooth" });
         }
     });
+
+    $(document).ready(function () {
+        $('#categoryFilter').change(function () {
+            const cate = $(this).val()
+            page.commands.filterProducts(currentPage,10, cate);
+        });
+    });
+
+    page.commands.filterProducts=(pageProduct,pageSize, cate)=> {
+        const selectedCategory = $('#categoryFilter').val();
+        const search = '';
+        let ApiUrl = App.API_PRODUCT + `?page=${pageProduct}&size=${pageSize}`
+        if (cate) {
+            ApiUrl += '&category=' + cate
+        }
+        $.ajax({
+            type: 'GET',
+            url: ApiUrl,
+            data: {
+                search: search,
+                category: selectedCategory
+            }
+        })
+            .done((data) => {
+                console.log(data)
+                page.elements.tbProductBody.empty();
+                $.each(data.content, (index, product) => {
+                    const str = page.commands.renderProduct(product)
+                    page.elements.tbProductBody.prepend(str)
+                })
+                // page.commands.displayPagination(data.totalPages, data.number + 1);
+                page.commands.displayPagination(data.totalPages, 1);
+            })
+                .fail(function () {
+                    App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+                })
+                .always(function () {
+                    hideLoader();
+        });
+    }
+
+
     page.commands.displayPagination = (totalPages, currentPage) => {
         page.elements.pagination.empty();
         const maxVisiblePages = 2;
@@ -230,6 +288,11 @@
 
     page.commands.getAllProduct = (pageProduct,pageSize,keySearch) => {
         currentPage = pageProduct;
+        const cate = $('#categoryFilter').val()
+        let ApiUrl = page.url.getAllProducts+`?page=${pageProduct}&size=${pageSize}&search=${keySearch}`
+        if (cate) {
+            ApiUrl += '&category=' + cate
+        }
         showLoader();
         $.ajax({
             headers: {
@@ -237,10 +300,10 @@
                 'Content-Type': 'application/json'
             },
             type: 'GET',
-            url: page.url.getAllProducts+`?page=${pageProduct}&size=${pageSize}&search=${keySearch}`,
-            data: {
-                keySearch: keySearch
-            }
+            url: ApiUrl,
+            // data: {
+            //     keySearch: keySearch
+            // }
         })
             .done((data) => {
                 console.log(data)
@@ -458,7 +521,7 @@
             const currentRow = $('#tr_' + productId);
             currentRow.replaceWith(str);
             App.SweetAlert.showSuccessAlert("Cập nhật thành công")
-            page.commands.getAllProduct(currentPage,10,keySearch);
+            page.commands.getAllProduct(currentPage,10);
             page.dialogs.elements.modalUpdate.modal('hide');
         }).fail((err) => {
             App.SweetAlert.showErrorAlert(err.responseJSON.message);
@@ -489,9 +552,9 @@
             $("#tr_" + product.id).remove();
             page.commands.handleImagePopup();
             if($("#tbProduct tbody tr").length > 1){
-                page.commands.getAllProduct(currentPage,10,keySearch);
+                page.commands.getAllProduct(currentPage,10);
             }else{
-                page.commands.getAllProduct(currentPage - 1,10,keySearch);
+                page.commands.getAllProduct(currentPage - 1,10);
             }
         }).fail(function (jqXHR) {
             App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);

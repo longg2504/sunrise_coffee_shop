@@ -140,4 +140,9 @@ public class ProductServiceImpl implements IProductService {
     public ProductCountDTO countProduct() {
         return productRepository.countProduct();
     }
+
+    @Override
+    public Page<ProductDTO> findAllByCategoryAndSearch(Category category, String search, Pageable pageable) {
+        return productRepository.findAllByCategoryAndSearch(category,search,pageable);
+    }
 }

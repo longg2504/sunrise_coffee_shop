@@ -230,10 +230,10 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
             Date billTo = billFilterReqDTO.getBillTo();
 
             if (billFrom != null && billTo != null) {
-                Predicate predicate = criteriaBuilder.between(root.get("createdAt"), billFrom, billTo);
+                Predicate predicate = criteriaBuilder.between(root.get("createdAt") ,billFrom, billTo);
                 predicates.add(predicate);
             }
-            else {
+            else if (billFrom != null || billTo != null) {
                 if (billFrom != null) {
                     Predicate predicate = criteriaBuilder.greaterThan(root.get("createdAt"), billFrom);
                     predicates.add(predicate);
