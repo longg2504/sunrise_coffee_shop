@@ -25,10 +25,16 @@
                 <div class="card my-4">
 
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                            <h6 class="text-white text-capitalize ps-3">Staff</h6>
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+                            <h6 class="text-white text-capitalize ps-3 ">Staff</h6>
+
+                            <button class="btn btn-outline shadow-primary bg-gradient-primary border-radius-lg me-2" id="btnShowModalListBannedStaff">
+                                History Staff Block
+                            </button>
                         </div>
                     </div>
+
+
 
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
@@ -77,6 +83,7 @@
 <th:block th:replace="/layout/dashboard_layout/javascript"/>
 <th:block th:replace="/dashboard/modal-create-staff :: modal-create-staff"></th:block>
 <th:block th:replace="/dashboard/modal-update-staff :: modal-update-staff"></th:block>
+<th:block th:replace="/dashboard/modal-list-banned-staff :: modal-list-banned-staff"></th:block>
 
 <script src="/assets/jquery/jquery-3.7.0.min.js"></script>
 <script src="/assets/jquery/jquery.validate.js"></script>
@@ -93,7 +100,8 @@
             getStaffById: App.API_STAFF,
             create: App.API_STAFF + '/create',
             update: App.API_STAFF,
-            delete: App.API_STAFF + '/delete'
+            delete: App.API_STAFF + '/delete',
+            bannedStaff: App.API_STAFF + '/get-all-staff-by-deleted-true'
         },
         elements: {},
         loadData: {},
@@ -104,7 +112,8 @@
             loadData: {}
         }
     }
-    page.elements.tbStaffBody = $('#tbStaff tbody')
+    page.elements.tbStaffBody = $('#tbStaff tbody');
+    page.elements.tbBannedStaffBody = $('#tbBannedStaff tbody');
     page.elements.loader = $(".loader");
 
     page.elements.btnShowModalCreate = $('#btnShowModalCreate');
@@ -132,7 +141,10 @@
     page.dialogs.elements.districtUp = $('#districtUp');
     page.dialogs.elements.wardUp = $('#wardUp');
     page.dialogs.elements.addressUp = $('#addressUp');
-    page.dialogs.elements.btnUpdate = $('#btnUpdate')
+    page.dialogs.elements.btnUpdate = $('#btnUpdate');
+
+    page.dialogs.elements.modalListBannedStaff = $('#modalListBannedStaff');
+    page.dialogs.elements.btnShowModalListBannedStaff = $('#btnShowModalListBannedStaff');
 
 
     page.dialogs.elements.wrapper = $("section .wrapper");
@@ -184,6 +196,30 @@
                             <i class="fas fa-lock"></i>
                         </button>
                     </td>
+                </tr>
+            `
+    }
+
+    page.commands.renderBannedStaff = (staff) => {
+        console.log(staff)
+        avatar = staff.staffAvatar;
+        let imageThumbnail = (avatar && avatar.fileFolder && avatar.fileName) ?
+            App.BASE_URL_CLOUD_IMAGE + "/" + App.IMAGE_SCALE_W_100_h_80_Q_90 + "/" + avatar.fileFolder + "/" + avatar.fileName :
+            '';
+        const now = moment();
+
+        return `
+                <tr>
+                    <td>${staff.id}</td>
+                     <td><img src="${imageThumbnail}" alt="" /></td>
+                    <td>${staff.fullName}</td>
+                    <td>${moment(staff.dob).format("DD/MM/YYYY")}</td>
+                    <td>${staff.phone}</td>
+                    <td>${staff.locationRegion.provinceName}</td>
+                    <td>${staff.locationRegion.districtName}</td>
+                    <td>${staff.locationRegion.wardName}</td>
+                    <td>${staff.locationRegion.address}</td>
+                    <td>${staff.user.role.code}</td>
                 </tr>
             `
     }
@@ -312,6 +348,36 @@
             .always(function () {
                 hideLoader();
             });
+    }
+
+    page.commands.getAllBannedStaff = ()  => {
+        showLoader();
+        $.ajax({
+            header: {
+                'Accept' : 'application/json',
+                'Content-type' : 'application/json'
+            },
+            type: 'GET',
+            url: page.url.bannedStaff,
+
+        })
+            .done((data) => {
+                console.log(data)
+                page.elements.tbBannedStaffBody.empty();
+                $.each(data, (index, item) => {
+                    const str = page.commands.renderBannedStaff(item)
+                    page.elements.tbBannedStaffBody.prepend(str)
+                })
+
+            })
+            .fail(function () {
+                App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+            })
+            .always(function () {
+            hideLoader();
+        });
+
+
     }
 
     page.commands.onchangeProvince = (provinceId, districtElement, wardElement) => {
@@ -692,6 +758,10 @@
         })
         page.dialogs.elements.btnCreate.on('click', () => {
             page.dialogs.elements.frmCreateStaff.trigger("submit");
+        })
+        page.dialogs.elements.btnShowModalListBannedStaff.on('click', () => {
+            page.commands.getAllBannedStaff();
+            page.dialogs.elements.modalListBannedStaff.modal('show');
         })
         page.dialogs.elements.provinceCre.on('change', function () {
             const provinceId = $(this).val();
