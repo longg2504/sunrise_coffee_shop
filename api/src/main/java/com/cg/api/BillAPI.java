@@ -107,7 +107,6 @@ public class BillAPI {
     @GetMapping("/date")
     public ResponseEntity<?> getBillByDate(@RequestParam(required = false) Integer day, @RequestParam Integer month, @RequestParam Integer year, Pageable pageable){
         return new ResponseEntity<>(billService.getBillByDate(year,month,day,pageable), HttpStatus.OK);
-
     }
 
     @GetMapping("/search")
