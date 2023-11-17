@@ -105,9 +105,12 @@ public class BillAPI {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<?> getBillByDate(@RequestParam(required = false) Integer day, @RequestParam Integer month, @RequestParam Integer year, Pageable pageable){
-        return new ResponseEntity<>(billService.getBillByDate(year,month,day,pageable), HttpStatus.OK);
+    public ResponseEntity<?> getBillByDate(@RequestParam(required = false) Integer day, @RequestParam Integer month, @RequestParam Integer year, @RequestParam(required = false) String staffName ,Pageable pageable){
+        staffName  =  '%' + staffName + '%';
+        return new ResponseEntity<>(billService.getBillByDate(year,month,day,staffName,pageable), HttpStatus.OK);
+
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<?> getBillByStaffName(@RequestParam("") String staffName, Pageable pageable){

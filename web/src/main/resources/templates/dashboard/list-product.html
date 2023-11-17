@@ -26,21 +26,24 @@
                    </div>
                    <div class="col-sm-3">
                        <div class="mr-2">
-                           <select class="form-control select2-container search" id="categoryFilter">
-                               <option value="">--Category--</option>
-                               <option value="1" >Trà sữa</option>
-                               <option value="2" >Nước ép</option>
-                               <option value="3" >Soda</option>
-                               <option value="4" >Cafe</option>
-                               <option value="5" >Trà</option>
-                           </select>
+
                        </div>
                    </div>
                </div>
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
                             <h6 class="text-white text-capitalize ps-3">Product</h6>
+                                <select class="form-control search me-3 shadow-primary border-radius-lg " id="categoryFilter" style="width: 200px">
+                                    <option class="text-center" value="">--Category--</option>
+                                    <option value="1" >Trà sữa</option>
+                                    <option value="2" >Nước ép</option>
+                                    <option value="3" >Soda</option>
+                                    <option value="4" >Cafe</option>
+                                    <option value="5" >Trà</option>
+                                </select>
+
+
                         </div>
                     </div>
                     <div class="card-body px-0 pb-2">
@@ -301,9 +304,6 @@
             },
             type: 'GET',
             url: ApiUrl,
-            // data: {
-            //     keySearch: keySearch
-            // }
         })
             .done((data) => {
                 console.log(data)
@@ -622,20 +622,6 @@
         page.elements.keySearch.on('input', function () {
             const keySearch = $(this).val();
             page.commands.getAllProduct(0,10,keySearch);
-
-        })
-
-        page.elements.sortByPrice.on('click', function () {
-            if ($(this).hasClass('asc')) {
-                $(this).addClass('desc').removeClass('asc');
-            } else {
-                if ($(this).hasClass('desc')) {
-                    $(this).addClass('asc').removeClass('desc');
-                }
-            }
-            const direction = $(this).hasClass('asc') ? 'asc' : 'desc';
-            const sortBy = 'price';
-            page.commands.getAllProductSorted(sortBy, direction);
 
         })
 

@@ -62,7 +62,7 @@ public interface IBillService extends IGeneralService<Bill, Long> {
 
     List<BillDetailDTO> findBillById(Long billId);
 
-    Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day, Pageable pageable);
+    Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,String staffName, Pageable pageable);
 
     Page<BillGetAllResDTO> getBillByStaff(String staffName, Pageable pageable);
 

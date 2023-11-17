@@ -315,13 +315,13 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
-    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,Pageable pageable) {
+    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,String staffName,Pageable pageable) {
         LocalDate start = getDate(year,month,day);
         if(day == null){
-            return billRepository.getAllBillByDate(start,getLastDayOfMonth(start),pageable);
+            return billRepository.getAllBillByDate(start,getLastDayOfMonth(start),staffName,pageable);
         }
 
-        return billRepository.getAllBillByDate(start, start,pageable);
+        return billRepository.getAllBillByDate(start, start,staffName,pageable);
     }
 
     @Override

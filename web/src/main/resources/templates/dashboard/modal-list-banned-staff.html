@@ -1,0 +1,41 @@
+<th:block th:fragment="modal-list-banned-staff">
+    <div class="modal fade" id="modalListBannedStaff" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+         data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content" style="width: 115%">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">List banned staffs</h1>
+                    <button type="button" class="btn-close btnClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center text-center mb-0" id="tbBannedStaff">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Avatar</th>
+                                <th>Full Name</th>
+                                <th>Date of Birth</th>
+                                <th>Phone Number</th>
+                                <th>Province</th>
+                                <th>District</th>
+                                <th>Ward</th>
+                                <th>Address</th>
+                                <th>Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btnClose" data-bs-dismiss="modal">Close
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
