@@ -184,9 +184,9 @@ public class BillServiceImpl implements IBillService {
     // don't use this api !!!
     @Override
     public BillResDTO createBillWithOrders(Long tableId) {
-//        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
-//            throw new DataInputException("Tên nhân viên không hợp lệ");
-//        });
+        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
+            throw new DataInputException("Tên nhân viên không hợp lệ");
+        });
 
         Order order = orderService.findByTableId(tableId).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
         order.setPaid(true);
@@ -202,7 +202,7 @@ public class BillServiceImpl implements IBillService {
 
             Bill bill = new Bill()
                     .setOrder(order)
-                    .setStaff(order.getStaff())
+                    .setStaff(staff)
                     .setTable(order.getTableOrder())
                     .setDiscountPercent(0L)
                     .setDiscountMoney(BigDecimal.ZERO)
@@ -315,13 +315,13 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
-    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,Pageable pageable) {
+    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,String staffName,Pageable pageable) {
         LocalDate start = getDate(year,month,day);
         if(day == null){
-            return billRepository.getAllBillByDate(start,getLastDayOfMonth(start),pageable);
+            return billRepository.getAllBillByDate(start,getLastDayOfMonth(start),staffName,pageable);
         }
 
-        return billRepository.getAllBillByDate(start, start,pageable);
+        return billRepository.getAllBillByDate(start, start,staffName,pageable);
     }
 
     @Override

@@ -25,36 +25,20 @@
                    </div>
                    <div class="col-sm-3">
                        <div class="mr-2">
-                           <select class="form-control select2-container search" id="zoneFilter">
-                               <option value="">--Tầng--</option>
-                               <option value="1" >Tầng 1</option>
-                               <option value="2" >Tầng 2</option>
-                               <option value="3" >Tầng 3</option>
-                           </select>
+
                        </div>
                    </div>
-<!--                  <div class="col-sm-4">-->
-<!--                      <div class="card" style="padding: 5px">-->
-<!--                          <div class="card-header p-3 pt-2">-->
-<!--                              <div class="icon icon-lg icon-shape bg-gradient-info shadow-dark text-center border-radius-xl mt-n4 position-absolute">-->
-<!--                                  <i class="material-icons opacity-10">table_bar</i>-->
-<!--                              </div>-->
-<!--                              <div class="text-end pt-1">-->
-<!--                                  <p class="text-sm mb-0 text-capitalize">Total number of employees</p>-->
-<!--                                  <h4 class="mb-0" id="countStaff"></h4>-->
-<!--                              </div>-->
-<!--                          </div>-->
-<!--                          <div class="p-3">-->
-<!--                              <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>-->
-<!--                              </p>-->
-<!--                          </div>-->
-<!--                      </div>-->
-<!--                  </div>-->
                </div>
                 <div class="card my-4" style="padding: 5px">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
                             <h6 class="text-white text-capitalize ps-3">Table Order</h6>
+                            <select class="form-control search me-3 shadow-primary border-radius-lg " id="zoneFilter" style="width: 200px">
+                                <option class="text-center" value="">--Tầng--</option>
+                                <option value="1" >Tầng 1</option>
+                                <option value="2" >Tầng 2</option>
+                                <option value="3" >Tầng 3</option>
+                            </select>
                         </div>
                     </div>
                     <div class="card-body px-0 pb-2">
@@ -196,9 +180,51 @@
         let lastBtn = '<li class="page-item' + (currentPage === totalPages ? ' disabled' : '') + '"><a class="page-link" href="#" onclick="page.commands.getAllTableOrder(' + (totalPages - 1) + ', 10, keySearch)">Last</li>';
         page.elements.pagination.append(lastBtn);
     };
+    $(document).ready(function () {
+        $('#zoneFilter').change(function () {
+            const zone = $(this).val()
+            page.commands.filterZone(currentPage,10, zone);
+        });
+    });
 
+    page.commands.filterZone=(pageTable,pageSize, zone)=> {
+        const selectedZone = $('#zoneFilter').val();
+        const search = '';
+        let ApiUrl = App.API_TABLE_ORDER + `?page=${pageTable}&size=${pageSize}`
+        if (zone) {
+            ApiUrl += '&zone=' + zone
+        }
+        $.ajax({
+            type: 'GET',
+            url: ApiUrl,
+            data: {
+                search: search,
+                category: selectedZone
+            }
+        })
+            .done((data) => {
+                console.log(data)
+                page.elements.tbTableOrderBody.empty();
+                $.each(data.content, (index, tableOrder) => {
+                    const str = page.commands.renderTableOrder(tableOrder)
+                    page.elements.tbTableOrderBody.prepend(str)
+                })
+                page.commands.displayPagination(data.totalPages, 1);
+            })
+            .fail(function () {
+                App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+            })
+            .always(function () {
+                hideLoader();
+            });
+    }
 
     page.commands.getAllTableOrder = (pageTable,pageSize,keySearch) => {
+        const zone = $('#zoneFilter').val()
+        let ApiUrl = page.url.getAllTableOrder+`?page=${pageTable}&size=${pageSize}&search=${keySearch}`
+        if (zone) {
+            ApiUrl += '&zone=' + zone
+        }
         showLoader();
         $.ajax({
             headers: {
@@ -206,10 +232,7 @@
                 'Content-Type': 'application/json'
             },
             type: 'GET',
-            url: page.url.getAllTableOrder+`?page=${pageTable}&size=${pageSize}&search=${keySearch}`,
-            data: {
-                keySearch: keySearch
-            }
+            url: ApiUrl,
         })
             .done((data) => {
                 console.log(data)
