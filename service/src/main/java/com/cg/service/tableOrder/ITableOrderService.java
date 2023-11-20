@@ -29,6 +29,8 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
     TableOrderCountDTO countTable ();
 
     List<TableOrderWithZoneCountDTO> countTableOrderByZone();
+    Boolean existsByTitle(String title);
+
 
 
 }

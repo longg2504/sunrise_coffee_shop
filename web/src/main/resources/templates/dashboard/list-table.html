@@ -17,19 +17,65 @@
         <div class="row">
             <div class="col-12">
                <div class="row">
-                   <div class="col-sm-8">
+                   <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+                       <div class="card">
+                           <div class="card-header p-3 pt-2">
+                               <div class="icon icon-lg icon-shape bg-gradient-success shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                                   <i class="material-icons opacity-10">table_bar</i>
+                               </div>
+                               <div class="text-end pt-1">
+                                   <p class="text-sm mb-0 text-capitalize">Total tables zone 1</p>
+                                   <h4 class="mb-0" id="countZone1"></h4>
+                               </div>
+                           </div>
+                           <div class="p-3">
+                               <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>
+                               </p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+                       <div class="card">
+                           <div class="card-header p-3 pt-2">
+                               <div class="icon icon-lg icon-shape bg-gradient-success shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                                   <i class="material-icons opacity-10">table_bar</i>
+                               </div>
+                               <div class="text-end pt-1">
+                                   <p class="text-sm mb-0 text-capitalize">Total tables zone 2</p>
+                                   <h4 class="mb-0" id="countZone2"></h4>
+                               </div>
+                           </div>
+                           <div class="p-3">
+                               <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>
+                               </p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+                       <div class="card">
+                           <div class="card-header p-3 pt-2">
+                               <div class="icon icon-lg icon-shape bg-gradient-success shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                                   <i class="material-icons opacity-10">table_bar</i>
+                               </div>
+                               <div class="text-end pt-1">
+                                   <p class="text-sm mb-0 text-capitalize">Total tables zone 3</p>
+                                   <h4 class="mb-0" id="countZone3"></h4>
+                               </div>
+                           </div>
+                           <div class="p-3">
+                               <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>
+                               </p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-sm-8 p-3">
                        <button type="button" class="btn add" id="btnShowModalCreate">
                            <i class="material-icons opacity-10">add</i>
                            Add Table
                        </button>
                    </div>
-                   <div class="col-sm-3">
-                       <div class="mr-2">
-
-                       </div>
-                   </div>
                </div>
-                <div class="card my-4" style="padding: 5px">
+                <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
                             <h6 class="text-white text-capitalize ps-3">Table Order</h6>
@@ -219,6 +265,22 @@
             });
     }
 
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: App.API_TABLE_ORDER + "/get-count-table-by-zone",
+            contentType: "application/json",
+        })
+            .done((data) => {
+                $("#countZone1").text(data[0].countTableOrder);
+                $("#countZone2").text(data[1].countTableOrder);
+                $("#countZone3").text(data[2].countTableOrder);
+        })
+            .fail(function () {
+                App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+            })
+    });
+
     page.commands.getAllTableOrder = (pageTable,pageSize,keySearch) => {
         const zone = $('#zoneFilter').val()
         let ApiUrl = page.url.getAllTableOrder+`?page=${pageTable}&size=${pageSize}&search=${keySearch}`
@@ -270,16 +332,19 @@
                 page.dialogs.elements.modalCreate.modal('hide');
                 App.SweetAlert.showSuccessAlert("Thêm mới thành công")
             })
-            .fail(function () {
-                App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+            .fail((jqXHR, textStatus, errorThrown) => {
+                if (jqXHR.status === 400) {
+                    App.SweetAlert.showErrorAlert("Bàn này đã tồn tại vui lòng xem lại!!!");
+                } else if (jqXHR.status === 404) {
+                    App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
+                } else {
+                    App.SweetAlert.showErrorAlert("Bàn này đã tồn tại vui lòng xem lại!!!");
+                }
             })
             .always(function () {
                 hideLoader();
             });
     }
-
-
-
 
     page.initializeControlEvent = ()=> {
         page.elements.btnShowModalCreate.on('click', () => {
@@ -350,8 +415,6 @@
         submitHandler: function () {
             page.commands.create();
         }
-
-
     })
 </script>
 </body>

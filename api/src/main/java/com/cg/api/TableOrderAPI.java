@@ -8,6 +8,7 @@ import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.domain.enums.ETableStatus;
 import com.cg.exception.DataInputException;
+import com.cg.exception.EmailExistsException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.service.tableOrder.ITableOrderService;
 import com.cg.service.zone.IZoneService;
@@ -88,6 +89,11 @@ public class TableOrderAPI {
 
     @PostMapping("/create")
     public ResponseEntity<?> createTable(@RequestBody TableOrderCreateReqDTO tableOrderCreateReqDTO) {
+        Boolean existsByTitle = tableOrderService.existsByTitle(tableOrderCreateReqDTO.getTitle());
+
+        if (existsByTitle) {
+            throw new EmailExistsException("Bàn này đã tồn tại vui lòng xem lại!!!");
+        }
         Long isZone = Long.parseLong(tableOrderCreateReqDTO.getZoneId());
         Zone zone = zoneService.findByIdAndDeletedFalse(isZone).orElseThrow(() -> new DataInputException("Khu vực không tồn tại"));
         TableOrderCreateResDTO tableOrderCreateResDTO = tableOrderService.createTableOrder(tableOrderCreateReqDTO, zone);

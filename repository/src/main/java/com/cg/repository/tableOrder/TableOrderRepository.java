@@ -65,5 +65,6 @@ public interface TableOrderRepository extends JpaRepository<TableOrder, Long> {
 
     )
     List<TableOrderWithZoneCountDTO> countTableOrderByZone();
+    Boolean existsByTitle(String title);
 
 }
