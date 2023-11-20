@@ -128,6 +128,7 @@ public class OrderServiceImpl implements IOrderService {
         orderDetailCreResDTO.setTotalAmount(amount);
         orderDetailCreResDTO.setStatus(String.valueOf(orderDetail.getStatus()));
         orderDetailCreResDTO.setAvatar(product.getProductAvatar().toAvatarResDTO());
+        orderDetailCreResDTO.setCreatedAt(orderDetail.getCreatedAt());
         return orderDetailCreResDTO;
     }
 

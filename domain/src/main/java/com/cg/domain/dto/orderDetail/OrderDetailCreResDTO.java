@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -25,6 +27,7 @@ public class OrderDetailCreResDTO {
     private BigDecimal totalAmount;
     private AvatarResDTO avatar;
     private String status;
+    private Date createdAt;
 
 
 }
