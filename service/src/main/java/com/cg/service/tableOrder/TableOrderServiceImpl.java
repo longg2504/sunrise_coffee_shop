@@ -354,4 +354,9 @@ public class TableOrderServiceImpl implements ITableOrderService {
     public List<TableOrderWithZoneCountDTO> countTableOrderByZone() {
         return tableOrderRepository.countTableOrderByZone();
     }
+
+    @Override
+    public Boolean existsByTitle(String title) {
+        return tableOrderRepository.existsByTitle(title);
+    }
 }

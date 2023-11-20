@@ -389,16 +389,16 @@
     page.commands.getAllProvinces = () => {
         return $.ajax({
             type: 'GET',
-            url: 'https://vapi.vnappmob.com/api/province/'
+            url: 'https://vapi.onedev.top/api/v1/provinces/',
         })
             .done((data) => {
-                const provinces = data.results;
+                const provinces = data;
                 page.dialogs.elements.provinceCre.empty();
                 page.dialogs.elements.provinceUp.empty();
 
                 $.each(provinces, (index, item) => {
 
-                    const str = `<option value="${item.province_id}">${item.province_name}</option>`
+                    const str = `<option value="${item.id}">${item.name}</option>`
                     page.dialogs.elements.provinceCre.append(str);
                     page.dialogs.elements.provinceUp.append(str);
 
@@ -409,14 +409,14 @@
     page.commands.getALlDistricts = (provinceId, elementSelect) => {
         return $.ajax({
             type: 'GET',
-            url: 'https://vapi.vnappmob.com/api/province/district/' + provinceId
+            url: 'https://vapi.onedev.top/api/v1/districts/' + provinceId
         })
             .done((data) => {
-                const districts = data.results;
+                const districts = data;
                 elementSelect.empty();
 
                 $.each(districts, (index, item) => {
-                    const str = `<option value="${item.district_id}">${item.district_name}</option>`
+                    const str = `<option value="${item.id}">${item.name}</option>`
                     elementSelect.append(str);
                 });
             })
@@ -424,15 +424,15 @@
     page.commands.getAllWards = (districtId, elementSelect) => {
         return $.ajax({
             type: 'GET',
-            url: 'https://vapi.vnappmob.com/api/province/ward/' + districtId
+            url: 'https://vapi.onedev.top/api/v1/wards/' + districtId
         })
             .done((data) => {
-                const wards = data.results;
+                const wards = data;
 
                 elementSelect.empty();
 
                 $.each(wards, (index, item) => {
-                    const str = `<option value="${item.ward_id}">${item.ward_name}</option>`;
+                    const str = `<option value="${item.id}">${item.name}</option>`;
                     elementSelect.append(str);
                 });
             });
