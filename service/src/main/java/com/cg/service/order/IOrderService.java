@@ -8,6 +8,7 @@ import com.cg.domain.dto.orderDetail.OrderDetailUpResDTO;
 import com.cg.domain.entity.*;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.service.IGeneralService;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.Optional;
 
 public interface IOrderService extends IGeneralService<Order,Long> {
     Optional<Order> findByTableId(Long tableId);
+
+    Optional<Order> findByOrderIdAndPaid(@Param("orderId") Long orderId);
 
     List<Order> findByTableOrderAndPaid(TableOrder tableOrder, Boolean paid);
 

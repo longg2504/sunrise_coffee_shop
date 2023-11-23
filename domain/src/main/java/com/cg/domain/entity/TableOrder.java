@@ -39,6 +39,7 @@ public class TableOrder extends BaseEntity {
                 .setId(String.valueOf(id))
                 .setTitle(title)
                 .setStatus(status.getValue())
+                .setZone(zone.toZoneDTO())
                 ;
     }
     public TableOrderCreateResDTO toTableOrderCreateResDTO() {

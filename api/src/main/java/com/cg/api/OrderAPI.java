@@ -16,6 +16,7 @@ import com.cg.service.order.IOrderService;
 import com.cg.service.orderDetail.IOrderDetailService;
 import com.cg.service.product.IProductService;
 import com.cg.service.tableOrder.ITableOrderService;
+import com.cg.service.tableOrderBackup.ITableOrderBackupService;
 import com.cg.service.user.IUserService;
 import com.cg.utils.AppUtils;
 import com.cg.utils.ValidateUtils;
@@ -26,7 +27,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/orders")
@@ -52,11 +55,14 @@ public class OrderAPI {
     private IProductService productService;
 
     @Autowired
+    private ITableOrderBackupService tableOrderBackupService;
+
+    @Autowired
     private AppUtils appUtils;
 
     @GetMapping("/table/{tableId}")
-    public ResponseEntity<?> getOrderByTableId(@PathVariable("tableId") String tableIdStr){
-        if(!validateUtils.isNumberValid(tableIdStr)){
+    public ResponseEntity<?> getOrderByTableId(@PathVariable("tableId") String tableIdStr) {
+        if (!validateUtils.isNumberValid(tableIdStr)) {
             throw new DataInputException("Mã số bàn không hợp lệ vui lòng xem lại");
         }
 
@@ -64,29 +70,7 @@ public class OrderAPI {
 
         Optional<Order> orderOptional = orderService.findByTableId(tableId);
 
-        if(!orderOptional.isPresent()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderOptional.get().getId());
-
-        if(orderDetails.size() == 0){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        return new ResponseEntity<>(orderDetails,HttpStatus.OK);
-    }
-
-    @GetMapping("/list-order-details/{tableId}")
-    public ResponseEntity<?> getListOrderDetailByTableId(@PathVariable("tableId") String tableIdStr){
-        if (!validateUtils.isNumberValid(tableIdStr)) {
-            throw new DataInputException("Mã bàn không hợp lệ");
-        }
-        Long tableId = Long.valueOf(tableIdStr);
-
-        Optional<Order> orderOptional = orderService.findByTableId(tableId);
-
-        if (orderOptional.isEmpty()) {
+        if (!orderOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
@@ -99,8 +83,45 @@ public class OrderAPI {
         return new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 
+    @GetMapping("/list-order-details/{tableId}")
+    public ResponseEntity<?> getListOrderDetailByTableId(@PathVariable("tableId") String tableIdStr) {
+        if (!validateUtils.isNumberValid(tableIdStr)) {
+            throw new DataInputException("Mã bàn không hợp lệ");
+        }
+        Long tableId = Long.valueOf(tableIdStr);
+        Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupService.findByTableCurrentId(tableId);
+        if (tableOrderBackup.isPresent()) {
+            Long orderId = tableOrderBackup.get().getOrderTargetId();
+            Optional<Order> orderOptional = orderService.findById(orderId);
+            if (orderOptional.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            List<OrderDetailByTableResDTO> orderDetais = orderDetailService.getOrderDetailByTableResDTO(orderId);
+            if (orderDetais.size() == 0) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(orderDetais, HttpStatus.OK);
+        } else {
+            Optional<Order> orderOptional = orderService.findByTableId(tableId);
+
+            if (orderOptional.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderOptional.get().getId());
+
+            if (orderDetails.size() == 0) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(orderDetails, HttpStatus.OK);
+        }
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<?> creOrder(@RequestBody OrderCreReqDTO orderCreReqDTO){
+    public ResponseEntity<?> creOrder(@RequestBody OrderCreReqDTO orderCreReqDTO) {
         String username = appUtils.getPrincipalUsername();
         Optional<User> userOptional = userService.findByName(username);
 
@@ -121,10 +142,11 @@ public class OrderAPI {
         }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> upOrder(@RequestBody OrderUpReqDTO orderUpReqDTO){
+    public ResponseEntity<?> upOrder(@RequestBody OrderUpReqDTO orderUpReqDTO) {
         String username = appUtils.getPrincipalUsername();
         Optional<User> userOptional = userService.findByName(username);
 
@@ -136,27 +158,50 @@ public class OrderAPI {
             throw new DataInputException("Sản phẩm không tồn tại");
         });
 
-        List<Order> orders = orderService.findByTableOrderAndPaid(tableOrder, false);
+        Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupService.findByTableCurrentId(tableOrder.getId());
+        if (tableOrderBackup.isPresent()) {
+            Optional<Order> orderOptional = orderService.findByOrderIdAndPaid(tableOrderBackup.get().getOrderTargetId());
 
-        if (orders.size() == 0) {
-            throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+            if (orderOptional.isEmpty()) {
+                throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+            }
+
+            Order order = orderOptional.get();
+
+            if (tableOrder.getStatus() == ETableStatus.BUSY) {
+
+                OrderDetailUpResDTO orderDetailUpResDTO = orderService.upOrderDetail(orderUpReqDTO, order, product, userOptional.get());
+
+                return new ResponseEntity<>(orderDetailUpResDTO, HttpStatus.OK);
+            }
+
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<Order> orders = orderService.findByTableOrderAndPaid(tableOrder, false);
+
+            if (orders.size() == 0) {
+                throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+            }
+
+            if (orders.size() > 1) {
+                throw new DataInputException("Lỗi hệ thống, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
+            }
+
+            Order order = orders.get(0);
+
+            if (tableOrder.getStatus() == ETableStatus.BUSY) {
+
+                OrderDetailUpResDTO orderDetailUpResDTO = orderService.upOrderDetail(orderUpReqDTO, order, product, userOptional.get());
+
+                return new ResponseEntity<>(orderDetailUpResDTO, HttpStatus.OK);
+            }
+
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        if (orders.size() > 1) {
-            throw new DataInputException("Lỗi hệ thống, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
-        }
 
-        Order order = orders.get(0);
-
-        if (tableOrder.getStatus() == ETableStatus.BUSY){
-
-            OrderDetailUpResDTO orderDetailUpResDTO = orderService.upOrderDetail(orderUpReqDTO, order, product, userOptional.get());
-
-            return new ResponseEntity<>(orderDetailUpResDTO ,HttpStatus.OK);
-        }
-
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/delete/{orderDetailId}")
@@ -167,24 +212,24 @@ public class OrderAPI {
 
         Long orderId = orderDetail.getOrder().getId();
         Long tableId = orderDetail.getOrder().getTableOrder().getId();
-        if(orderDetail.getStatus().equals(EOrderDetailStatus.NEW) || orderDetail.getStatus().equals(EOrderDetailStatus.STOCK_OUT)){
+        if (orderDetail.getStatus().equals(EOrderDetailStatus.NEW) || orderDetail.getStatus().equals(EOrderDetailStatus.STOCK_OUT)) {
             orderDetailService.delete(orderDetail);
-        }else{
+        } else {
             throw new DataInputException("Món này đang được làm không thể xoá");
         }
         List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderId);
-        if(orderDetails.isEmpty()){
+        if (orderDetails.isEmpty()) {
             Optional<TableOrder> tableOrderOptional = tableOrderService.findById(tableId);
             TableOrder tableOrder = tableOrderOptional.get();
             tableOrder.setStatus(ETableStatus.EMPTY);
             tableOrderService.save(tableOrder);
-            return new ResponseEntity<>(tableOrder,HttpStatus.OK);
+            return new ResponseEntity<>(tableOrder, HttpStatus.OK);
         }
         return new ResponseEntity<>(orderDetail.getOrder().getTableOrder(), HttpStatus.OK);
     }
 
     @PostMapping("/change-status-cooking")
-    public ResponseEntity<?> changeStatusWaiting(@RequestBody OrderChangeStatusReqDTO orderChangeStatusReqDTO){
+    public ResponseEntity<?> changeStatusWaiting(@RequestBody OrderChangeStatusReqDTO orderChangeStatusReqDTO) {
         String username = appUtils.getPrincipalUsername();
         Optional<User> userOptional = userService.findByName(username);
 
@@ -192,31 +237,57 @@ public class OrderAPI {
             throw new DataInputException("Bàn không tồn tại");
         });
 
-        List<Order> orders = orderService.findByTableOrderAndPaid(tableOrder, false);
+        Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupService.findByTableCurrentId(tableOrder.getId());
+        if (tableOrderBackup.isPresent()) {
+            Optional<Order> orderOptional = orderService.findByOrderIdAndPaid(tableOrderBackup.get().getOrderTargetId());
+            if (orderOptional.isEmpty()) {
+                throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+            }
 
-        if (orders.size() == 0) {
-            throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+            if (tableOrder.getStatus() == ETableStatus.EMPTY) {
+                throw new DataInputException("Bàn đang rảnh không thể gửi thông báo tới bếp khi bàn đang rảnh!!!");
+            }
+
+            OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
+            Optional<Order> optionalOrder = orderService.findByOrderIdAndPaid(orderOptional.get().getId());
+            List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(optionalOrder.get().getId());
+
+            Notification notification = new Notification();
+            notification.setType(Notification.NotificationType.RECEPTION);
+            notification.setSender("USER");
+            notification.setData(new Notification.Data(tableOrder.getId(), String.format("%s đã được cập nhật", tableOrder.getTitle())));
+
+            ///topic/reception OR /topic/kitchen
+            messagingTemplate.convertAndSend("/topic/kitchen", notification);
+            return new ResponseEntity<>(orderDetails, HttpStatus.OK);
+
+        } else {
+            List<Order> orders = orderService.findByTableOrderAndPaid(tableOrder, false);
+
+            if (orders.size() == 0) {
+                throw new DataInputException("Bàn này không có hoá đơn, vui lòng kiểm tra lại thông tin");
+            }
+
+            if (orders.size() > 1) {
+                throw new DataInputException("Lỗi hệ thống, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
+            }
+
+            if (tableOrder.getStatus() == ETableStatus.EMPTY) {
+                throw new DataInputException("Bàn đang rảnh không thể gửi thông báo tới bếp khi bàn đang rảnh!!!");
+            }
+
+            OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
+            Optional<Order> orderOptional = orderService.findByTableId(orderChangeStatusResDTO.getTableId());
+            List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderOptional.get().getId());
+
+            Notification notification = new Notification();
+            notification.setType(Notification.NotificationType.RECEPTION);
+            notification.setSender("USER");
+            notification.setData(new Notification.Data(tableOrder.getId(), String.format("%s đã được cập nhật", tableOrder.getTitle())));
+
+            ///topic/reception OR /topic/kitchen
+            messagingTemplate.convertAndSend("/topic/kitchen", notification);
+            return new ResponseEntity<>(orderDetails, HttpStatus.OK);
         }
-
-        if (orders.size() > 1) {
-            throw new DataInputException("Lỗi hệ thống, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
-        }
-
-        if(tableOrder.getStatus() == ETableStatus.EMPTY){
-            throw new DataInputException("Bàn đang rảnh không thể gửi thông báo tới bếp khi bàn đang rảnh!!!");
-        }
-
-        OrderChangeStatusResDTO orderChangeStatusResDTO = orderService.upStatusOrderItemToCooking(orderChangeStatusReqDTO, userOptional.get());
-        Optional<Order> orderOptional = orderService.findByTableId(orderChangeStatusResDTO.getTableId());
-        List<OrderDetailByTableResDTO> orderDetails = orderDetailService.getOrderDetailByTableResDTO(orderOptional.get().getId());
-
-        Notification notification = new Notification();
-        notification.setType(Notification.NotificationType.RECEPTION);
-        notification.setSender("USER");
-        notification.setData(new Notification.Data(tableOrder.getId(), String.format("%s đã được cập nhật", tableOrder.getTitle())));
-
-        ///topic/reception OR /topic/kitchen
-        messagingTemplate.convertAndSend("/topic/kitchen", notification);
-        return  new ResponseEntity<>(orderDetails, HttpStatus.OK);
     }
 }

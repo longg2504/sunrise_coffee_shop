@@ -21,6 +21,9 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     @Query("SELECT ord FROM Order AS ord WHERE ord.tableOrder.id = :tableId AND ord.paid = false")
     Optional<Order> findByTableId(@Param("tableId") Long tableId);
 
+    @Query("SELECT ord FROM Order AS ord WHERE ord.id = :orderId AND ord.paid = false")
+    Optional<Order> findByOrderIdAndPaid(@Param("orderId") Long orderId);
+
     List<Order> findByTableOrderAndPaid(TableOrder tableOrder, Boolean paid);
 
     Optional<Order> getByTableOrderAndPaid(TableOrder appTable, Boolean paid);

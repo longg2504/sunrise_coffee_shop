@@ -18,22 +18,17 @@ import javax.persistence.*;
 public class TableOrderBackup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
-
     private Long tableCurrentId;
-
-    private Long orderCurrentId;
-
     private Long tableTargetId;
-
     private Long orderTargetId;
+    private Boolean paid;
 
-    public TableOrderBackup(Long id, Long tableCurrentId, Long orderCurrentId, Long tableTargetId, Long orderTargetId) {
+    public TableOrderBackup(Long id, Long tableCurrentId, Long tableTargetId, Long orderTargetId,Boolean paid) {
         this.id = id;
         this.tableCurrentId = tableCurrentId;
-        this.orderCurrentId = orderCurrentId;
         this.tableTargetId = tableTargetId;
         this.orderTargetId = orderTargetId;
+        this.paid = paid;
     }
 }

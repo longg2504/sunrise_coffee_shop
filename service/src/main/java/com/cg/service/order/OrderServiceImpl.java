@@ -12,6 +12,7 @@ import com.cg.repository.product.ProductRepository;
 import com.cg.repository.staff.StaffRepository;
 import com.cg.repository.tableOrder.TableOrderRepository;
 import com.cg.service.orderDetail.IOrderDetailService;
+import com.cg.service.tableOrderBackup.ITableOrderBackupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private IOrderDetailService orderDetailService;
+
+    @Autowired
+    private ITableOrderBackupService tableOrderBackupService;
 
 
     @Override
@@ -74,6 +78,11 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public Optional<Order> findByOrderIdAndPaid(Long orderId) {
+        return orderRepository.findByOrderIdAndPaid(orderId);
+    }
+
+    @Override
     public List<Order> findByTableOrderAndPaid(TableOrder tableOrder, Boolean paid) {
         return orderRepository.findByTableOrderAndPaid(tableOrder, paid);
     }
@@ -96,9 +105,7 @@ public class OrderServiceImpl implements IOrderService {
         });
 
         OrderDetail orderDetail = new OrderDetail();
-        Long count = orderCreReqDTO.getQuantity();
         Long quantity = orderCreReqDTO.getQuantity();
-        Long quantityDelivery = 0L;
         BigDecimal price = product.getPrice();
         BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 
@@ -188,27 +195,53 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public OrderChangeStatusResDTO upStatusOrderItemToCooking(OrderChangeStatusReqDTO orderChangeStatusReqDTO, User user) {
         Long tableId = orderChangeStatusReqDTO.getTableId();
-        Optional<Order> orderOptional = orderRepository.findByTableId(tableId);
-        if (!orderOptional.isPresent()) {
-            throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
-        }
-        List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(orderOptional.get());
-        if (orderDetails.isEmpty()) {
-            throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
-        }
-        for (OrderDetail item : orderDetails) {
-            if (item.getStatus() == EOrderDetailStatus.NEW) {
-                item.setStatus(EOrderDetailStatus.COOKING);
-                orderDetailRepository.save(item);
+        Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupService.findByTableCurrentId(tableId);
+        if(tableOrderBackup.isPresent()){
+            Optional<Order> orderOptional = orderRepository.findByOrderIdAndPaid(tableOrderBackup.get().getOrderTargetId());
+            if (!orderOptional.isPresent()) {
+                throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
             }
-        }
+            List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(orderOptional.get());
+            if (orderDetails.isEmpty()) {
+                throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
+            }
+            for (OrderDetail item : orderDetails) {
+                if (item.getStatus() == EOrderDetailStatus.NEW) {
+                    item.setStatus(EOrderDetailStatus.COOKING);
+                    orderDetailRepository.save(item);
+                }
+            }
 
-        List<OrderDetailChangeStatusResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailByStatus(orderOptional.get().getId(), EOrderDetailStatus.COOKING);
-        OrderChangeStatusResDTO orderChangeStatusResDTO = new OrderChangeStatusResDTO();
-        orderChangeStatusResDTO.setOrderDetails(newOrderDetails);
-        orderChangeStatusResDTO.setTotalAmount(orderOptional.get().getTotalAmount());
-        orderChangeStatusResDTO.setTableId(tableId);
-        return orderChangeStatusResDTO;
+            List<OrderDetailChangeStatusResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailByStatus(orderOptional.get().getId(), EOrderDetailStatus.COOKING);
+            OrderChangeStatusResDTO orderChangeStatusResDTO = new OrderChangeStatusResDTO();
+            orderChangeStatusResDTO.setOrderDetails(newOrderDetails);
+            orderChangeStatusResDTO.setTotalAmount(orderOptional.get().getTotalAmount());
+            orderChangeStatusResDTO.setTableId(tableId);
+            return orderChangeStatusResDTO;
+        }
+        else {
+            Optional<Order> orderOptional = orderRepository.findByTableId(tableId);
+            if (!orderOptional.isPresent()) {
+                throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
+            }
+            List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder(orderOptional.get());
+            if (orderDetails.isEmpty()) {
+                throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
+            }
+            for (OrderDetail item : orderDetails) {
+                if (item.getStatus() == EOrderDetailStatus.NEW) {
+                    item.setStatus(EOrderDetailStatus.COOKING);
+                    orderDetailRepository.save(item);
+                }
+            }
+
+            List<OrderDetailChangeStatusResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailByStatus(orderOptional.get().getId(), EOrderDetailStatus.COOKING);
+            OrderChangeStatusResDTO orderChangeStatusResDTO = new OrderChangeStatusResDTO();
+            orderChangeStatusResDTO.setOrderDetails(newOrderDetails);
+            orderChangeStatusResDTO.setTotalAmount(orderOptional.get().getTotalAmount());
+            orderChangeStatusResDTO.setTableId(tableId);
+            return orderChangeStatusResDTO;
+        }
 
     }
 
