@@ -36,11 +36,13 @@
                             <h6 class="text-white text-capitalize ps-3">Product</h6>
                                 <select class="form-control search me-3 shadow-primary border-radius-lg " id="categoryFilter" style="width: 200px">
                                     <option class="text-center" value="">--Category--</option>
-                                    <option value="1" >Trà sữa</option>
-                                    <option value="2" >Nước ép</option>
-                                    <option value="3" >Soda</option>
-                                    <option value="4" >Cafe</option>
-                                    <option value="5" >Trà</option>
+                                    <option value="1" >Cafe</option>
+                                    <option value="2" >Trà</option>
+                                    <option value="3" >Sinh tố</option>
+                                    <option value="4" >Yaourt</option>
+                                    <option value="6" >Soda</option>
+                                    <option value="7" >Đá xay</option>
+                                    <option value="8" >Nước ép</option>
                                 </select>
 
 
@@ -310,7 +312,7 @@
                 page.elements.tbProductBody.empty();
                 $.each(data.content, (index, product) => {
                     const str = page.commands.renderProduct(product)
-                    page.elements.tbProductBody.prepend(str)
+                    page.elements.tbProductBody.append(str)
                 })
                 page.commands.displayPagination(data.totalPages, data.number + 1);
             })
@@ -521,7 +523,7 @@
             const currentRow = $('#tr_' + productId);
             currentRow.replaceWith(str);
             App.SweetAlert.showSuccessAlert("Cập nhật thành công")
-            page.commands.getAllProduct(currentPage,10);
+            page.commands.getAllProduct(currentPage,10,keySearch);
             page.dialogs.elements.modalUpdate.modal('hide');
         }).fail((err) => {
             App.SweetAlert.showErrorAlert(err.responseJSON.message);
@@ -552,9 +554,9 @@
             $("#tr_" + product.id).remove();
             page.commands.handleImagePopup();
             if($("#tbProduct tbody tr").length > 1){
-                page.commands.getAllProduct(currentPage,10);
+                page.commands.getAllProduct(currentPage,10,keySearch);
             }else{
-                page.commands.getAllProduct(currentPage - 1,10);
+                page.commands.getAllProduct(currentPage - 1,10,keySearch);
             }
         }).fail(function (jqXHR) {
             App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);

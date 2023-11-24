@@ -14,7 +14,22 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-
+                <div class="mr-2 d-flex justify-content-between mx-auto" id="formSearch">
+                    <div class=" ml-2 mr-2 form-label my-auto ">
+                        Từ
+                    </div>
+                    <div class="ml-2 mr-2 ">
+                        <input type="date" min="2020-01-01" max="" class="form-control search"
+                               id='dayStartOrder'>
+                    </div>
+                    <div class="mr-2 form-label my-auto ">
+                        đến ngày
+                    </div>
+                    <div class="mr-2 ">
+                        <input type="date" min="2020-01-01" max="" class="form-control search"
+                               id='dayEndOrder'>
+                    </div>
+                </div>
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex">
@@ -146,19 +161,19 @@
     }
 
     page.dialogs.commands.getAllBills = (pageBill, pageSize, keysearch) => {
-        currentPage = pageBill
+        currentPage = pageBill;
         showLoader();
-        day = page.dialogs.elements.day.val();
-        month = page.dialogs.elements.month.val();
-        year = page.dialogs.elements.year.val();
-        staffName = keysearch;
+        const day = page.dialogs.elements.day.val();
+        const month = page.dialogs.elements.month.val();
+        const year = page.dialogs.elements.year.val();
+        const staffName = keysearch;
         $.ajax({
             type: 'GET',
             headers: {
                 'accept': 'application/json',
                 'content-type': 'application/json'
             },
-            url: page.urls.getSearchBillDay+'page='+pageBill +'&size='+ pageSize + '&day=' +day + '&month=' + month +'&year=' + year + '&staffName=' +staffName,
+            url: page.urls.getSearchBillDay + 'page=' + pageBill + '&size=' + pageSize + '&day=' + day + '&month=' + month + '&year=' + year + '&staffName=' + staffName,
         })
             .done((data) => {
                 let totalMoney = 0;
@@ -166,10 +181,10 @@
                 $.each(data.content, (i, item) => {
                     totalMoney = totalMoney + item.totalAmount;
                     let str = page.commands.renderBill(item);
-                    $('#tbBill tbody').append(str);
-                })
-          page.commands.renderPagination(data.totalPages, data.number+1, staffName);
-                page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', {style: 'currency', currency: 'VND'}));
+                    $('#tbBill tbody').prepend(str);
+                });
+                page.commands.renderPagination(data.totalPages, data.number + 1, staffName);
+                page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', { style: 'currency', currency: 'VND' }));
                 page.commands.showModalBillDetail();
             })
             .fail(function () {
@@ -178,7 +193,8 @@
             .always(function () {
                 hideLoader();
             });
-    }
+    };
+
 
     page.commands.renderBill = (bill) => {
         return `
@@ -250,27 +266,27 @@
         date = arr[2] + "-" + arr[1] + "-" + arr[0]
         return date;
     }
-// ----------------Search
-//     page.commands.searchBill = () =>{
-//         let day =page.dialogs.elements.day.val();
-//         let month =page.dialogs.elements.month.val();
-//         let year =page.dialogs.elements.year.val();
-//         page.elements.tbOrderBody.empty()
-//         $.ajax({
-//             type:'GET',
-//             url: page.urls.getSearchBillDay +'day='  + day +'&month=' + month +'&year=' +year+ '&staffName=' +staffName,
-//         })
-//             .done((data) => {
-//                 let totalMoney = 0;
-//                 data.content.forEach(item => {
-//                     totalMoney = totalMoney + item.totalAmount;
-//                     const str = page.commands.renderBill(item);
-//                     page.elements.tbOrderBody.append(str);
-//                 })
-//                 page.commands.showModalBillDetail();
-//                 page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', {style: 'currency', currency: 'VND'}));
-//             })
-//     }
+    // ----------------Search
+    //     page.commands.searchBill = () =>{
+    //         let day =page.dialogs.elements.day.val();
+    //         let month =page.dialogs.elements.month.val();
+    //         let year =page.dialogs.elements.year.val();
+    //         page.elements.tbOrderBody.empty()
+    //         $.ajax({
+    //             type:'GET',
+    //             url: page.urls.getSearchBillDay +'day='  + day +'&month=' + month +'&year=' +year+ '&staffName=' +staffName,
+    //         })
+    //             .done((data) => {
+    //                 let totalMoney = 0;
+    //                 data.content.forEach(item => {
+    //                     totalMoney = totalMoney + item.totalAmount;
+    //                     const str = page.commands.renderBill(item);
+    //                     page.elements.tbOrderBody.append(str);
+    //                 })
+    //                 page.commands.showModalBillDetail();
+    //                 page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', {style: 'currency', currency: 'VND'}));
+    //             })
+    //     }
     const daySelect = document.getElementById("day");
     const monthSelect = document.getElementById("month");
     const yearSelect = document.getElementById("year");
@@ -292,7 +308,7 @@
         daySelect.appendChild(option);
     }
 
-    // Lặp qua các tùy chọn tháng và chọn tùy chọn tương ứng với tháng hiện tại
+    // Tạo các tùy chọn cho tháng
     for (let i = 1; i <= 12; i++) {
         const option = document.createElement("option");
         option.value = i < 10 ? "0" + i : "" + i;
@@ -303,7 +319,7 @@
         monthSelect.appendChild(option);
     }
 
-    // Lặp qua các tùy chọn năm và chọn tùy chọn tương ứng với năm hiện tại
+    // Tạo các tùy chọn cho năm
     for (let i = currentYear; i >= currentYear - 10; i--) {
         const option = document.createElement("option");
         option.value = i;
@@ -344,6 +360,8 @@
     //             page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', {style: 'currency', currency: 'VND'}));
     //         });
     // };
+
+
 
     /////////////////------------------- Modal detail
     page.commands.getBillDetailByBillID = (billId) => {

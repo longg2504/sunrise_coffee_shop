@@ -337,7 +337,7 @@
                 page.elements.tbStaffBody.empty();
                 $.each(data.content, (index, item) => {
                     const str = page.commands.renderStaff(item)
-                    page.elements.tbStaffBody.prepend(str)
+                    page.elements.tbStaffBody.append(str)
                 })
                 page.commands.displayPagination(data.totalPages, data.number + 1);
 

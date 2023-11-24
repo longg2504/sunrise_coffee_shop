@@ -301,7 +301,7 @@
                 page.elements.tbTableOrderBody.empty();
                 $.each(data.content, (index, item) => {
                     const str = page.commands.renderTableOrder(item)
-                    page.elements.tbTableOrderBody.prepend(str)
+                    page.elements.tbTableOrderBody.append(str)
                 })
                 page.commands.displayPagination(data.totalPages, data.number + 1);
 
