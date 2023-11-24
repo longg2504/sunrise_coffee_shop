@@ -106,7 +106,7 @@ public class TableOrderServiceImpl implements ITableOrderService {
     }
 
     @Override
-    public Page<TableOrderDTO> findAllTableOrder(Zone zone, String status,String search, Pageable pageable) {
+    public Page<TableOrderDTO> findAllTableOrder(Zone zone, String status, String search, Pageable pageable) {
         return tableOrderRepository.findAllTableOrderByTitle(zone, status, search, pageable);
     }
 
@@ -166,7 +166,7 @@ public class TableOrderServiceImpl implements ITableOrderService {
 
         Optional<Order> targetOrderOptional = iOrderService.getByTableOrderAndPaid(targetTable, false);
 
-        if(!targetOrderOptional.isPresent()){
+        if (!targetOrderOptional.isPresent()) {
             throw new DataInputException("Đơn hàng của bàn đích không hợp lệ, vui lòng kiểm tra lại dữ liệu");
         }
 
@@ -178,60 +178,46 @@ public class TableOrderServiceImpl implements ITableOrderService {
         }
 
         // kiểm tra và lấy danh sách đơn hàng từ các bàn nguồn
-        for(TableOrder sourceTable : sourceTables){
+        for (TableOrder sourceTable : sourceTables) {
             Optional<Order> sourceOrderOptional = iOrderService.getByTableOrderAndPaid(sourceTable, false);
 
-            if(!sourceOrderOptional.isPresent()){
-                throw new DataInputException("đơn hàng hiện tại không hợp lệ, vui lòng kiểm tra lại dữ liệu");
-            }
+            if (!sourceOrderOptional.isPresent()) {
+                TableOrderBackup tableBackup = new TableOrderBackup()
+                        .setOrderTargetId(targetOrder.getId())
+                        .setTableTargetId(targetTable.getId())
+                        .setTableCurrentId(sourceTable.getId())
+                        .setPaid(false);
+                tableOrderBackupRepository.save(tableBackup);
 
-            Order sourceOrder = sourceOrderOptional.get();
-            sourceOrders.add(sourceOrder);
+                sourceTable.setStatus(ETableStatus.BUSY);
+                tableOrderRepository.save(sourceTable);
+            } else {
+                Order sourceOrder = sourceOrderOptional.get();
+                sourceOrders.add(sourceOrder);
 //            BigDecimal sourceOrderAmount = sourceOrderOptional.get().getTotalAmount();
 
-            TableOrderBackup tableBackup = new TableOrderBackup()
-                    .setOrderTargetId(targetOrder.getId())
-                    .setTableTargetId(targetTable.getId())
-                    .setTableCurrentId(sourceTable.getId())
-                    .setPaid(false)
-                    ;
+                TableOrderBackup tableBackup = new TableOrderBackup()
+                        .setOrderTargetId(targetOrder.getId())
+                        .setTableTargetId(targetTable.getId())
+                        .setTableCurrentId(sourceTable.getId())
+                        .setPaid(false);
 
-            tableOrderBackupRepository.save(tableBackup);
+                tableOrderBackupRepository.save(tableBackup);
 
-            List<OrderDetail> sourceOrderItems = iOrderDetailService.getAllByOrder(sourceOrder);
+                List<OrderDetail> sourceOrderItems = iOrderDetailService.getAllByOrder(sourceOrder);
 
-            if(sourceOrderItems.isEmpty()){
-                throw new DataInputException("Không tìm thấy hóa đơn của bàn " + sourceTable.getId());
+                if (sourceOrderItems.isEmpty()) {
+                    throw new DataInputException("Không tìm thấy hóa đơn của bàn " + sourceTable.getId());
+                }
+
+                allSourceOrderItems.addAll(sourceOrderItems);
             }
-
-            allSourceOrderItems.addAll(sourceOrderItems);
         }
-
-
-
-//        TableOrderBackup tableBackup = new TableOrderBackup()
-//                .setOrderTargetId(targetOrder.getId())
-//                .setTableTargetId(targetTable.getId());
-
-//        for(TableOrder sourceTable : sourceTables) {
-//            tableBackup.setTableCurrentId(sourceTable.getId());
-//            sourceTable.setStatus(ETableStatus.BUSY);
-//            tableOrderRepository.save(sourceTable);
-//        }
-
-//        tableOrderBackupRepository.save(tableBackup);
-
-//        for (OrderDetail targetItem : targetOrderItems) {
-//            billBackupRepository.save(targetItem.toBillBackup(tableBackup));
-//        }
-
         List<OrderDetail> newOrderItems = new ArrayList<>();
 
         for (OrderDetail sourceItem : allSourceOrderItems) {
             boolean isExist = false;
             int itemIndex = 0;
-//            billBackupRepository.save(sourceItem.toBillBackup(tableBackup));
-
             for (int i = 0; i < targetOrderItems.size(); i++) {
                 OrderDetail targetItem = targetOrderItems.get(i);
 
@@ -243,7 +229,6 @@ public class TableOrderServiceImpl implements ITableOrderService {
                     break;
                 }
             }
-
             if (isExist) {
                 int newQuantity = (int) (sourceItem.getQuantity() + targetOrderItems.get(itemIndex).getQuantity());
                 BigDecimal newAmount = sourceItem.getPrice().multiply(BigDecimal.valueOf(newQuantity));
@@ -269,98 +254,7 @@ public class TableOrderServiceImpl implements ITableOrderService {
         orderRepository.deleteAll(sourceOrders);
 
         orderDetailRepository.saveAll(newOrderItems);
-
-//        Optional<Order> orderCurrentOptional = iOrderService.getByTableOrderAndPaid(currentTable, false);
-//
-//        if (!orderCurrentOptional.isPresent()) {
-//            throw new DataInputException("đơn hàng hiện tại không hợp lệ, vui lòng kiểm tra lại dữ liệu");
-//        }
-//
-//        Optional<Order> orderTargetOptional = iOrderService.getByTableOrderAndPaid(targetTable, false);
-//
-//        if (!orderTargetOptional.isPresent()) {
-//            throw new DataInputException("đơn hàng muốn gộp không hợp lệ, vui lòng kiểm tra lại dữ liệu");
-//        }
-//
-//        List<OrderDetail> orderItemCurrent = iOrderDetailService.getAllByOrder(orderCurrentOptional.get());
-//
-//        if (orderItemCurrent.size() == 0) {
-//            throw new DataInputException("Không tìm thấy hóa đơn của bàn hiện tại.");
-//        }
-//
-//        List<OrderDetail> orderItemTarget = iOrderDetailService.getAllByOrder(orderTargetOptional.get());
-//
-//        if (orderItemTarget.size() == 0) {
-//            throw new DataInputException("Không tìm thấy hóa đơn của bàn muốn gộp.");
-//        }
-//
-//        TableOrderBackup tableBackup = new TableOrderBackup()
-//                .setOrderTargetId(orderCurrentOptional.get().getId())
-//                .setOrderCurrentId(orderTargetOptional.get().getId())
-//                .setTableCurrentId(targetTable.getId())
-//                .setTableTargetId(currentTable.getId());
-//
-//        tableOrderBackupRepository.save(tableBackup);
-//
-//        for (OrderDetail itemTarget : orderItemTarget) {
-//            billBackupRepository.save(itemTarget.toBillBackup(tableBackup));
-//        }
-//
-//        List<OrderDetail> newOrderItems = new ArrayList<>();
-//
-//        for (OrderDetail itemCurrent : orderItemCurrent) {
-//            boolean isExist = false;
-//            int itemIndex = 0;
-//            billBackupRepository.save(itemCurrent.toBillBackup(tableBackup));
-//
-//            for (int i = 0; i < orderItemTarget.size(); i++) {
-//                if (Objects.equals(itemCurrent.getProduct().getId(), orderItemTarget.get(i).getProduct().getId())
-//                        && Objects.equals(itemCurrent.getNote(), orderItemTarget.get(i).getNote())
-//                        && itemCurrent.getStatus() == orderItemTarget.get(i).getStatus()
-//                ) {
-//                    isExist = true;
-//                    itemIndex = i;
-//                }
-//            }
-//
-//            if (isExist) {
-//                int newQuantity = (int) (itemCurrent.getQuantity() + orderItemTarget.get(itemIndex).getQuantity());
-//                BigDecimal newAmount = itemCurrent.getPrice().multiply(BigDecimal.valueOf(newQuantity));
-//
-//                orderItemTarget.get(itemIndex).setId(orderItemTarget.get(itemIndex).getId());
-//                orderItemTarget.get(itemIndex).setQuantity((long) newQuantity);
-//                orderItemTarget.get(itemIndex).setAmount(newAmount);
-//                orderDetailRepository.save(orderItemTarget.get(itemIndex));
-//            } else {
-//                itemCurrent.setOrder(orderItemTarget.get(itemIndex).getOrder());
-//                OrderDetail newOrderItem = new OrderDetail().initValue(itemCurrent);
-//                newOrderItem.setId(null);
-//                newOrderItems.add(newOrderItem);
-//            }
-//
-//            isExist = false;
-//            itemIndex = 0;
-//        }
-//
-//        currentTable.setStatus(ETableStatus.EMPTY);
-//        tableOrderRepository.save(currentTable);
-//
-//        targetTable.setStatus(ETableStatus.BUSY);
-//        tableOrderRepository.save(targetTable);
-//
-//
-//        BigDecimal newTotalAmount = iOrderService.getOrderTotalAmount(orderTargetOptional.get().getId());
-//        orderTargetOptional.get().setTotalAmount(newTotalAmount);
-//        orderRepository.save(orderTargetOptional.get());
-//
-//        orderDetailRepository.deleteAll(orderItemCurrent);
-//
-//        orderRepository.delete(orderCurrentOptional.get());
-//
-//        orderDetailRepository.saveAll(newOrderItems);
     }
-
-
 
     @Override
     public List<TableOrderDTO> findAllTableOrder() {
