@@ -238,6 +238,18 @@ public class BillServiceImpl implements IBillService {
             Order order = orderService.findByTableId(tableId).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
             order.setPaid(true);
             order = orderRepository.save(order);
+            List<TableOrderBackup> tableOrderBackups = tableOrderBackupRepository.findByOrderTargetId(order.getId());
+            for (TableOrderBackup items : tableOrderBackups) {
+                items.setPaid(true);
+                tableOrderBackupRepository.save(items);
+
+                Optional<TableOrder> tableOrderOptional = tableOrderService.findById(items.getTableCurrentId());
+                TableOrder tableOrder = tableOrderOptional.get();
+                tableOrder.setStatus(ETableStatus.EMPTY);
+                tableOrderRepository.save(tableOrder);
+            }
+
+
 
             List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
             orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));

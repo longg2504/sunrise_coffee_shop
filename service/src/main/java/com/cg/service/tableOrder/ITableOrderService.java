@@ -22,6 +22,8 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
 
     void combineTable(List<TableOrder> sourceTables, TableOrder targetTable);
 
+    void combineProduct(List<TableOrder> sourceTables, TableOrder targetTable);
+
 //    TableOrder unCombineTable(TableOrder currentTable);
 
     List<TableOrderDTO> findAllTableOrder();

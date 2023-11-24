@@ -217,6 +217,70 @@ public class TableOrderAPI {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/combine-products")
+    public ResponseEntity<?> combineProducts(HttpServletRequest request) throws IOException {
+        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+        ObjectMapper mapper = new JsonMapper();
+        JsonNode json = mapper.readTree(body);
+
+        List<String> currentTableIds;
+        String targetTableIdStr;
+
+        try {
+            currentTableIds = mapper.convertValue(json.get("currentTableIds"), new TypeReference<List<String>>() {});
+            targetTableIdStr = json.get("targetTableId").asText();
+        } catch (Exception e) {
+            throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
+        }
+
+        for (String currentTableIdStr : currentTableIds) {
+            if (!validateUtils.isNumberValid(currentTableIdStr)) {
+                throw new DataInputException("ID bàn hiện tại phải là ký tự số");
+            }
+        }
+
+        if (!validateUtils.isNumberValid(targetTableIdStr)) {
+            throw new DataInputException("ID bàn mục tiêu phải là ký tự số");
+        }
+
+        Long targetTableId = Long.parseLong(targetTableIdStr);
+
+        Optional<TableOrder> optionalTargetAppTable = tableOrderService.findById(targetTableId);
+
+        if (!optionalTargetAppTable.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        TableOrder targetTable = optionalTargetAppTable.get();
+
+        List<TableOrder> sourceTables = new ArrayList<>();
+        for (String currentTableIdStr : currentTableIds) {
+            Long currentTableId = Long.parseLong(currentTableIdStr);
+            Optional<TableOrder> optionalCurrentAppTable = tableOrderService.findById(currentTableId);
+
+            if (!optionalCurrentAppTable.isPresent()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            TableOrder currentTable = optionalCurrentAppTable.get();
+            sourceTables.add(currentTable);
+        }
+
+        try {
+            tableOrderService.combineProduct(sourceTables, targetTable);
+        } catch (DataInputException e) {
+            throw new DataInputException(e.getMessage());
+        }
+
+        TableOrderDTO targetTableDTO = targetTable.toTableOrderDTO();
+
+        Map<String, TableOrderDTO> result = new HashMap<>();
+        result.put("targetTable", targetTableDTO);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 //    @PostMapping("/combine-tables")
 //    public ResponseEntity<?> combineTables(HttpServletRequest request) throws IOException {
 //        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
