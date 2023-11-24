@@ -2,11 +2,14 @@ package com.cg.api;
 
 import com.cg.domain.dto.order.OrderKitchenTableDTO;
 import com.cg.domain.dto.orderDetail.*;
+import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.dto.socket.Notification;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
+import com.cg.domain.entity.Product;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.exception.DataInputException;
+import com.cg.repository.product.ProductRepository;
 import com.cg.service.order.IOrderService;
 import com.cg.service.orderDetail.IOrderDetailService;
 import com.cg.utils.ValidateUtils;
@@ -38,7 +41,8 @@ public class OrderDetailAPI {
     private IOrderDetailService orderDetailService;
     @Autowired
     private ValidateUtils validateUtils;
-
+    @Autowired
+    private ProductRepository productRepository;
 
     @GetMapping("/kitchen/get-all")
     public ResponseEntity<?> getAll() {
@@ -264,13 +268,15 @@ public class OrderDetailAPI {
 
         Map<String, List<?>> result = getAllItem();
 
-//        Notification notification = new Notification();
-//        notification.setType(Notification.NotificationType.RECEPTION);
-//        notification.setSender("USER");
-//        notification.setData(new Notification.Data(productId, String.format("%s đã hết!", )));
-//
-//        ///topic/reception OR /topic/kitchen
-//        messagingTemplate.convertAndSend("/topic/reception", notification);
+        Optional<Product> product = productRepository.findById(productId);
+
+        Notification notification = new Notification();
+        notification.setType(Notification.NotificationType.RECEPTION);
+        notification.setSender("USER");
+        notification.setData(new Notification.Data(productId, String.format("%s đã hết!", product.get().getTitle())));
+
+        ///topic/reception OR /topic/kitchen
+        messagingTemplate.convertAndSend("/topic/reception", notification);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
 

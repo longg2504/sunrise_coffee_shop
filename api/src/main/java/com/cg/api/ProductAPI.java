@@ -38,6 +38,16 @@ public class ProductAPI {
     private AppUtils appUtils;
 
 
+    @GetMapping("/all")
+    public  ResponseEntity<?> getAll() {
+        List<ProductDTO> products = productService.findAllProductDTO();
+        if(products.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        }
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "") String search,@RequestParam (defaultValue = "") Category category, Pageable pageable) {
 //        search =  '%' + search + '%';

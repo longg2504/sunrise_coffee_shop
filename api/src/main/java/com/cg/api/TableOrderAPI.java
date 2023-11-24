@@ -26,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -225,6 +222,87 @@ public class TableOrderAPI {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+//    @PostMapping("/combine-tables")
+//    public ResponseEntity<?> combineTables(HttpServletRequest request) throws IOException {
+//        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+//        ObjectMapper mapper = new JsonMapper();
+//        JsonNode json = mapper.readTree(body);
+//
+//        String currentTableIdStr;
+//        List<String> targetTableIdsStr = new ArrayList<>();
+//
+//        try {
+//            currentTableIdStr = json.get("currentTableId").asText();
+//            JsonNode targetTableIdsNode = json.get("targetTableIds");
+//            if (targetTableIdsNode.isArray()) {
+//                for (JsonNode idNode : targetTableIdsNode) {
+//                    targetTableIdsStr.add(idNode.asText());
+//                }
+//            }
+//        } catch (Exception e) {
+//            throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
+//        }
+//
+//        if (!validateUtils.isNumberValid(currentTableIdStr)) {
+//            throw new DataInputException("ID bàn hiện tại phải là ký tự số");
+//        }
+//
+//        List<Long> targetTableIds = new ArrayList<>();
+//        for (String targetTableIdStr : targetTableIdsStr) {
+//            if (!validateUtils.isNumberValid(targetTableIdStr)) {
+//                throw new DataInputException("ID bàn mục tiêu phải là ký tự số");
+//            }
+//            targetTableIds.add(Long.parseLong(targetTableIdStr));
+//        }
+//
+//        Long currentTableId = Long.parseLong(currentTableIdStr);
+//
+//        Optional<TableOrder> optionalCurrentAppTable = tableOrderService.findById(currentTableId);
+//
+//        if (!optionalCurrentAppTable.isPresent()) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        TableOrder currentTable = optionalCurrentAppTable.get();
+//
+//        ETableStatus eCurrentTableStatus = ETableStatus.fromString(currentTable.getStatus().toString().toUpperCase());
+//
+//        if (!eCurrentTableStatus.equals(ETableStatus.BUSY)) {
+//            throw new DataInputException("Trạng thái bàn hiện tại không hợp lệ, vui lòng kiểm tra lại.");
+//        }
+//
+//        Map<String, TableOrderDTO> result = new HashMap<>();
+//
+//        for (Long targetTableId : targetTableIds) {
+//            if (!validateUtils.isNumberValid(targetTableId.toString())) {
+//                throw new DataInputException("ID bàn mục tiêu phải là ký tự số");
+//            }
+//
+//            Optional<TableOrder> optionalTargetAppTable = tableOrderService.findById(targetTableId);
+//
+//            if (!optionalTargetAppTable.isPresent()) {
+//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//            }
+//
+//            TableOrder targetTable = optionalTargetAppTable.get();
+//            ETableStatus eTargetTableStatus = ETableStatus.fromString(targetTable.getStatus().toString().toUpperCase());
+//
+//            if (!eTargetTableStatus.equals(ETableStatus.BUSY)) {
+//                throw new DataInputException("Trạng thái bàn muốn gộp không hợp lệ, vui lòng kiểm tra lại.");
+//            }
+//
+//            tableOrderService.combineTable(currentTable, targetTable);
+//
+//            TableOrderDTO targetTableDTO = targetTable.toTableOrderDTO();
+//            result.put("targetTable" + targetTableId, targetTableDTO);
+//        }
+//
+//        TableOrderDTO currentTableDTO = currentTable.toTableOrderDTO();
+//        result.put("currentTable", currentTableDTO);
+//
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 
 
 //    @PostMapping("/un-combine-tables")
