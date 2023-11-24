@@ -117,69 +117,69 @@ public class BillServiceImpl implements IBillService {
 
     }
 
-    @Override
-    public void pay(Long orderId, Long chargePercent, BigDecimal chargeMoney, Long discountPercent, BigDecimal discountMoney, BigDecimal totalAmount, BigDecimal transferPay, BigDecimal cashPay) {
-        Optional<TableOrderBackup> tableBackupOptional = tableOrderBackupService.findByOrderCurrentId(orderId);
-
-        if(tableBackupOptional.isPresent()) {
-
-            List<BillBackup> currentTableBillBackup = billBackupService.findAllByOrderId(tableBackupOptional.get().getOrderCurrentId());
-
-            if (currentTableBillBackup.size() == 0) {
-                throw new DataInputException("đơn hàng hiện tại không hợp lệ, vui lòng kiểm tra lại dữ liệu !!!");
-            }
-
-            List<BillBackup> targetTableBillBackup = billBackupService.findAllByOrderId(tableBackupOptional.get().getOrderTargetId());
-
-            if (targetTableBillBackup.size() == 0) {
-                throw new DataInputException("đơn hàng muốn tách không hợp lệ, vui lòng kiểm tra lại dữ liệu !!!");
-            }
-
-            billBackupRepository.deleteAll(currentTableBillBackup);
-            billBackupRepository.deleteAll(targetTableBillBackup);
-            tableOrderBackupRepository.delete(tableBackupOptional.get());
-        }
-
-
-
-        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
-            throw new UnauthorizedException("Vui lòng xác thực");
-        });
-
-        Order order = orderService.findById(orderId).orElseThrow(() -> {
-            throw new DataInputException("ID order không tồn tại.");
-        });
-
-        order.setPaid(true);
-        order = orderRepository.save(order);
-
-        List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
-        orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
-
-
-
-        Optional<Bill> billOptional = billRepository.findBillByOrderId(order.getId());
-
-        Bill bill = billOptional.get()
-                .setOrder(order)
-                .setStaff(staff)
-                .setTable(order.getTableOrder())
-                .setOrderPrice(order.getTotalAmount())
-                .setChargePercent(chargePercent)
-                .setChargeMoney(chargeMoney)
-                .setDiscountPercent(discountPercent)
-                .setDiscountMoney(discountMoney)
-                .setTotalAmount(totalAmount)
-                .setTransferPay(transferPay)
-                .setCashPay(cashPay)
-                .setPaid(true);
-        billRepository.save(bill);
-
-
-        TableOrder table = order.getTableOrder();
-        table.setStatus(ETableStatus.EMPTY);
-        tableOrderRepository.save(table);
-    }
+//    @Override
+//    public void pay(Long orderId, Long chargePercent, BigDecimal chargeMoney, Long discountPercent, BigDecimal discountMoney, BigDecimal totalAmount, BigDecimal transferPay, BigDecimal cashPay) {
+//        Optional<TableOrderBackup> tableBackupOptional = tableOrderBackupService.findByOrderCurrentId(orderId);
+//
+//        if(tableBackupOptional.isPresent()) {
+//
+//            List<BillBackup> currentTableBillBackup = billBackupService.findAllByOrderId(tableBackupOptional.get().getOrderCurrentId());
+//
+//            if (currentTableBillBackup.size() == 0) {
+//                throw new DataInputException("đơn hàng hiện tại không hợp lệ, vui lòng kiểm tra lại dữ liệu !!!");
+//            }
+//
+//            List<BillBackup> targetTableBillBackup = billBackupService.findAllByOrderId(tableBackupOptional.get().getOrderTargetId());
+//
+//            if (targetTableBillBackup.size() == 0) {
+//                throw new DataInputException("đơn hàng muốn tách không hợp lệ, vui lòng kiểm tra lại dữ liệu !!!");
+//            }
+//
+//            billBackupRepository.deleteAll(currentTableBillBackup);
+//            billBackupRepository.deleteAll(targetTableBillBackup);
+//            tableOrderBackupRepository.delete(tableBackupOptional.get());
+//        }
+//
+//
+//
+//        Staff staff = staffService.findByUsername(appUtils.getPrincipalUsername()).orElseThrow(() -> {
+//            throw new UnauthorizedException("Vui lòng xác thực");
+//        });
+//
+//        Order order = orderService.findById(orderId).orElseThrow(() -> {
+//            throw new DataInputException("ID order không tồn tại.");
+//        });
+//
+//        order.setPaid(true);
+//        order = orderRepository.save(order);
+//
+//        List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
+//        orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+//
+//
+//
+//        Optional<Bill> billOptional = billRepository.findBillByOrderId(order.getId());
+//
+//        Bill bill = billOptional.get()
+//                .setOrder(order)
+//                .setStaff(staff)
+//                .setTable(order.getTableOrder())
+//                .setOrderPrice(order.getTotalAmount())
+//                .setChargePercent(chargePercent)
+//                .setChargeMoney(chargeMoney)
+//                .setDiscountPercent(discountPercent)
+//                .setDiscountMoney(discountMoney)
+//                .setTotalAmount(totalAmount)
+//                .setTransferPay(transferPay)
+//                .setCashPay(cashPay)
+//                .setPaid(true);
+//        billRepository.save(bill);
+//
+//
+//        TableOrder table = order.getTableOrder();
+//        table.setStatus(ETableStatus.EMPTY);
+//        tableOrderRepository.save(table);
+//    }
 
     // don't use this api !!!
     @Override
@@ -188,17 +188,35 @@ public class BillServiceImpl implements IBillService {
             throw new DataInputException("Tên nhân viên không hợp lệ");
         });
 
-        Order order = orderService.findByTableId(tableId).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
-        order.setPaid(true);
-        order = orderRepository.save(order);
+        Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupRepository.findByTableCurrentId(tableId);
+        if (tableOrderBackup.isPresent()) {
+            Optional<Order> orderOptional = orderService.findByOrderIdAndPaid(tableOrderBackup.get().getOrderTargetId());
+            if (orderOptional.isEmpty()) {
+                throw new DataInputException("Không có hoá đơn vui lòng xem lại");
+            }
 
-        List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
-        orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
-        orderDetailRepository.saveAll(orderItems);
+            Order order = orderOptional.get();
+            order.setPaid(true);
+            order = orderRepository.save(order);
+            List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
+            orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+            orderDetailRepository.saveAll(orderItems);
 
-        TableOrder table = order.getTableOrder();
-        table.setStatus(ETableStatus.EMPTY);
-        tableOrderRepository.save(table);
+            List<TableOrderBackup> tableOrderBackups = tableOrderBackupRepository.findByOrderTargetId(order.getId());
+            for (TableOrderBackup items : tableOrderBackups) {
+                items.setPaid(true);
+                tableOrderBackupRepository.save(items);
+
+                Optional<TableOrder> tableOrderOptional = tableOrderService.findById(items.getTableCurrentId());
+                TableOrder tableOrder = tableOrderOptional.get();
+                tableOrder.setStatus(ETableStatus.EMPTY);
+                tableOrderRepository.save(tableOrder);
+            }
+
+            TableOrder tableOrder = order.getTableOrder();
+            tableOrder.setStatus(ETableStatus.EMPTY);
+            tableOrderRepository.save(tableOrder);
+
 
             Bill bill = new Bill()
                     .setOrder(order)
@@ -212,10 +230,41 @@ public class BillServiceImpl implements IBillService {
                     .setTotalAmount(order.getTotalAmount())
                     .setPaid(true)
                     .setCashPay(BigDecimal.ZERO)
-                    .setTransferPay(BigDecimal.ZERO)
-                    ;
+                    .setTransferPay(BigDecimal.ZERO);
             billRepository.save(bill);
-            return bill.toBillResDTO();}
+            return bill.toBillResDTO();
+
+        } else {
+            Order order = orderService.findByTableId(tableId).orElseThrow(() -> new DataInputException("ID Hóa đơn không hợp lệ."));
+            order.setPaid(true);
+            order = orderRepository.save(order);
+
+            List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
+            orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+            orderDetailRepository.saveAll(orderItems);
+
+            TableOrder table = order.getTableOrder();
+            table.setStatus(ETableStatus.EMPTY);
+            tableOrderRepository.save(table);
+
+            Bill bill = new Bill()
+                    .setOrder(order)
+                    .setStaff(staff)
+                    .setTable(order.getTableOrder())
+                    .setDiscountPercent(0L)
+                    .setDiscountMoney(BigDecimal.ZERO)
+                    .setChargePercent(0L)
+                    .setChargeMoney(order.getTotalAmount())
+                    .setOrderPrice(order.getTotalAmount())
+                    .setTotalAmount(order.getTotalAmount())
+                    .setPaid(true)
+                    .setCashPay(BigDecimal.ZERO)
+                    .setTransferPay(BigDecimal.ZERO);
+            billRepository.save(bill);
+            return bill.toBillResDTO();
+        }
+
+    }
 
     @Override
     public Optional<Bill> findBillByOrderId(Long orderId) {
@@ -288,7 +337,6 @@ public class BillServiceImpl implements IBillService {
     }
 
 
-
     @Override
     public PayDTO payOfDay() {
         return billRepository.payOfDay();
@@ -315,14 +363,16 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
-    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day,String staffName,Pageable pageable) {
-        LocalDate start = getDate(year,month,day);
-        if(day == null){
-            return billRepository.getAllBillByDate(start,getLastDayOfMonth(start),staffName,pageable);
+    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day, String staffName, Pageable pageable) {
+        LocalDate start = getDate(year, month, day);
+        if (day == null) {
+            return billRepository.getAllBillByDate(start, getLastDayOfMonth(start), staffName, pageable);
         }
 
-        return billRepository.getAllBillByDate(start, start,staffName,pageable);
+        return billRepository.getAllBillByDate(start, start, staffName, pageable);
     }
+
+    //sửa đoạn này
 
     @Override
     public Page<BillGetAllResDTO> getBillByStaff(String staffName, Pageable pageable) {
@@ -342,7 +392,6 @@ public class BillServiceImpl implements IBillService {
     public LocalDate getLastDayOfMonth(LocalDate date) {
         return date.with(TemporalAdjusters.lastDayOfMonth());
     }
-
 
 
 }

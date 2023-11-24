@@ -4,10 +4,12 @@ import com.cg.domain.dto.bill.*;
 import com.cg.domain.dto.product.ProductDTO;
 import com.cg.domain.entity.Bill;
 import com.cg.domain.entity.Order;
+import com.cg.domain.entity.TableOrderBackup;
 import com.cg.exception.DataInputException;
 import com.cg.service.bill.BillServiceImpl;
 import com.cg.service.bill.IBillService;
 import com.cg.service.order.IOrderService;
+import com.cg.service.tableOrderBackup.ITableOrderBackupService;
 import com.cg.utils.AppUtils;
 import com.cg.utils.ValidateUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,6 +51,9 @@ public class BillAPI {
 
     @Autowired
     private ValidateUtils validateUtils;
+
+    @Autowired
+    private ITableOrderBackupService tableOrderBackupService;
 
 
     @GetMapping("/get-bills-today-and-previous-day")
@@ -164,17 +169,30 @@ public class BillAPI {
         }
         Long tableId = Long.parseLong(tableStr);
 
-        Optional<Order> orderOptional = orderService.findByTableId(tableId);
+        Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupService.findByTableCurrentId(tableId);
+        if(tableOrderBackup.isPresent()){
+            Optional<Order> orderOptional = orderService.findByOrderIdAndPaid(tableOrderBackup.get().getOrderTargetId());
+            if(orderOptional.get().getPaid()) {
+                throw new DataInputException("Hóa đơn đã thanh toán");
+            }
 
-        Order order = orderOptional.get();
+            BillResDTO billResDTO = iBillService.createBillWithOrders(tableOrderBackup.get().getTableCurrentId());
+            return new ResponseEntity<>(billResDTO, HttpStatus.OK);
+        }
+        else {
+            Optional<Order> orderOptional = orderService.findByTableId(tableId);
 
-        if (order.getPaid()) {
-            throw new DataInputException("Hóa đơn đã thanh toán.");
+            Order order = orderOptional.get();
+
+            if (order.getPaid()) {
+                throw new DataInputException("Hóa đơn đã thanh toán");
+            }
+
+            BillResDTO billResDTO = iBillService.createBillWithOrders(tableId);
+
+            return new ResponseEntity<>(billResDTO, HttpStatus.OK);
         }
 
-        BillResDTO billResDTO = iBillService.createBillWithOrders(tableId);
-
-        return new ResponseEntity<>(billResDTO, HttpStatus.OK);
     }
 
     @PostMapping("/print")

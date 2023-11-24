@@ -19,7 +19,7 @@ public interface IBillService extends IGeneralService<Bill, Long> {
 
     BillPrintTempDTO print(Order order);
 
-    void pay(Long orderId, Long chargePercent, BigDecimal chargeMoney, Long discountPercent, BigDecimal discountMoney, BigDecimal totalAmount, BigDecimal transferPay, BigDecimal cashPay);
+//    void pay(Long orderId, Long chargePercent, BigDecimal chargeMoney, Long discountPercent, BigDecimal discountMoney, BigDecimal totalAmount, BigDecimal transferPay, BigDecimal cashPay);
 
     Optional<Bill> findBillByOrderId(Long orderId);
 

@@ -14,6 +14,7 @@ import com.cg.service.tableOrder.ITableOrderService;
 import com.cg.service.zone.IZoneService;
 import com.cg.utils.AppUtils;
 import com.cg.utils.ValidateUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -154,39 +155,32 @@ public class TableOrderAPI {
 
     @PostMapping("/combine-tables")
     public ResponseEntity<?> combineTables(HttpServletRequest request) throws IOException {
-
         String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 
         ObjectMapper mapper = new JsonMapper();
         JsonNode json = mapper.readTree(body);
 
-        String currentTableIdStr;
+        List<String> currentTableIds;
         String targetTableIdStr;
 
         try {
-            currentTableIdStr = json.get("currentTableId").asText();
+            currentTableIds = mapper.convertValue(json.get("currentTableIds"), new TypeReference<List<String>>() {});
             targetTableIdStr = json.get("targetTableId").asText();
         } catch (Exception e) {
             throw new DataInputException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin");
         }
 
-        if (!validateUtils.isNumberValid(currentTableIdStr)) {
-            throw new DataInputException("ID bàn hiện tại phải là ký tự số");
+        for (String currentTableIdStr : currentTableIds) {
+            if (!validateUtils.isNumberValid(currentTableIdStr)) {
+                throw new DataInputException("ID bàn hiện tại phải là ký tự số");
+            }
         }
 
         if (!validateUtils.isNumberValid(targetTableIdStr)) {
             throw new DataInputException("ID bàn mục tiêu phải là ký tự số");
         }
 
-        Long currentTableId = Long.parseLong(currentTableIdStr);
-
         Long targetTableId = Long.parseLong(targetTableIdStr);
-
-        Optional<TableOrder> optionalCurrentAppTable = tableOrderService.findById(currentTableId);
-
-        if (!optionalCurrentAppTable.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         Optional<TableOrder> optionalTargetAppTable = tableOrderService.findById(targetTableId);
 
@@ -194,30 +188,30 @@ public class TableOrderAPI {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        TableOrder currentTable = optionalCurrentAppTable.get();
-
         TableOrder targetTable = optionalTargetAppTable.get();
 
-        ETableStatus eCurrentTableStatus = ETableStatus.fromString(currentTable.getStatus().toString().toUpperCase());
+        List<TableOrder> sourceTables = new ArrayList<>();
+        for (String currentTableIdStr : currentTableIds) {
+            Long currentTableId = Long.parseLong(currentTableIdStr);
+            Optional<TableOrder> optionalCurrentAppTable = tableOrderService.findById(currentTableId);
 
-        ETableStatus eTargetTableStatus = ETableStatus.fromString(targetTable.getStatus().toString().toUpperCase());
+            if (!optionalCurrentAppTable.isPresent()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
-        if (!eCurrentTableStatus.equals(ETableStatus.BUSY)) {
-            throw new DataInputException("Trạng thái bàn hiện tại không hợp lệ, vui lòng kiểm tra lại.");
+            TableOrder currentTable = optionalCurrentAppTable.get();
+            sourceTables.add(currentTable);
         }
 
-        if (!eTargetTableStatus.equals(ETableStatus.BUSY)) {
-            throw new DataInputException("Trạng thái bàn muốn gộp không hợp lệ, vui lòng kiểm tra lại.");
+        try {
+            tableOrderService.combineTable(sourceTables, targetTable);
+        } catch (DataInputException e) {
+            throw new DataInputException(e.getMessage());
         }
-
-        tableOrderService.combineTable(currentTable, targetTable);
-
-        TableOrderDTO currentTableDTO = currentTable.toTableOrderDTO();
 
         TableOrderDTO targetTableDTO = targetTable.toTableOrderDTO();
 
         Map<String, TableOrderDTO> result = new HashMap<>();
-        result.put("currentTable", currentTableDTO);
         result.put("targetTable", targetTableDTO);
 
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -20,7 +20,7 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
 
     void changeAllProductToNewTable(Long oldTableId, Long newTableId);
 
-    void combineTable(TableOrder currentTable, TableOrder targetTable);
+    void combineTable(List<TableOrder> sourceTables, TableOrder targetTable);
 
 //    TableOrder unCombineTable(TableOrder currentTable);
 

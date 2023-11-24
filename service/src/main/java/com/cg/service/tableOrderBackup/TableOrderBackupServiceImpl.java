@@ -42,10 +42,10 @@ public class TableOrderBackupServiceImpl implements ITableOrderBackupService{
 
     }
 
-    @Override
-    public Optional<TableOrderBackup> findByTableCurrentIdAndOrderCurrentId(Long tableCurrentId, Long orderCurrentId) {
-        return tableOrderBackupRepository.findByTableCurrentIdAndOrderCurrentId(tableCurrentId, orderCurrentId);
-    }
+//    @Override
+//    public Optional<TableOrderBackup> findByTableCurrentIdAndOrderCurrentId(Long tableCurrentId, Long orderCurrentId) {
+//        return tableOrderBackupRepository.findByTableCurrentIdAndOrderCurrentId(tableCurrentId, orderCurrentId);
+//    }
 
     @Override
     public Optional<TableOrderBackup> findByTableTargetId(Long tableTargetId) {
@@ -58,7 +58,7 @@ public class TableOrderBackupServiceImpl implements ITableOrderBackupService{
     }
 
     @Override
-    public Optional<TableOrderBackup> findByOrderCurrentId(Long orderCurrentId) {
-        return tableOrderBackupRepository.findByOrderCurrentId(orderCurrentId);
+    public List<TableOrderBackup> findByOrderTargetId(Long orderTargetId) {
+        return tableOrderBackupRepository.findByOrderTargetId(orderTargetId);
     }
 }

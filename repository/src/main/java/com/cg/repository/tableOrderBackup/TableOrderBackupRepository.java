@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,37 +14,39 @@ public interface TableOrderBackupRepository extends JpaRepository<TableOrderBack
     @Query("SELECT NEW com.cg.domain.entity.TableOrderBackup (" +
             "tbu.id, " +
             "tbu.tableCurrentId, " +
-            "tbu.orderCurrentId, " +
             "tbu.tableTargetId," +
-            "tbu.orderTargetId " +
+            "tbu.orderTargetId, " +
+            "tbu.paid " +
             ") " +
             "FROM TableOrderBackup AS tbu " +
             "WHERE tbu.tableCurrentId = :tableCurrentId " +
-            "AND tbu.orderCurrentId = :orderCurrentId "
+            "AND tbu.paid = false "
     )
-    Optional<TableOrderBackup> findByTableCurrentIdAndOrderCurrentId(@Param("tableCurrentId") Long tableCurrentId, @Param("orderCurrentId") Long orderCurrentId);
+    Optional<TableOrderBackup> findByTableCurrentIdAndOrderCurrentId(@Param("tableCurrentId") Long tableCurrentId);
 
     @Query("SELECT NEW com.cg.domain.entity.TableOrderBackup (" +
             "tbu.id, " +
             "tbu.tableCurrentId, " +
-            "tbu.orderCurrentId, " +
             "tbu.tableTargetId," +
-            "tbu.orderTargetId " +
+            "tbu.orderTargetId," +
+            "tbu.paid " +
             ") " +
             "FROM TableOrderBackup AS tbu " +
-            "WHERE tbu.tableTargetId = :tableTargetId "
+            "WHERE tbu.tableTargetId = :tableTargetId " +
+            "AND tbu.paid = false "
     )
     Optional<TableOrderBackup> findByTableTargetId(@Param("tableTargetId") Long tableTargetId);
 
     @Query("SELECT NEW com.cg.domain.entity.TableOrderBackup(" +
             "tbu.id, " +
             "tbu.tableCurrentId, " +
-            "tbu.orderCurrentId, " +
             "tbu.tableTargetId," +
-            "tbu.orderTargetId " +
+            "tbu.orderTargetId," +
+            "tbu.paid " +
             ") " +
             "FROM TableOrderBackup AS tbu " +
-            "WHERE tbu.tableCurrentId = :tableCurrentId "
+            "WHERE tbu.tableCurrentId = :tableCurrentId " +
+            "AND tbu.paid = false "
     )
     Optional<TableOrderBackup> findByTableCurrentId(@Param("tableCurrentId") Long tableCurrentId);
 
@@ -51,13 +54,14 @@ public interface TableOrderBackupRepository extends JpaRepository<TableOrderBack
     @Query("SELECT NEW com.cg.domain.entity.TableOrderBackup (" +
             "tbu.id, " +
             "tbu.tableCurrentId, " +
-            "tbu.orderCurrentId, " +
             "tbu.tableTargetId," +
-            "tbu.orderTargetId " +
+            "tbu.orderTargetId," +
+            "tbu.paid " +
             ") " +
             "FROM TableOrderBackup AS tbu " +
-            "WHERE tbu.orderCurrentId = :orderCurrentId "
+            "WHERE tbu.orderTargetId = :orderTargetId " +
+            "AND tbu.paid = false "
     )
-    Optional<TableOrderBackup> findByOrderCurrentId(@Param("orderCurrentId") Long orderCurrentId);
+    List<TableOrderBackup> findByOrderTargetId(@Param("orderTargetId") Long orderTargetId);
 
 }
