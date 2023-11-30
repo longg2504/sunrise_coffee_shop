@@ -14,29 +14,15 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <div class="mr-2 d-flex justify-content-between mx-auto" id="formSearch">
-                    <div class=" ml-2 mr-2 form-label my-auto ">
-                        Từ
-                    </div>
-                    <div class="ml-2 mr-2 ">
-                        <input type="date" min="2020-01-01" max="" class="form-control search"
-                               id='dayStartOrder'>
-                    </div>
-                    <div class="mr-2 form-label my-auto ">
-                        đến ngày
-                    </div>
-                    <div class="mr-2 ">
-                        <input type="date" min="2020-01-01" max="" class="form-control search"
-                               id='dayEndOrder'>
-                    </div>
-                </div>
                 <div class="card my-4">
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex">
                             <h6 class="text-white text-capitalize ps-3">Bill</h6>
-                            <form style=" margin-left: 70%; display: flex; align-items: center;">
-                                <label class="text-white text-capitalize pe-1" for="day" >Day:</label>
-                                <select id="day" name="day" class="form-select" ></select>
+                            <form style=" margin-left:55%; display: flex; align-items: center;">
+                                <label class="text-white text-capitalize pe-1" for="dayFrom" >Day From:</label>
+                                <select id="dayFrom" name="day" class="form-select" ></select>
+                                <label class="text-white text-capitalize pe-1" for="dayTo" >Day To:</label>
+                                <select id="dayTo" name="day" class="form-select" ></select>
                                 <label class="text-white text-capitalize pe-1" for="month" >Month:</label>
                                 <select id="month" name="month" class="form-select" ></select>
                                 <label class="text-white text-capitalize pe-1" for="year" >Year:</label>
@@ -140,13 +126,13 @@
 
     page.elements.tbOrder = $("#tbBill");
     page.elements.tbOrderBody = $("#tbBill tbody");
-    page.elements.dayStartOrder = $("#dayStartOrder");
-    page.elements.dayEndOrder = $("#dayEndOrder");
     page.elements.btnViewOrder = $("#btnViewOrder");
     page.elements.billPaid = $("#billPaid")
     page.elements.totalAmountRevenue = $('#totalAmountRevenue')
 
-    page.dialogs.elements.day = $('#day')
+    page.dialogs.elements.dayFrom = $('#dayFrom')
+    page.dialogs.elements.dayTo = $('#dayTo')
+
     page.dialogs.elements.month = $('#month')
     page.dialogs.elements.year = $('#year')
     page.dialogs.elements.btnSearchDay =$('#btnSearchDay')
@@ -163,7 +149,8 @@
     page.dialogs.commands.getAllBills = (pageBill, pageSize, keysearch) => {
         currentPage = pageBill;
         showLoader();
-        const day = page.dialogs.elements.day.val();
+        const dayFrom = page.dialogs.elements.dayFrom.val();
+        const dayTo = page.dialogs.elements.dayTo.val();
         const month = page.dialogs.elements.month.val();
         const year = page.dialogs.elements.year.val();
         const staffName = keysearch;
@@ -173,7 +160,7 @@
                 'accept': 'application/json',
                 'content-type': 'application/json'
             },
-            url: page.urls.getSearchBillDay + 'page=' + pageBill + '&size=' + pageSize + '&day=' + day + '&month=' + month + '&year=' + year + '&staffName=' + staffName,
+            url: page.urls.getSearchBillDay + 'page=' + pageBill + '&size=' + pageSize + '&dayFrom=' + dayFrom + '&dayTo='+ dayTo + '&month=' + month + '&year=' + year + '&staffName=' + staffName,
         })
             .done((data) => {
                 let totalMoney = 0;
@@ -181,7 +168,7 @@
                 $.each(data.content, (i, item) => {
                     totalMoney = totalMoney + item.totalAmount;
                     let str = page.commands.renderBill(item);
-                    $('#tbBill tbody').prepend(str);
+                    $('#tbBill tbody').append(str);
                 });
                 page.commands.renderPagination(data.totalPages, data.number + 1, staffName);
                 page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', { style: 'currency', currency: 'VND' }));
@@ -266,28 +253,10 @@
         date = arr[2] + "-" + arr[1] + "-" + arr[0]
         return date;
     }
-    // ----------------Search
-    //     page.commands.searchBill = () =>{
-    //         let day =page.dialogs.elements.day.val();
-    //         let month =page.dialogs.elements.month.val();
-    //         let year =page.dialogs.elements.year.val();
-    //         page.elements.tbOrderBody.empty()
-    //         $.ajax({
-    //             type:'GET',
-    //             url: page.urls.getSearchBillDay +'day='  + day +'&month=' + month +'&year=' +year+ '&staffName=' +staffName,
-    //         })
-    //             .done((data) => {
-    //                 let totalMoney = 0;
-    //                 data.content.forEach(item => {
-    //                     totalMoney = totalMoney + item.totalAmount;
-    //                     const str = page.commands.renderBill(item);
-    //                     page.elements.tbOrderBody.append(str);
-    //                 })
-    //                 page.commands.showModalBillDetail();
-    //                 page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', {style: 'currency', currency: 'VND'}));
-    //             })
-    //     }
-    const daySelect = document.getElementById("day");
+
+    const dayFromSelect = document.getElementById("dayFrom");
+    const dayToSelect = document.getElementById("dayTo");
+
     const monthSelect = document.getElementById("month");
     const yearSelect = document.getElementById("year");
     const currentDate = new Date();
@@ -300,12 +269,25 @@
         if (i === 0) {
             option.value = "";
             option.textContent = "--";
-            daySelect.appendChild(option);
+            dayFromSelect.appendChild(option);
             continue;
         }
         option.value = i < 10 ? "0" + i : "" + i;
         option.textContent = i;
-        daySelect.appendChild(option);
+        dayFromSelect.appendChild(option);
+    }
+
+    for (let i = 0; i <= 31; i++) {
+        const option = document.createElement("option");
+        if (i === 0) {
+            option.value = "";
+            option.textContent = "--";
+            dayToSelect.appendChild(option);
+            continue;
+        }
+        option.value = i < 10 ? "0" + i : "" + i;
+        option.textContent = i;
+        dayToSelect.appendChild(option);
     }
 
     // Tạo các tùy chọn cho tháng
@@ -335,31 +317,8 @@
             const staffName = $(this).val();
             page.dialogs.commands.getAllBills(currentPage,10,staffName);
         });
-        $('#formSearch').submit(function (event) {
-            event.preventDefault();
-            const staffName = $('#keySearch').val();
-            page.dialogs.commands.getAllBills(currentPage,10,staffName);
-        });
     });
-    // page.commands.searchByStaffName = (staffName) => {
-    //     $.ajax({
-    //         type: 'GET',
-    //         url: App.API_BILL + '/search',
-    //         data: {
-    //             staffName: staffName
-    //         },
-    //     })
-    //         .done((data) => {
-    //             let totalMoney = 0;
-    //             page.elements.tbOrderBody.empty();
-    //             data.content.forEach(item => {
-    //                 totalMoney = totalMoney + item.totalAmount;
-    //                 const str = page.commands.renderBill(item);
-    //                 page.elements.tbOrderBody.append(str);
-    //             })
-    //             page.elements.totalAmountRevenue.text(totalMoney.toLocaleString('vi', {style: 'currency', currency: 'VND'}));
-    //         });
-    // };
+
 
 
 

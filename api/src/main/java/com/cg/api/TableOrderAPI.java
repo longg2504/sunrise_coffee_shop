@@ -1,15 +1,18 @@
 package com.cg.api;
 
+import com.cg.domain.dto.product.DataSplitReqDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateReqDTO;
 import com.cg.domain.dto.tableOrder.TableOrderCreateResDTO;
 import com.cg.domain.dto.tableOrder.TableOrderDTO;
 import com.cg.domain.dto.tableOrder.TableOrderWithZoneCountDTO;
+import com.cg.domain.entity.Product;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.domain.enums.ETableStatus;
 import com.cg.exception.DataInputException;
 import com.cg.exception.EmailExistsException;
 import com.cg.exception.ResourceNotFoundException;
+import com.cg.service.product.IProductService;
 import com.cg.service.tableOrder.ITableOrderService;
 import com.cg.service.zone.IZoneService;
 import com.cg.utils.AppUtils;
@@ -38,6 +41,9 @@ public class TableOrderAPI {
 
     @Autowired
     private IZoneService zoneService;
+
+    @Autowired
+    private IProductService productService;
 
     @Autowired
     private AppUtils appUtils;
@@ -280,6 +286,59 @@ public class TableOrderAPI {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PostMapping("/split-products")
+    public ResponseEntity<?> splitProduct(@RequestBody DataSplitReqDTO dataSplitReqDTO){
+        String sourceTableIdStr = dataSplitReqDTO.getSourceTableId();
+        String targetTableIdStr = dataSplitReqDTO.getTargetTableId();
+
+
+        if (!validateUtils.isNumberValid(sourceTableIdStr)) {
+            throw new DataInputException("ID bàn nguồn phải là ký tự số");
+        }
+
+        Long sourceTableId = Long.parseLong(sourceTableIdStr);
+        Optional<TableOrder> optionalSourceTable = tableOrderService.findById(sourceTableId);
+
+        if (!optionalSourceTable.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        TableOrder sourceTable = optionalSourceTable.get();
+        if(sourceTable.getStatus().equals(ETableStatus.EMPTY)){
+            throw new DataInputException("bàn hiện tại không có hoá đơn xin vui lòng xem lại");
+        }
+
+
+        if (!validateUtils.isNumberValid(targetTableIdStr)) {
+            throw new DataInputException("ID bàn nguồn phải là ký tự số");
+        }
+        Long targetTableId = Long.parseLong(targetTableIdStr);
+        Optional<TableOrder> optionalTargetTable = tableOrderService.findById(targetTableId);
+
+        if (!optionalTargetTable.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        TableOrder tagetTable = optionalTargetTable.get();
+        if(tagetTable.getStatus().equals(ETableStatus.BUSY)){
+            throw new DataInputException("bàn hiện tại có hoá đơn xin vui lòng xem lại");
+        }
+
+
+        try {
+            tableOrderService.splitProducts(sourceTable, dataSplitReqDTO.getProducts(), tagetTable);
+        } catch (DataInputException e) {
+            throw new DataInputException(e.getMessage());
+        }
+
+        TableOrderDTO sourceTableDTO = sourceTable.toTableOrderDTO();
+
+        Map<String, TableOrderDTO> result = new HashMap<>();
+        result.put("sourceTable", sourceTableDTO);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+        }
 
 //    @PostMapping("/combine-tables")
 //    public ResponseEntity<?> combineTables(HttpServletRequest request) throws IOException {

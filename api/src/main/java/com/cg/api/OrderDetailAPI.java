@@ -420,14 +420,10 @@ public class OrderDetailAPI {
 
         if (!orderDetail.getStatus().equals(EOrderDetailStatus.WAITING)) {
             String tableName = orderDetail.getOrder().getTableOrder().getTitle();
-            throw new DataInputException(String.format("Hóa đơn '%s' không có sản phẩm tương tứng trạng thái !!!", tableName));
+            throw new DataInputException(String.format("Hóa đơn '%s' không có sản phẩm tương ứng trạng thái !!!", tableName));
         }
 
         Order order = orderDetail.getOrder();
-        if (order.getPaid()) {
-            throw new DataInputException("Hóa đơn này đã thanh toán !!!");
-        }
-
         orderDetailService.changeStatusFromWaiterToDoneToProductOfOrder(orderDetail);
 
         List<IOrderDetailKitchenWaiterDTO> itemsWaiter = orderDetailService.getOrderDetailByStatusWaiterGroupByTableAndProduct();
@@ -455,10 +451,6 @@ public class OrderDetailAPI {
         Order order = orderService.findById(orderId).orElseThrow(() -> {
             throw new DataInputException("Hóa đơn không hợp lệ");
         });
-
-        if (order.getPaid()) {
-            throw new DataInputException("Hóa đơn này đã thanh toán");
-        }
 
         orderDetailService.changeStatusFromWaiterToDoneAllProductOfTable(order);
 

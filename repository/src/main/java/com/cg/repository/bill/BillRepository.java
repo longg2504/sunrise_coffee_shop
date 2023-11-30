@@ -269,12 +269,15 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
             "b.paid"  +
             ") " +
             "FROM Bill AS b " +
-            "WHERE DATE_FORMAT(b.createdAt, '%Y-%m-%d') >= DATE_FORMAT(:start, '%Y-%m-%d') " +
-            "AND DATE_FORMAT(b.createdAt, '%Y-%m-%d') <= DATE_FORMAT(:end, '%Y-%m-%d') " +
-            "AND (:staffName IS NULL OR b.staff.fullName like :staffName) " +
-            "AND b.paid = true "
+            "WHERE DATE_FORMAT(b.createdAt, '%y-%M-%d') >= DATE_FORMAT(:start, '%y-%M-%d') " +
+            "AND DATE_FORMAT(b.createdAt, '%y-%M-%d') <= DATE_FORMAT(:end, '%y-%M-%d') " +
+//            "WHERE DATE_FORMAT(b.createdAt, 'yyyy-MM-dd') >= DATE_FORMAT(:start, 'yyyy-MM-dd') " +
+//            "AND DATE_FORMAT(b.createdAt, 'yyyy-MM-dd') <= DATE_FORMAT(:end, 'yyyy-MM-dd') " +
+            "AND (b.staff.fullName IS NULL OR b.staff.fullName like :staffName) " +
+            "AND b.paid = true " +
+            "ORDER BY b.createdAt ASC"
     )
-    Page<BillGetAllResDTO> getAllBillByDate(LocalDate start, LocalDate end, @Param("staffName") String staffName, Pageable pageable);
+    Page<BillGetAllResDTO> getAllBillByDate(@Param("start") LocalDate start, @Param("end") LocalDate end, @Param("staffName") String staffName, Pageable pageable);
 
     @Query("SELECT NEW com.cg.domain.dto.bill.BillGetAllResDTO (" +
             "b.id, " +
@@ -298,27 +301,6 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
     )
     Page<BillGetAllResDTO> getBillByStaff(@Param("staffName") String staffName, Pageable pageable);
 
-//    @Query("SELECT NEW com.cg.domain.dto.bill.BillGetAllResDTO (" +
-//            "b.id, " +
-//            "b.createdAt, " +
-//            "b.orderPrice, " +
-//            "b.discountMoney, " +
-//            "b.discountPercent, " +
-//            "b.chargeMoney, " +
-//            "b.chargePercent, " +
-//            "b.totalAmount, " +
-//            "b.table.id, " +
-//            "b.table.title, " +
-//            "b.order.id, " +
-//            "b.staff.id, " +
-//            "b.staff.fullName, " +
-//            "b.paid"  +
-//            ") " +
-//            "FROM Bill AS b " +
-//            "WHERE b.createdAt = :createdAt " +
-//            "AND b.paid = true "
-//    )
-//    Page<BillGetAllResDTO> getAllBill(@Param("staffName") String staffName, Pageable pageable);
 
 
 

@@ -199,7 +199,11 @@ public class BillServiceImpl implements IBillService {
             order.setPaid(true);
             order = orderRepository.save(order);
             List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
-            orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+            orderItems.forEach(item -> {
+                if (item.getStatus() == EOrderDetailStatus.WAITING) {
+                    item.setStatus(EOrderDetailStatus.DONE);
+                }
+            });
             orderDetailRepository.saveAll(orderItems);
 
             List<TableOrderBackup> tableOrderBackups = tableOrderBackupRepository.findByOrderTargetId(order.getId());
@@ -252,7 +256,11 @@ public class BillServiceImpl implements IBillService {
 
 
             List<OrderDetail> orderItems = orderDetailService.getAllByOrder(order);
-            orderItems.forEach(item -> item.setStatus(EOrderDetailStatus.DONE));
+            orderItems.forEach(item -> {
+                if (item.getStatus() == EOrderDetailStatus.WAITING) {
+                    item.setStatus(EOrderDetailStatus.DONE);
+                }
+            });
             orderDetailRepository.saveAll(orderItems);
 
             TableOrder table = order.getTableOrder();
@@ -375,13 +383,21 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
-    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer day, String staffName, Pageable pageable) {
-        LocalDate start = getDate(year, month, day);
-        if (day == null) {
-            return billRepository.getAllBillByDate(start, getLastDayOfMonth(start), staffName, pageable);
+    public Page<BillGetAllResDTO> getBillByDate(Integer year, Integer month, Integer dayFrom,Integer dayTo, String staffName, Pageable pageable) {
+        LocalDate start = getDate(year, month, dayFrom);
+        LocalDate end = getDate(year,month,dayTo);
+        if (dayFrom == null && dayTo == null) {
+            return billRepository.getAllBillByDate(end, getLastDayOfMonth(end), staffName, pageable);
+        }
+        else if(dayFrom == null) {
+//             return billRepository.getAllBillByDate(end, getLastDayOfMonth(end), staffName, pageable);
+            return billRepository.getAllBillByDate(end, end, staffName, pageable);
+        } else if(dayTo == null){
+//            return billRepository.getAllBillByDate(start, getLastDayOfMonth(start), staffName, pageable);
+            return billRepository.getAllBillByDate(start, start, staffName, pageable);
         }
 
-        return billRepository.getAllBillByDate(start, start, staffName, pageable);
+        return billRepository.getAllBillByDate(start, end, staffName, pageable);
     }
 
     //sửa đoạn này

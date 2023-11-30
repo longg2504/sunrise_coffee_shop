@@ -1,9 +1,12 @@
 package com.cg.service.tableOrder;
 
+import com.cg.domain.dto.product.DataSplitReqDTO;
+import com.cg.domain.dto.product.ProductSplitReqDTO;
 import com.cg.domain.dto.tableOrder.*;
 import com.cg.domain.entity.TableOrder;
 import com.cg.domain.entity.Zone;
 import com.cg.service.IGeneralService;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -34,5 +37,5 @@ public interface ITableOrderService extends IGeneralService<TableOrder, Long> {
     Boolean existsByTitle(String title);
 
 
-
+    void splitProducts(TableOrder sourceTable, List<ProductSplitReqDTO> products, TableOrder tagretTable);
 }
