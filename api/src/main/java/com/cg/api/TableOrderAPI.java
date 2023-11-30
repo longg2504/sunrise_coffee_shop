@@ -301,12 +301,12 @@ public class TableOrderAPI {
         Optional<TableOrder> optionalSourceTable = tableOrderService.findById(sourceTableId);
 
         if (!optionalSourceTable.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Bàn nguồn không tồn tại", HttpStatus.NOT_FOUND);
         }
 
         TableOrder sourceTable = optionalSourceTable.get();
         if(sourceTable.getStatus().equals(ETableStatus.EMPTY)){
-            throw new DataInputException("bàn hiện tại không có hoá đơn xin vui lòng xem lại");
+            throw new DataInputException("Bàn nguồn hiện tại không có hoá đơn xin vui lòng xem lại");
         }
 
 
@@ -317,20 +317,18 @@ public class TableOrderAPI {
         Optional<TableOrder> optionalTargetTable = tableOrderService.findById(targetTableId);
 
         if (!optionalTargetTable.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Bàn đích không tồn tại ", HttpStatus.NOT_FOUND);
         }
 
         TableOrder tagetTable = optionalTargetTable.get();
         if(tagetTable.getStatus().equals(ETableStatus.BUSY)){
-            throw new DataInputException("bàn hiện tại có hoá đơn xin vui lòng xem lại");
+            throw new DataInputException("Bàn đích hiện tại có hoá đơn xin vui lòng xem lại");
         }
 
-
-        try {
-            tableOrderService.splitProducts(sourceTable, dataSplitReqDTO.getProducts(), tagetTable);
-        } catch (DataInputException e) {
-            throw new DataInputException(e.getMessage());
+        if(optionalSourceTable.equals(optionalTargetTable)) {
+            throw new DataInputException("Bàn đích và bàn nguồn là một vui lòng xem lại");
         }
+        tableOrderService.splitProducts(sourceTable, dataSplitReqDTO.getProducts(), tagetTable);
 
         TableOrderDTO sourceTableDTO = sourceTable.toTableOrderDTO();
 

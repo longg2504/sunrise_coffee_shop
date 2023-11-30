@@ -6,6 +6,7 @@ import com.cg.domain.dto.product.IProductReportDTO;
 import com.cg.domain.dto.report.ProductReportDTO;
 import com.cg.domain.entity.Order;
 import com.cg.domain.entity.OrderDetail;
+import com.cg.domain.entity.Product;
 import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.domain.enums.ETableStatus;
 import org.springframework.data.domain.Pageable;
@@ -256,6 +257,9 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Long> {
 
     @Query(value = "SELECT * FROM v_get_top5_best_sell_current_month", nativeQuery = true)
     List<IProductReportDTO> getTop5BestSellCurrentMonth();
+
+
+    void deleteOrderDetailByOrderAndProduct(Order order, Product product);
 
 
 }

@@ -3,6 +3,7 @@ package com.cg.service.tableOrder;
 import com.cg.domain.dto.product.ProductSplitReqDTO;
 import com.cg.domain.dto.tableOrder.*;
 import com.cg.domain.entity.*;
+import com.cg.domain.enums.EOrderDetailStatus;
 import com.cg.domain.enums.ETableStatus;
 import com.cg.exception.DataInputException;
 import com.cg.repository.bill.BillRepository;
@@ -426,88 +427,221 @@ public class TableOrderServiceImpl implements ITableOrderService {
 
     @Override
     public void splitProducts(TableOrder sourceTable, List<ProductSplitReqDTO> products, TableOrder targetTable) {
+        handleSplitProducts(sourceTable, products, targetTable);
+//        Optional<Order> sourceOrderOptional = iOrderService.getByTableOrderAndPaid(sourceTable, false);
+//        boolean hasError = false;
+//
+//        if (!sourceOrderOptional.isPresent()) {
+//            throw new DataInputException("Đơn hàng của bàn nguồn không hợp lệ, vui lòng kiểm tra lại dữ liệu");
+//        }
+//
+//        Order sourceOrder = sourceOrderOptional.get();
+//        List<OrderDetail> sourceOrderItems = iOrderDetailService.getAllByOrder(sourceOrder);
+//
+//        if (sourceOrderItems.isEmpty()) {
+//            throw new DataInputException("Không tìm thấy hóa đơn của bàn nguồn");
+//        }
+//
+//        Order targetOrder = new Order();
+//        targetOrder.setTableOrder(targetTable);
+//        targetOrder.setPaid(false);
+//        targetOrder.setTotalAmount(BigDecimal.ZERO);
+//        targetOrder.setStaff(sourceOrder.getStaff());
+//        targetOrder = orderRepository.save(targetOrder);
+//
+//        List<OrderDetail> targetOrderItems = new ArrayList<>();
+//
+//        for (OrderDetail sourceItem : sourceOrderItems) {
+//            for (ProductSplitReqDTO productReq : products) {
+//                if (productReq.getId().equals(sourceItem.getProduct().getId())) {
+//                    Long requestedQuantity = productReq.getQuantity();
+//                    Long sourceItemQuantity = sourceItem.getQuantity().longValue();
+//
+//                    if (requestedQuantity < 0) {
+//                        throw new DataInputException("Số lượng âm không thể tách");
+//                    } else if (requestedQuantity > sourceItemQuantity) {
+//                        throw new DataInputException("Số lượng yêu cầu lớn hơn số lượng có trong hóa đơn gốc");
+//                    } else if (targetOrderItems.stream().anyMatch(item -> item.getProduct().getId().equals(productReq.getId()))) {
+//                        throw new DataInputException("Mảng products chứa các id trùng nhau");
+//                    } else if (sourceItemQuantity.equals(requestedQuantity)) {
+//                        // Tách món đúng số lượng yêu cầu
+//                        sourceItem.setOrder(targetOrder);
+//                        targetOrderItems.add(sourceItem);
+//                    } else if (sourceItemQuantity > requestedQuantity) {
+//                        // Tách món và giảm số lượng của món gốc
+//                        sourceItem.setQuantity(sourceItemQuantity - requestedQuantity);
+//                        sourceItem.setAmount(BigDecimal.valueOf((sourceItemQuantity - requestedQuantity)).multiply(sourceItem.getPrice()));
+//                        OrderDetail newOrderItem = new OrderDetail().initValue(sourceItem);
+//                        newOrderItem.setId(null);
+//                        newOrderItem.setQuantity(requestedQuantity);
+//                        newOrderItem.setOrder(targetOrder);
+//                        newOrderItem.setAmount(BigDecimal.valueOf(requestedQuantity).multiply(sourceItem.getPrice()));
+//                        targetOrderItems.add(newOrderItem);
+//                    }
+//                    else {
+//                        hasError = true;
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (targetOrderItems.isEmpty()) {
+//            throw new DataInputException("Có lỗi xảy ra, vui lòng kiểm tra lại thông tin gửi lên");
+//        }
+//
+//        if(hasError) {
+//            throw new DataInputException("Có lỗi xảy ra, vui lòng kiểm tra lại thông tin gửi lên");
+//        }
+//        else {
+//            // Cập nhật tổng tiền của đơn hàng nguồn
+//            BigDecimal sourceOrderTotalAmount = calculateTotalAmount(sourceOrderItems);
+//            sourceOrder.setTotalAmount(sourceOrderTotalAmount);
+//            iOrderService.save(sourceOrder);
+//
+//            // Cập nhật tổng tiền của đơn hàng đích
+//            BigDecimal targetOrderTotalAmount = calculateTotalAmount(targetOrderItems);
+//            targetOrder.setTotalAmount(targetOrderTotalAmount);
+//            iOrderService.save(targetOrder);
+//
+//            // Lưu các mục mới của bàn nguồn và bàn đích
+//            orderDetailRepository.saveAll(sourceOrderItems);
+//            orderDetailRepository.saveAll(targetOrderItems);
+//
+//            // Cập nhật trạng thái của bàn đích
+//            targetTable.setStatus(ETableStatus.BUSY);
+//            tableOrderRepository.save(targetTable);
+//        }
+
+
+    }
+
+    public void handleSplitProducts(TableOrder sourceTable, List<ProductSplitReqDTO> products, TableOrder targetTable) {
         Optional<Order> sourceOrderOptional = iOrderService.getByTableOrderAndPaid(sourceTable, false);
-
-        if (!sourceOrderOptional.isPresent()) {
-            throw new DataInputException("Đơn hàng của bàn nguồn không hợp lệ, vui lòng kiểm tra lại dữ liệu");
-        }
-
         Order sourceOrder = sourceOrderOptional.get();
-        List<OrderDetail> sourceOrderItems = iOrderDetailService.getAllByOrder(sourceOrder);
+        List<OrderDetail> sourceOrderDetails = orderDetailRepository.findAllByOrder(sourceOrder);
+        List<Long> productArr = new ArrayList<>();
+        List<OrderDetail> newSourceOrderDetails = new ArrayList<>();
 
-        if (sourceOrderItems.isEmpty()) {
-            throw new DataInputException("Không tìm thấy hóa đơn của bàn nguồn");
+        int countSourceProduct = sourceOrderDetails.size();
+        int countSourceQuantity = 0;
+
+        for (OrderDetail item : sourceOrderDetails) {
+            countSourceQuantity += item.getQuantity();
         }
+
+        int countTargetProduct = products.size();
+        int countTargetQuantity = 0;
+
+        for (ProductSplitReqDTO item : products) {
+            if (item.getQuantity() < 0) {
+                throw new DataInputException("Vui long nhap lai so luong san pham > 0");
+            }
+
+            if (productArr.contains(item.getId())) {
+                throw new DataInputException("Vui long nhap ID san pham khong duoc trung nhau");
+            }
+
+            productArr.add(item.getId());
+            countTargetQuantity += item.getQuantity();
+        }
+
+        if (countSourceProduct == countTargetProduct && countSourceQuantity == countTargetQuantity) {
+            throw new DataInputException("Vui long su dung chuc nang chuyen ban");
+        }
+
+        if (countSourceQuantity <= countTargetQuantity) {
+            throw new DataInputException("Vui long nhap lai so luong san pham muon tach");
+        }
+
+        List<Long> sourceProductIdArr = new ArrayList<>();
+        List<EOrderDetailStatus> sourceOrderDetailStatuses = new ArrayList<>();
+        List<BigDecimal> sourceProductPrice = new ArrayList<>();
+        List<Long> sourceQuantityArr = new ArrayList<>();
+        List<String> sourceNote = new ArrayList<>();
+
+        for (int i = 0; i < sourceOrderDetails.size(); i++) {
+            for (int k = 0; k < products.size(); k++) {
+                if (sourceOrderDetails.get(i).getProduct().getId() == products.get(k).getId()) {
+                    sourceProductIdArr.add(products.get(k).getId());
+                    sourceQuantityArr.add(sourceOrderDetails.get(i).getQuantity() - products.get(k).getQuantity());
+                    sourceProductPrice.add(sourceOrderDetails.get(i).getPrice());
+                    sourceOrderDetailStatuses.add(sourceOrderDetails.get(i).getStatus());
+                    sourceNote.add(sourceOrderDetails.get(i).getNote());
+                }
+            }
+        }
+
+//        System.out.println("sourceQuantityArr");
+//        System.out.println(sourceProductIdArr);
+//        System.out.println("sourceQuantityArr");
+//        System.out.println(sourceQuantityArr);
+
+        BigDecimal sourceOrderTotalAmount = BigDecimal.ZERO;
+
+        for (int i = 0; i < sourceProductIdArr.size(); i++) {
+            Optional<Product> productOptional = productRepository.findById(sourceProductIdArr.get(i));
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder(sourceOrderOptional.get());
+            orderDetail.setProduct(productOptional.get());
+            orderDetail.setQuantity(sourceQuantityArr.get(i));
+            orderDetail.setPrice(sourceProductPrice.get(i));
+            orderDetail.setAmount(BigDecimal.valueOf(sourceQuantityArr.get(i)).multiply(sourceProductPrice.get(i)));
+            orderDetail.setStatus(sourceOrderDetailStatuses.get(i));
+            orderDetail.setNote(sourceNote.get(i));
+
+            if (sourceQuantityArr.get(i) > 0) {
+                newSourceOrderDetails.add(orderDetail);
+            }
+
+            sourceOrderTotalAmount.add(BigDecimal.valueOf(sourceQuantityArr.get(i)).multiply(sourceProductPrice.get(i)));
+
+            orderDetailRepository.deleteOrderDetailByOrderAndProduct(sourceOrderOptional.get(), productOptional.get());
+        }
+
+        orderDetailRepository.saveAll(newSourceOrderDetails);
+
+        sourceOrder.setTotalAmount(sourceOrderTotalAmount);
+        orderRepository.save(sourceOrder);
 
         Order targetOrder = new Order();
         targetOrder.setTableOrder(targetTable);
         targetOrder.setPaid(false);
         targetOrder.setTotalAmount(BigDecimal.ZERO);
-        targetOrder.setStaff(sourceOrder.getStaff());
-        targetOrder = orderRepository.save(targetOrder);
+        targetOrder.setStaff(sourceOrderOptional.get().getStaff());
+        orderRepository.save(targetOrder);
 
-        List<OrderDetail> targetOrderItems = new ArrayList<>();
+        BigDecimal targetOrderTotalAmount = BigDecimal.ZERO;
 
-        for (OrderDetail sourceItem : sourceOrderItems) {
-            for (ProductSplitReqDTO productReq : products) {
-                if (productReq.getId().equals(sourceItem.getProduct().getId())) {
-                    Long requestedQuantity = productReq.getQuantity();
-                    Long sourceItemQuantity = sourceItem.getQuantity().longValue();
+        for (int i = 0; i < products.size() ; i++) {
+            Optional<Product> productOptional = productRepository.findById(products.get(i).getId());
 
-                    if (sourceItemQuantity.equals(requestedQuantity)) {
-                        // Tách món đúng số lượng yêu cầu
-                        sourceItem.setOrder(targetOrder);
-                        targetOrderItems.add(sourceItem);
-                    } else if (sourceItemQuantity > requestedQuantity) {
-                        // Tách món và giảm số lượng của món gốc
-                        sourceItem.setQuantity(sourceItemQuantity - requestedQuantity);
-                        orderDetailRepository.save(sourceItem);
-
-                        OrderDetail newOrderItem = new OrderDetail().initValue(sourceItem);
-                        newOrderItem.setId(null);
-                        newOrderItem.setQuantity(requestedQuantity);
-                        newOrderItem.setOrder(targetOrder);
-                        targetOrderItems.add(newOrderItem);
-
-                        BigDecimal targetItemTotalAmount = newOrderItem.getProduct().getPrice().multiply(BigDecimal.valueOf(newOrderItem.getQuantity()));
-                        newOrderItem.setAmount(targetItemTotalAmount);
-                        orderDetailRepository.save(newOrderItem);
-                    }
-
-                    // Cập nhật tổng tiền của món gốc
-                    BigDecimal sourceItemTotalAmount = sourceItem.getProduct().getPrice().multiply(BigDecimal.valueOf(sourceItem.getQuantity()));
-                    sourceItem.setAmount(sourceItemTotalAmount);
-                    orderDetailRepository.save(sourceItem);
-
-
-                }
-            }
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder(targetOrder);
+            orderDetail.setProduct(productOptional.get());
+            orderDetail.setQuantity(products.get(i).getQuantity());
+            orderDetail.setPrice(productOptional.get().getPrice());
+            orderDetail.setAmount(productOptional.get().getPrice().multiply(BigDecimal.valueOf(products.get(i).getQuantity())));
+            orderDetail.setStatus(sourceOrderDetailStatuses.get(i));
+            orderDetail.setNote(sourceNote.get(i));
+            orderDetailRepository.save(orderDetail);
+            targetOrderTotalAmount.add(productOptional.get().getPrice().multiply(BigDecimal.valueOf(products.get(i).getQuantity())));
         }
 
-        orderDetailRepository.saveAll(targetOrderItems);
+        targetOrder.setTotalAmount(targetOrderTotalAmount);
+        orderRepository.save(targetOrder);
 
-        if (!targetOrderItems.isEmpty()) {
-            targetTable.setStatus(ETableStatus.BUSY);
-            tableOrderRepository.save(targetTable);
+        // Cập nhật trạng thái của bàn đích
+        targetTable.setStatus(ETableStatus.BUSY);
+        tableOrderRepository.save(targetTable);
+    }
 
-            // Cập nhật tổng tiền của món đi
-            BigDecimal sourceOrderTotalAmount = BigDecimal.ZERO;
-            for (OrderDetail sourceItem : sourceOrderItems) {
-                BigDecimal sourceItemTotalAmount = sourceItem.getProduct().getPrice().multiply(BigDecimal.valueOf(sourceItem.getQuantity()));
-                sourceOrderTotalAmount = sourceOrderTotalAmount.add(sourceItemTotalAmount);
-            }
-            sourceOrder.setTotalAmount(sourceOrderTotalAmount);
-            orderRepository.save(sourceOrder);
-
-            // Cập nhật tổng tiền của món đến
-            BigDecimal targetOrderTotalAmount = BigDecimal.ZERO;
-            for (OrderDetail targetItem : targetOrderItems) {
-                BigDecimal targetItemTotalAmount = targetItem.getProduct().getPrice().multiply(BigDecimal.valueOf(targetItem.getQuantity()));
-                targetOrderTotalAmount = targetOrderTotalAmount.add(targetItemTotalAmount);
-            }
-            targetOrder.setTotalAmount(targetOrderTotalAmount);
-            orderRepository.save(targetOrder);
+    private BigDecimal calculateTotalAmount(List<OrderDetail> orderItems) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (OrderDetail item : orderItems) {
+            BigDecimal itemTotalAmount = item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            totalAmount = totalAmount.add(itemTotalAmount);
         }
+        return totalAmount;
     }
 
 
