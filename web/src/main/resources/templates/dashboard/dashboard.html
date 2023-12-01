@@ -348,7 +348,7 @@
         page.loadData();
     });
 //---------DOANH THU THEO KHOẢNG NGÀY
-    $(document).ready(function () {
+    $(document).ready(function ()  {
         const dateStartReport = $("#dateStartReport");
         const dateEndReport = $("#dateEndReport");
         const canvas = document.getElementById("myChartLine");
@@ -386,14 +386,14 @@
                 App.showErrorAlert("Vui lòng chọn khoảng thời gian");
             }
         }
-
         function renderLineChart(canvas, data) {
-            const labels = data.map(item => {
-                const dateParts = item.day.split('/');
-                const formattedDate = `${dateParts[0]}/${dateParts[1]}`;
-                return formattedDate;
+            const sortedData = data.sort((a, b) => {
+                const dateA = new Date(a.day.split('/').reverse().join('-'));
+                const dateB = new Date(b.day.split('/').reverse().join('-'));
+                return dateA - dateB;
             });
-            const revenueData = data.map(item => item.totalAmount);
+            const labels = sortedData.map(item => item.day);
+            const revenueData = sortedData.map(item => item.totalAmount);
             const chartData = {
                 labels: labels,
                 datasets: [
@@ -405,16 +405,17 @@
                     },
                 ],
             };
+
             const ctx = canvas.getContext("2d");
             if (canvas.chart) {
                 canvas.chart.destroy();
             }
+
             canvas.chart = new Chart(ctx, {
                 type: "line",
                 data: chartData,
             });
         }
-
         function formatDate(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
