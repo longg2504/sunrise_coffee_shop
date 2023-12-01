@@ -500,7 +500,7 @@ public class TableOrderServiceImpl implements ITableOrderService {
                 newSourceOrderDetails.add(orderDetail);
             }
 
-            sourceOrderTotalAmount.add(BigDecimal.valueOf(sourceQuantityArr.get(i)).multiply(sourceProductPrice.get(i)));
+            sourceOrderTotalAmount = sourceOrderTotalAmount.add(BigDecimal.valueOf(sourceQuantityArr.get(i)).multiply(sourceProductPrice.get(i)));
 
             orderDetailRepository.deleteOrderDetailByOrderAndProduct(sourceOrderOptional.get(), productOptional.get());
         }
@@ -531,7 +531,7 @@ public class TableOrderServiceImpl implements ITableOrderService {
             orderDetail.setStatus(sourceOrderDetailStatuses.get(i));
             orderDetail.setNote(sourceNote.get(i));
             orderDetailRepository.save(orderDetail);
-            targetOrderTotalAmount.add(productOptional.get().getPrice().multiply(BigDecimal.valueOf(products.get(i).getQuantity())));
+            targetOrderTotalAmount = targetOrderTotalAmount.add(productOptional.get().getPrice().multiply(BigDecimal.valueOf(products.get(i).getQuantity())));
         }
 
         targetOrder.setTotalAmount(targetOrderTotalAmount);
