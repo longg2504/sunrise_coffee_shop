@@ -204,7 +204,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex justify-content-center"> <!-- Để canh giữa biểu đồ -->
+                <div class="col-md-6 d-flex justify-content-center">
                     <canvas id="myChartLine"></canvas>
                 </div>
             </div>
@@ -286,7 +286,7 @@
         const totalQuantity = data.reduce((acc, product) => acc + product.quantity, 0);
         const percentages = data.map(product => ((product.quantity / totalQuantity) * 100).toFixed(2));
         const chartData = {
-            labels: data.map((product, index) => `${product.title} (${percentages[index]}%)`), // Tên sản phẩm với phần trăm
+            labels: data.map((product, index) => `${product.title} (${percentages[index]}%)`),
             datasets: [
                 {
                     label: "Top 5 Best Sellers",
@@ -302,6 +302,10 @@
     }
 
     page.commands.getAllTop5BestSeller = () => {
+        if (page.commands.getAllTop5BestSeller.inProgress) {
+            return;
+        }
+        page.commands.getAllTop5BestSeller.inProgress = true;
         showLoader();
         $.ajax({
             headers: {
@@ -312,18 +316,19 @@
             url: page.urls.getAllTop5BestSeller,
         })
             .done((data) => {
-                console.log(data)
+                console.log(data);
                 page.elements.tbTop5ProductBody.empty();
                 $.each(data, (index, product) => {
-                    const str = page.commands.renderTop5BestSeller(index,product)
-                    page.elements.tbTop5ProductBody.append(str)
-                })
+                    const str = page.commands.renderTop5BestSeller(index, product);
+                    page.elements.tbTop5ProductBody.append(str);
+                });
                 renderChart(data);
             })
             .fail(function () {
                 App.SweetAlert.showErrorAlert(App.AlertMessageVi.ERROR_404);
             })
             .always(function () {
+                page.commands.getAllTop5BestSeller.inProgress = false;
                 hideLoader();
             });
     }
@@ -374,7 +379,6 @@
                     } else {
                         renderLineChart(canvas, []);
                         App.showErrorAlert("Dữ liệu không hợp lệ hoặc rỗng");
-                        console.error("Dữ liệu không hợp lệ hoặc rỗng");
                     }
                 });
             } else {
@@ -397,7 +401,7 @@
                         label: "Doanh thu",
                         data: revenueData,
                         fill: false,
-                        borderColor: "red",
+                        borderColor: "#1A73E8",
                     },
                 ],
             };
