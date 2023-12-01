@@ -36,13 +36,6 @@
                             <h6 class="text-white text-capitalize ps-3">Product</h6>
                                 <select class="form-control search me-3 shadow-primary border-radius-lg " id="categoryFilter" style="width: 200px">
                                     <option class="text-center" value="">--Category--</option>
-                                    <option value="1" >Cafe</option>
-                                    <option value="2" >Trà</option>
-                                    <option value="3" >Sinh tố</option>
-                                    <option value="4" >Yaourt</option>
-                                    <option value="6" >Soda</option>
-                                    <option value="7" >Đá xay</option>
-                                    <option value="8" >Nước ép</option>
                                 </select>
 
 
@@ -153,6 +146,7 @@
     page.elements.sortByPrice = $('#sortByPrice');
     page.elements.keySearch = $('#keySearch');
     page.elements.pagination = $('.pagination')
+    page.dialogs.elements.categoryFilter=$('#categoryFilter')
     let productId = 0;
     let product = new Product();
     let currentPage = 0;
@@ -170,6 +164,11 @@
     // Ẩn loading spinner trong modal
     function hideModalLoading() {
         $("#modalLoadingOverlay").hide();
+    }
+    page.commands.categoryFilter = (category) => {
+        return `
+            <option value="${category.id}">${category.title}</option>
+        `;
     }
     page.commands.renderProduct = (product) => {
         avatar = product.productAvatar;
@@ -205,14 +204,14 @@
     });
 
     $(document).ready(function () {
-        $('#categoryFilter').change(function () {
+        page.dialogs.elements.categoryFilter.change(function () {
             const cate = $(this).val()
             page.commands.filterProducts(currentPage,10, cate);
         });
     });
 
     page.commands.filterProducts=(pageProduct,pageSize, cate)=> {
-        const selectedCategory = $('#categoryFilter').val();
+        const selectedCategory = page.dialogs.elements.categoryFilter.val();
         const search = '';
         let ApiUrl = App.API_PRODUCT + `?page=${pageProduct}&size=${pageSize}`
         if (cate) {
@@ -231,7 +230,7 @@
                 page.elements.tbProductBody.empty();
                 $.each(data.content, (index, product) => {
                     const str = page.commands.renderProduct(product)
-                    page.elements.tbProductBody.prepend(str)
+                    page.elements.tbProductBody.append(str)
                 })
                 page.commands.displayPagination(data.totalPages, 1);
             })
@@ -343,6 +342,7 @@
                 $.each(data, function (index, item) {
                     page.dialogs.elements.categoryCre.append($('<option>').val(item.id).text(item.title));
                     page.dialogs.elements.categoryUp.append($('<option>').val(item.id).text(item.title));
+                    page.dialogs.elements.categoryFilter.append($('<option>').val(item.id).text(item.title));
                 })
             })
             .fail((jqXHR, textStatus, errorThrown) => {

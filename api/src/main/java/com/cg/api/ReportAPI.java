@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -159,7 +160,7 @@ public class ReportAPI {
         endDay = String.join("-", endDayArray);
 
         List<DayToDayReportDTO> report = iBillService.getReportFromDayToDay(startDay, endDay);
-
+        report.sort(Comparator.comparing(DayToDayReportDTO::getDay));
         if (report.size() == 0) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
