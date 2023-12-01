@@ -104,39 +104,77 @@ public class OrderServiceImpl implements IOrderService {
             throw new DataInputException("Sản phẩm này không tồn tại vui lòng xem lại");
         });
 
-        OrderDetail orderDetail = new OrderDetail();
-        Long quantity = orderCreReqDTO.getQuantity();
-        BigDecimal price = product.getPrice();
-        BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
+        if (product.getCategory().getTitle().equals("Nước ngọt") || product.getCategory().getTitle().equals("Bánh ngọt") || product.getCategory().getTitle().equals("Thuốc lá")) {
+            OrderDetail orderDetail = new OrderDetail();
+            Long quantity = orderCreReqDTO.getQuantity();
+            BigDecimal price = product.getPrice();
+            BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
 
 
-        orderDetail.setProduct(product);
-        orderDetail.setQuantity(quantity);
-        orderDetail.setPrice(price);
-        orderDetail.setAmount(amount);
-        orderDetail.setNote(orderCreReqDTO.getNote());
-        orderDetail.setStatus(EOrderDetailStatus.NEW);
-        orderDetail.setOrder(order);
+            orderDetail.setProduct(product);
+            orderDetail.setQuantity(quantity);
+            orderDetail.setPrice(price);
+            orderDetail.setAmount(amount);
+            orderDetail.setNote(orderCreReqDTO.getNote());
+            orderDetail.setStatus(EOrderDetailStatus.DONE);
+            orderDetail.setOrder(order);
 
-        orderDetailRepository.save(orderDetail);
+            orderDetailRepository.save(orderDetail);
 
-        order.setTotalAmount(amount);
-        orderRepository.save(order);
+            order.setTotalAmount(amount);
+            orderRepository.save(order);
 
-        OrderDetailCreResDTO orderDetailCreResDTO = new OrderDetailCreResDTO();
-        orderDetailCreResDTO.setOrderDetailId(orderDetail.getId());
-        orderDetailCreResDTO.setTable(tableOrder.toTableOrderResDTO());
-        orderDetailCreResDTO.setProductId(product.getId());
-        orderDetailCreResDTO.setTitle(product.getTitle());
-        orderDetailCreResDTO.setPrice(price);
-        orderDetailCreResDTO.setQuantity(quantity);
-        orderDetailCreResDTO.setAmount(amount);
-        orderDetailCreResDTO.setNote(orderDetail.getNote());
-        orderDetailCreResDTO.setTotalAmount(amount);
-        orderDetailCreResDTO.setStatus(String.valueOf(orderDetail.getStatus()));
-        orderDetailCreResDTO.setAvatar(product.getProductAvatar().toAvatarResDTO());
-        orderDetailCreResDTO.setCreatedAt(orderDetail.getCreatedAt());
-        return orderDetailCreResDTO;
+            OrderDetailCreResDTO orderDetailCreResDTO = new OrderDetailCreResDTO();
+            orderDetailCreResDTO.setOrderDetailId(orderDetail.getId());
+            orderDetailCreResDTO.setTable(tableOrder.toTableOrderResDTO());
+            orderDetailCreResDTO.setProductId(product.getId());
+            orderDetailCreResDTO.setTitle(product.getTitle());
+            orderDetailCreResDTO.setPrice(price);
+            orderDetailCreResDTO.setQuantity(quantity);
+            orderDetailCreResDTO.setAmount(amount);
+            orderDetailCreResDTO.setNote(orderDetail.getNote());
+            orderDetailCreResDTO.setTotalAmount(amount);
+            orderDetailCreResDTO.setStatus(String.valueOf(orderDetail.getStatus()));
+            orderDetailCreResDTO.setAvatar(product.getProductAvatar().toAvatarResDTO());
+            orderDetailCreResDTO.setCreatedAt(orderDetail.getCreatedAt());
+            return orderDetailCreResDTO;
+        } else {
+            OrderDetail orderDetail = new OrderDetail();
+            Long quantity = orderCreReqDTO.getQuantity();
+            BigDecimal price = product.getPrice();
+            BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
+
+
+            orderDetail.setProduct(product);
+            orderDetail.setQuantity(quantity);
+            orderDetail.setPrice(price);
+            orderDetail.setAmount(amount);
+            orderDetail.setNote(orderCreReqDTO.getNote());
+            orderDetail.setStatus(EOrderDetailStatus.NEW);
+            orderDetail.setOrder(order);
+
+            orderDetailRepository.save(orderDetail);
+
+            order.setTotalAmount(amount);
+            orderRepository.save(order);
+
+            OrderDetailCreResDTO orderDetailCreResDTO = new OrderDetailCreResDTO();
+            orderDetailCreResDTO.setOrderDetailId(orderDetail.getId());
+            orderDetailCreResDTO.setTable(tableOrder.toTableOrderResDTO());
+            orderDetailCreResDTO.setProductId(product.getId());
+            orderDetailCreResDTO.setTitle(product.getTitle());
+            orderDetailCreResDTO.setPrice(price);
+            orderDetailCreResDTO.setQuantity(quantity);
+            orderDetailCreResDTO.setAmount(amount);
+            orderDetailCreResDTO.setNote(orderDetail.getNote());
+            orderDetailCreResDTO.setTotalAmount(amount);
+            orderDetailCreResDTO.setStatus(String.valueOf(orderDetail.getStatus()));
+            orderDetailCreResDTO.setAvatar(product.getProductAvatar().toAvatarResDTO());
+            orderDetailCreResDTO.setCreatedAt(orderDetail.getCreatedAt());
+            return orderDetailCreResDTO;
+        }
+
+
     }
 
     @Override
@@ -148,6 +186,10 @@ public class OrderServiceImpl implements IOrderService {
             throw new DataInputException("Hoá đơn bàn này chưa có mặt hàng nào, vui lòng liên hệ ADMIN để kiểm tra lại dữ liệu");
         }
 
+        if (product.getCategory().getTitle().equals("Nước ngọt") || product.getCategory().getTitle().equals("Bánh ngọt") || product.getCategory().getTitle().equals("Thuốc lá")) {
+            orderUpReqDTO.setStatus(EOrderDetailStatus.DONE);
+        }
+
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findByProductIdAndOrderIdAndNote(orderUpReqDTO.getProductId(), order.getId(), orderUpReqDTO.getNote(), orderUpReqDTO.getStatus());
         if (orderDetailOptional.isEmpty()) {
             Long quantity = orderUpReqDTO.getQuantity();
@@ -155,48 +197,95 @@ public class OrderServiceImpl implements IOrderService {
 
             BigDecimal price = product.getPrice();
             BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
+            if (product.getCategory().getTitle().equals("Nước ngọt") || product.getCategory().getTitle().equals("Bánh ngọt") || product.getCategory().getTitle().equals("Thuốc lá")) {
+                orderDetail.setProduct(product);
+                orderDetail.setOrder(order);
+                orderDetail.setPrice(product.getPrice());
+                orderDetail.setQuantity(quantity);
+                orderDetail.setAmount(amount);
+                orderDetail.setStatus(EOrderDetailStatus.DONE);
+                orderDetail.setNote(orderUpReqDTO.getNote());
+                orderDetailRepository.save(orderDetail);
 
-            orderDetail.setProduct(product);
-            orderDetail.setOrder(order);
-            orderDetail.setPrice(product.getPrice());
-            orderDetail.setQuantity(quantity);
-            orderDetail.setAmount(amount);
-            orderDetail.setStatus(EOrderDetailStatus.NEW);
-            orderDetail.setNote(orderUpReqDTO.getNote());
-            orderDetailRepository.save(orderDetail);
+                BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
+                order.setTotalAmount(newTotalAmount);
+                orderRepository.save(order);
+            } else {
+                orderDetail.setProduct(product);
+                orderDetail.setOrder(order);
+                orderDetail.setPrice(product.getPrice());
+                orderDetail.setQuantity(quantity);
+                orderDetail.setAmount(amount);
+                orderDetail.setStatus(EOrderDetailStatus.NEW);
+                orderDetail.setNote(orderUpReqDTO.getNote());
+                orderDetailRepository.save(orderDetail);
 
-            BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
-            order.setTotalAmount(newTotalAmount);
-            orderRepository.save(order);
+                BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
+                order.setTotalAmount(newTotalAmount);
+                orderRepository.save(order);
+            }
+
         } else {
             orderDetail = orderDetailOptional.get();
-            long newQuantity = orderDetail.getQuantity() + orderUpReqDTO.getQuantity();
-            BigDecimal price = orderDetail.getPrice();
-            BigDecimal newAmount = price.multiply(BigDecimal.valueOf(newQuantity));
-            orderDetail.setQuantity(newQuantity);
-            orderDetail.setAmount(newAmount);
-            orderDetail.setStatus(EOrderDetailStatus.NEW);
-            orderDetailRepository.save(orderDetail);
+            product = orderDetail.getProduct();
+            if (product.getCategory().getTitle().equals("Nước ngọt") || product.getCategory().getTitle().equals("Bánh ngọt") || product.getCategory().getTitle().equals("Thuốc lá")) {
+                long newQuantity = orderDetail.getQuantity() + orderUpReqDTO.getQuantity();
+                BigDecimal price = orderDetail.getPrice();
+                BigDecimal newAmount = price.multiply(BigDecimal.valueOf(newQuantity));
+                orderDetail.setQuantity(newQuantity);
+                orderDetail.setAmount(newAmount);
+                orderDetailRepository.save(orderDetail);
 
-            BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
-            order.setTotalAmount(newTotalAmount);
-            orderRepository.save(order);
+                BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
+                order.setTotalAmount(newTotalAmount);
+                orderRepository.save(order);
+            } else {
+                long newQuantity = orderDetail.getQuantity() + orderUpReqDTO.getQuantity();
+                BigDecimal price = orderDetail.getPrice();
+                BigDecimal newAmount = price.multiply(BigDecimal.valueOf(newQuantity));
+                orderDetail.setQuantity(newQuantity);
+                orderDetail.setAmount(newAmount);
+                orderDetail.setStatus(EOrderDetailStatus.NEW);
+                orderDetailRepository.save(orderDetail);
+
+                BigDecimal newTotalAmount = getOrderTotalAmount(order.getId());
+                order.setTotalAmount(newTotalAmount);
+                orderRepository.save(order);
+            }
+
         }
-        List<OrderDetailProductUpResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailProductUpResDTO(order.getId());
 
+        List<OrderDetailProductUpResDTO> newOrderDetails = orderDetailRepository.findAllOrderDetailProductUpResDTO(order.getId());
         OrderDetailUpResDTO orderDetailUpResDTO = new OrderDetailUpResDTO();
         orderDetailUpResDTO.setTable(order.getTableOrder().toTableOrderResDTO());
         orderDetailUpResDTO.setProducts(newOrderDetails);
         orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
-        orderDetailUpResDTO.setStatus(EOrderDetailStatus.NEW);
+//        orderDetailUpResDTO.setStatus(EOrderDetailStatus.NEW);
         return orderDetailUpResDTO;
+
+//        if (product.getCategory().getTitle().equals("Nước ngọt") || product.getCategory().getTitle().equals("Bánh ngọt") || product.getCategory().getTitle().equals("Thuốc lá")) {
+//            OrderDetailUpResDTO orderDetailUpResDTO = new OrderDetailUpResDTO();
+//            orderDetailUpResDTO.setTable(order.getTableOrder().toTableOrderResDTO());
+//            orderDetailUpResDTO.setProducts(newOrderDetails);
+//            orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
+//            orderDetailUpResDTO.setStatus(EOrderDetailStatus.DONE);
+//            return orderDetailUpResDTO;
+//        } else {
+//            OrderDetailUpResDTO orderDetailUpResDTO = new OrderDetailUpResDTO();
+//            orderDetailUpResDTO.setTable(order.getTableOrder().toTableOrderResDTO());
+//            orderDetailUpResDTO.setProducts(newOrderDetails);
+//            orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
+//            orderDetailUpResDTO.setStatus(EOrderDetailStatus.NEW);
+//            return orderDetailUpResDTO;
+//        }
+
     }
 
     @Override
     public OrderChangeStatusResDTO upStatusOrderItemToCooking(OrderChangeStatusReqDTO orderChangeStatusReqDTO, User user) {
         Long tableId = orderChangeStatusReqDTO.getTableId();
         Optional<TableOrderBackup> tableOrderBackup = tableOrderBackupService.findByTableCurrentId(tableId);
-        if(tableOrderBackup.isPresent()){
+        if (tableOrderBackup.isPresent()) {
             Optional<Order> orderOptional = orderRepository.findByOrderIdAndPaid(tableOrderBackup.get().getOrderTargetId());
             if (!orderOptional.isPresent()) {
                 throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
@@ -218,8 +307,7 @@ public class OrderServiceImpl implements IOrderService {
             orderChangeStatusResDTO.setTotalAmount(orderOptional.get().getTotalAmount());
             orderChangeStatusResDTO.setTableId(tableId);
             return orderChangeStatusResDTO;
-        }
-        else {
+        } else {
             Optional<Order> orderOptional = orderRepository.findByTableId(tableId);
             if (!orderOptional.isPresent()) {
                 throw new DataInputException("Bàn này chưa có hoá đơn vui lòng xem lại!!!");
