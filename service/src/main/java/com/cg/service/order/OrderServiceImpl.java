@@ -260,25 +260,7 @@ public class OrderServiceImpl implements IOrderService {
         orderDetailUpResDTO.setTable(order.getTableOrder().toTableOrderResDTO());
         orderDetailUpResDTO.setProducts(newOrderDetails);
         orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
-//        orderDetailUpResDTO.setStatus(EOrderDetailStatus.NEW);
         return orderDetailUpResDTO;
-
-//        if (product.getCategory().getTitle().equals("Nước ngọt") || product.getCategory().getTitle().equals("Bánh ngọt") || product.getCategory().getTitle().equals("Thuốc lá")) {
-//            OrderDetailUpResDTO orderDetailUpResDTO = new OrderDetailUpResDTO();
-//            orderDetailUpResDTO.setTable(order.getTableOrder().toTableOrderResDTO());
-//            orderDetailUpResDTO.setProducts(newOrderDetails);
-//            orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
-//            orderDetailUpResDTO.setStatus(EOrderDetailStatus.DONE);
-//            return orderDetailUpResDTO;
-//        } else {
-//            OrderDetailUpResDTO orderDetailUpResDTO = new OrderDetailUpResDTO();
-//            orderDetailUpResDTO.setTable(order.getTableOrder().toTableOrderResDTO());
-//            orderDetailUpResDTO.setProducts(newOrderDetails);
-//            orderDetailUpResDTO.setTotalAmount(order.getTotalAmount());
-//            orderDetailUpResDTO.setStatus(EOrderDetailStatus.NEW);
-//            return orderDetailUpResDTO;
-//        }
-
     }
 
     @Override

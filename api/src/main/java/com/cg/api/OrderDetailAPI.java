@@ -385,9 +385,7 @@ public class OrderDetailAPI {
         }
 
         Order order = orderDetail.getOrder();
-        if (order.getPaid()) {
-            throw new DataInputException("Hóa đơn này đã thanh toán !!!");
-        }
+
 
         orderDetailService.changeStatusFromWaiterToDoneOfProduct(orderDetail);
 
