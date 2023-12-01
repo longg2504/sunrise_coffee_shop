@@ -233,7 +233,6 @@
                     const str = page.commands.renderProduct(product)
                     page.elements.tbProductBody.prepend(str)
                 })
-                // page.commands.displayPagination(data.totalPages, data.number + 1);
                 page.commands.displayPagination(data.totalPages, 1);
             })
                 .fail(function () {
@@ -308,7 +307,6 @@
             url: ApiUrl,
         })
             .done((data) => {
-                console.log(data)
                 page.elements.tbProductBody.empty();
                 $.each(data.content, (index, product) => {
                     const str = page.commands.renderProduct(product)
@@ -471,14 +469,13 @@
             page.elements.tbProductBody.prepend(str)
             page.dialogs.elements.modalCreate.modal('hide');
             page.commands.handleImagePopup();
-            App.SweetAlert.showSuccessAlert("Thêm mới thành công")
+            App.SweetAlert.showSuccessAlert("Thêm mới thành công");
         }).fail(() => {
             App.SweetAlert.showErrorAlert("Ảnh không được bỏ trống.Vui lòng upload ảnh!!!");
             hideModalLoading();
             hideLoader();
-            // App.SweetAlert.showErrorAlert(error.responseJSON.message);
-            console.log(err)
         }).always(function () {
+            hideModalLoading();
             hideLoader();
             page.dialogs.elements.btnCreate.prop('disabled', false);
         });
