@@ -148,6 +148,19 @@
                     </div>
                 </div>
             </div>
+            <div class="col-12 col-lg-6 ">
+                <div class="widget widget-tile">
+                    <div class="chart sparkline" id="spark4"></div>
+                    <div class="data-info">
+                        <div class="desc" id="month-bill-title">Bill of the month</div>
+                        <div class="value">
+                            <span class="indicator indicator-positive mdi mdi-chevron-up"></span>
+                            <span id="countBillOfMonth" class="number">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
             <div class="col-12 col-lg-12 mb-3">
@@ -514,43 +527,58 @@
     //---theo tháng năm
     $(document).ready(function () {
         const reportCurrentMonth = $("#reportCurrentMonth");
+        const countBillOfMonth = $("#countBillOfMonth");
         const monthAmountTitle = $("#month-amount-title");
+        const monthBillTitle = $("#month-bill-title");
         const monthCount = $("#monthCount");
+
         function getCurrentMonthYear() {
             const currentDate = new Date();
             const year = currentDate.getFullYear();
             const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
             return `${year}-${month}`;
         }
+
         const defaultMonthYear = getCurrentMonthYear();
         monthCount.val(defaultMonthYear);
-        function updateRevenueForMonthYear(selectedMonthYear) {
+        updateDataForMonthYear(defaultMonthYear);
+
+        function updateDataForMonthYear(selectedMonthYear) {
             const [selectedYear, selectedMonth] = selectedMonthYear.split('-');
             if (selectedYear && selectedMonth) {
-                const url = App.API_REPORT + "/month/" + `${selectedYear}-${selectedMonth}`;
-                $.get(url, function (data) {
-                    if (data && data.totalAmount !== undefined) {
-                        monthAmountTitle.text(`Revenue during the month ${selectedMonth}/${selectedYear}`);
-                        reportCurrentMonth.text(formatCurrency(data.totalAmount));
+                const reportUrl = App.API_REPORT + "/month/" + `${selectedYear}-${selectedMonth}`;
+                const billUrl = App.API_REPORT + "/month/" + `${selectedYear}-${selectedMonth}`;
+                $.get(reportUrl, function (reportData) {
+                    if (reportData && reportData.totalAmount !== undefined) {
+                        monthAmountTitle.text(`Revenue of the month ${selectedMonth}/${selectedYear}`);
+                        reportCurrentMonth.text(formatCurrency(reportData.totalAmount));
                     } else {
-                        App.showErrorAlert("Không có dữ liệu hoặc dữ liệu không hợp lệ");
-                        monthAmountTitle.text("Không có dữ liệu hoặc dữ liệu không hợp lệ");
-                        reportCurrentMonth.text("0");
+                        showError("Không có dữ liệu hoặc dữ liệu không hợp lệ", monthAmountTitle, reportCurrentMonth);
                     }
                 }).fail(function () {
-                    monthAmountTitle.text("Tháng này chưa có doanh thu");
-                    reportCurrentMonth.text("0");
+                    showError("Không có dữ liệu hoặc dữ liệu không hợp lệ", monthAmountTitle, reportCurrentMonth);
+                });
+                $.get(billUrl, function (billData) {
+                    if (billData && billData.count !== undefined) {
+                        monthBillTitle.text(`Bill of the month ${selectedMonth}/${selectedYear}`);
+                        countBillOfMonth.text(billData.count);
+                    } else {
+                        showError("Không có dữ liệu hoặc dữ liệu không hợp lệ", monthBillTitle, countBillOfMonth);
+                    }
+                }).fail(function () {
+                    showError("Không có dữ liệu hóa đơn hoặc dữ liệu không hợp lệ", monthBillTitle, countBillOfMonth);
                 });
             } else {
-                monthAmountTitle.text("Vui lòng chọn năm và tháng");
-                reportCurrentMonth.text("0");
+                showError("Vui lòng chọn năm và tháng", monthAmountTitle, reportCurrentMonth);
+                showError("Vui lòng chọn năm và tháng", monthBillTitle, countBillOfMonth);
             }
         }
-        updateRevenueForMonthYear(defaultMonthYear);
+
         monthCount.on("change", function () {
             const selectedMonthYear = monthCount.val();
-            updateRevenueForMonthYear(selectedMonthYear);
+            updateDataForMonthYear(selectedMonthYear);
         });
+
         function formatCurrency(amount) {
             if (amount !== null && amount !== undefined) {
                 return amount.toLocaleString('vi', { style: 'currency', currency: 'VND' });
@@ -558,8 +586,15 @@
                 return "0";
             }
         }
+
+        function showError(message, titleElement, valueElement) {
+            App.showErrorAlert(message);
+            titleElement.text(message);
+            valueElement.text("0");
+        }
     });
-//----theo năm
+
+    //----theo năm
     $(document).ready(function () {
         const yearReport = $("#yearReport");
         const chartContainer = document.getElementById("reportByYearChart");
