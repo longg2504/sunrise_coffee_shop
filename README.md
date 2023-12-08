@@ -16,7 +16,7 @@ Link Git: https://github.com/longg2504/sunrise_coffee_shop
       password: 123123
   
 Cashier + Kitchen :\
-Link Product:https://sunrise-coffee.onedev.top\
+Link Product:https://sunrise-coffee.onedev.top \
 Login : /login\
 Kitchen: /kitchen \
 Link Git: https://github.com/lthnhung99/react_sunrise_coffee_shop
