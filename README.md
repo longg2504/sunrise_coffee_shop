@@ -3,8 +3,7 @@
 
 
 API + Dashboard:\
-Link Product:\
-Login: /login\
+Link Product:https://sunrise-coffee.onedev.top/dashboard\
 Dashboard : /dashboard\
 Table: /dashboard/table\
 Staff: /dashboard/staff\
@@ -17,7 +16,7 @@ Link Git: https://github.com/longg2504/sunrise_coffee_shop
       password: 123123
   
 Cashier + Kitchen :\
-Link Product:\
+Link Product:https://sunrise-coffee.onedev.top\
 Login : /login\
 Kitchen: /kitchen \
 Link Git: https://github.com/lthnhung99/react_sunrise_coffee_shop
