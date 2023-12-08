@@ -3,7 +3,7 @@
 
 
 API + Dashboard:\
-Link Product:https://sunrise-coffee.onedev.top/dashboard
+Link Product:https://sunrise-coffee.onedev.top/dashboard \
 Dashboard : /dashboard\
 Table: /dashboard/table\
 Staff: /dashboard/staff\
